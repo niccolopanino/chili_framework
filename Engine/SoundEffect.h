@@ -1,5 +1,5 @@
-/****************************************************************************************** 
- *	Chili DirectX Framework Sound Pack Version 16.11.11									  *	
+/******************************************************************************************
+ *	Chili DirectX Framework Sound Pack Version 16.11.11									  *
  *	SoundEffect.h																		  *
  *	Copyright 2016 PlanetChili.net <http://www.planetchili.net>							  *
  *																						  *
@@ -27,38 +27,18 @@
 class SoundEffect
 {
 public:
-	SoundEffect( const std::initializer_list<std::wstring>& wavFiles,bool soft_fail = false,float freqStdDevFactor = 0.06f )
-		:
-		freqDist( 0.0f,freqStdDevFactor ),
-		soundDist( 0,unsigned int( wavFiles.size() - 1 ) )
-	{
-		sounds.reserve( wavFiles.size() );
-		for( auto& f : wavFiles )
-		{
-			try
-			{
-				sounds.emplace_back( f );
-			}
-			catch( const SoundSystem::FileException& e )
-			{
-				if( soft_fail )
-				{
-					sounds.emplace_back();
-				}
-				else
-				{
-					throw e;
-				}
-			}
-		}
-	}
-	template<class T>
-	void Play( T& rng,float vol = 1.0f )
-	{
-		sounds[soundDist( rng )].Play( exp2( freqDist( rng ) ),vol );
-	}
+    SoundEffect(const std::initializer_list<std::wstring> &wavFiles,
+        bool soft_fail = false, float freqStdDevFactor = 0.06f);
+    template<class T>
+    void Play(T &rng, float vol = 1.0f);
 private:
-	std::uniform_int_distribution<unsigned int> soundDist;
-	std::normal_distribution<float> freqDist;
-	std::vector<Sound> sounds;
+    std::uniform_int_distribution<unsigned int> soundDist;
+    std::normal_distribution<float> freqDist;
+    std::vector<Sound> sounds;
 };
+
+template<class T>
+inline void SoundEffect::Play(T &rng, float vol)
+{
+    sounds[soundDist(rng)].Play(exp2(freqDist(rng)), vol);
+}

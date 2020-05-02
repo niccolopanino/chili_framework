@@ -1,12 +1,11 @@
 #pragma once
-
 #include "ChiliWin.h"
 
 class COMInitializer
 {
 public:
-	COMInitializer();
-	~COMInitializer();
+    COMInitializer();
+    ~COMInitializer();
 private:
-	HRESULT hr;
+    HRESULT hr;
 };

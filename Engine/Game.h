@@ -1,5 +1,5 @@
-/****************************************************************************************** 
- *	Chili DirectX Framework Version 16.07.20											  *	
+/******************************************************************************************
+ *	Chili DirectX Framework Version 16.07.20											  *
  *	Game.h																				  *
  *	Copyright 2016 PlanetChili.net <http://www.planetchili.net>							  *
  *																						  *
@@ -27,20 +27,20 @@
 class Game
 {
 public:
-	Game( class MainWindow& wnd );
-	Game( const Game& ) = delete;
-	Game& operator=( const Game& ) = delete;
-	void Go();
+    Game(class MainWindow &wnd);
+    Game(const Game &) = delete;
+    Game &operator=(const Game &) = delete;
+    void Go();
 private:
-	void ComposeFrame();
-	void UpdateModel();
-	/********************************/
-	/*  User Functions              */
-	/********************************/
+    void ComposeFrame();
+    void UpdateModel();
+    /********************************/
+    /*  User Functions              */
+    /********************************/
 private:
-	MainWindow& wnd;
-	Graphics gfx;
-	/********************************/
-	/*  User Variables              */
-	/********************************/
+    MainWindow &wnd;
+    Graphics gfx;
+    /********************************/
+    /*  User Variables              */
+    /********************************/
 };
