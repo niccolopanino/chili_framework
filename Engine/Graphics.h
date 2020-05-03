@@ -45,8 +45,8 @@ private:
     // vertex format for the framebuffer fullscreen textured quad
     struct FSQVertex
     {
-        float x, y, z;		// position
-        float u, v;			// texcoords
+        float x, y, z;      // position
+        float u, v;         // texcoords
     };
 public:
     static IRect get_screen_rect();
@@ -66,6 +66,13 @@ public:
         Color chroma = Colors::Magenta);
     void draw_sprite(int x, int y, IRect src_rect, const IRect &clip, const Surface &s,
         Color chroma = Colors::Magenta);
+    // substitute all drawn pixel colors with given color
+    void draw_sprite_substitute(int x, int y, Color substitute, const Surface &s,
+        Color chroma = Colors::Magenta);
+    void draw_sprite_substitute(int x, int y, Color substitute, const IRect &src_rect,
+        const Surface &s, Color chroma = Colors::Magenta);
+    void draw_sprite_substitute(int x, int y, Color substitute, IRect src_rect, const IRect &clip,
+        const Surface &s, Color chroma = Colors::Magenta);
     ~Graphics();
 public:
     static constexpr int k_screen_width = 800;

@@ -327,7 +327,8 @@ void Graphics::draw_sprite_non_chroma(int x, int y, const IRect &src_rect, const
     draw_sprite_non_chroma(x, y, src_rect, get_screen_rect(), s);
 }
 
-void Graphics::draw_sprite_non_chroma(int x, int y, IRect src_rect, const IRect &clip, const Surface &s)
+void Graphics::draw_sprite_non_chroma(int x, int y,
+    IRect src_rect, const IRect &clip, const Surface &s)
 {
     assert(src_rect.m_left >= 0);
     assert(src_rect.m_right <= s.get_width());
@@ -363,7 +364,8 @@ void Graphics::draw_sprite(int x, int y, const IRect &src_rect, const Surface &s
     draw_sprite(x, y, src_rect, get_screen_rect(), s, chroma);
 }
 
-void Graphics::draw_sprite(int x, int y, IRect src_rect, const IRect &clip, const Surface &s, Color chroma)
+void Graphics::draw_sprite(int x, int y, IRect src_rect,
+    const IRect &clip, const Surface &s, Color chroma)
 {
     assert(src_rect.m_left >= 0);
     assert(src_rect.m_right <= s.get_width());
@@ -388,6 +390,48 @@ void Graphics::draw_sprite(int x, int y, IRect src_rect, const IRect &clip, cons
             const Color src_pixel = s.get_pixel(dx, dy);
             if (src_pixel != chroma)
                 put_pixel(x + dx - src_rect.m_left, y + dy - src_rect.m_top, src_pixel);
+        }
+    }
+}
+
+void Graphics::draw_sprite_substitute(int x, int y,
+    Color substitute, const Surface &s, Color chroma)
+{
+    draw_sprite_substitute(x, y, substitute, s.get_rect(), s, chroma);
+}
+
+void Graphics::draw_sprite_substitute(int x, int y, Color substitute,
+    const IRect &src_rect, const Surface &s, Color chroma)
+{
+    draw_sprite_substitute(x, y, substitute, src_rect, get_screen_rect(), s, chroma);
+}
+
+void Graphics::draw_sprite_substitute(int x, int y, Color substitute,
+    IRect src_rect, const IRect &clip, const Surface &s, Color chroma)
+{
+    assert(src_rect.m_left >= 0);
+    assert(src_rect.m_right <= s.get_width());
+    assert(src_rect.m_top >= 0);
+    assert(src_rect.m_bottom <= s.get_height());
+
+    if (x < clip.m_left) {
+        src_rect.m_left += clip.m_left - x;
+        x = clip.m_left;
+    }
+    if (y < clip.m_top) {
+        src_rect.m_top += clip.m_top - y;
+        y = clip.m_top;
+    }
+    if (x + src_rect.get_width() > clip.m_right)
+        src_rect.m_right -= x + src_rect.get_width() - clip.m_right;
+    if (y + src_rect.get_height() > clip.m_bottom)
+        src_rect.m_bottom -= y + src_rect.get_height() - clip.m_bottom;
+
+    for (int dy = src_rect.m_top; dy < src_rect.m_bottom; dy++) {
+        for (int dx = src_rect.m_left; dx < src_rect.m_right; dx++) {
+            const Color src_pixel = s.get_pixel(dx, dy);
+            if (src_pixel != chroma)
+                put_pixel(x + dx - src_rect.m_left, y + dy - src_rect.m_top, substitute);
         }
     }
 }
