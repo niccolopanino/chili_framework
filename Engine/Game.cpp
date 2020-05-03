@@ -51,6 +51,5 @@ void Game::update_model()
 void Game::compose_frame()
 {
     m_link.draw(m_gfx);
-    m_font.draw_text("Becky.\nLemme smash.",
-        { m_wnd.m_mouse.get_pos_x(), m_wnd.m_mouse.get_pos_y() }, Colors::White, m_gfx);
+    m_font.draw_text("Becky.\nLemme smash.", m_wnd.m_mouse.get_pos(), Colors::White, m_gfx);
 }
