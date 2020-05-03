@@ -24,6 +24,7 @@ Surface &Surface::operator=(const Surface &rhs)
     for (int i = 0; i < num_pixels; i++) {
         m_pixels_ptr[i] = rhs.m_pixels_ptr[i];
     }
+    return *this;
 }
 
 Surface::~Surface()
