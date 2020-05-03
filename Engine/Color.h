@@ -16,6 +16,8 @@ public:
     { }
     constexpr Color(Color col, unsigned char x) : Color((x << 24u) | col.m_dword) { }
     Color &operator =(Color color);
+    bool operator==(const Color &rhs) const;
+    bool operator!=(const Color &rhs) const;
     constexpr unsigned char get_x() const;
     constexpr unsigned char get_a() const;
     constexpr unsigned char get_r() const;

@@ -6,6 +6,16 @@ Color &Color::operator=(Color color)
     return *this;
 }
 
+bool Color::operator==(const Color &rhs) const
+{
+    return m_dword ==  rhs.m_dword;
+}
+
+bool Color::operator!=(const Color &rhs) const
+{
+    return !(*this == rhs);
+}
+
 constexpr unsigned char Color::get_x() const
 {
     return m_dword >> 24u;
