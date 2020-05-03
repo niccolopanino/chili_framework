@@ -33,10 +33,22 @@ void Game::go()
 }
 
 void Game::update_model()
-{ }
+{
+    Vec2f dir = { 0.f, 0.f };
+    if (m_wnd.m_kbd.is_key_pressed(VK_UP))
+        dir.m_y -= 1.f;
+    if (m_wnd.m_kbd.is_key_pressed(VK_DOWN))
+        dir.m_y += 1.f;
+    if (m_wnd.m_kbd.is_key_pressed(VK_LEFT))
+        dir.m_x -= 1.f;
+    if (m_wnd.m_kbd.is_key_pressed(VK_RIGHT))
+        dir.m_x += 1.f;
+
+    m_link.set_direction(dir);
+    m_link.update(m_ft.mark());
+}
 
 void Game::compose_frame()
 {
-    m_gfx.draw_sprite(m_wnd.m_mouse.get_pos_x(), m_wnd.m_mouse.get_pos_y(),
-        { 32, 64, 48, 96 }, m_gfx.get_screen_rect(), m_surf);
+    m_link.draw(m_gfx);
 }
