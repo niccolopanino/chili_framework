@@ -50,7 +50,7 @@ private:
     /*  User Variables              */
     FrameTimer m_ft;
     Character m_link = Character({ 100.f, 100.f });
-    Font m_font = Font("Fixedsys16x28.bmp");
-    Sound m_hit_sound = Sound(L"hit.wav");
+    Font m_font = Font("resources\\img\\Fixedsys16x28.bmp");
+    Sound m_hit_sound = Sound(L"resources\\sound\\hit.wav");
     /********************************/
 };
