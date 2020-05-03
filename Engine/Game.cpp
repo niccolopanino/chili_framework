@@ -36,4 +36,6 @@ void Game::update_model()
 { }
 
 void Game::compose_frame()
-{ }
+{
+    m_gfx.draw_sprite(200, 200, m_surf);
+}
