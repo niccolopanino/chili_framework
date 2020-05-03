@@ -32,12 +32,12 @@ public:
     {
     public:
         Exception(HRESULT hr, const std::wstring &note, const wchar_t *file, unsigned int line);
-        std::wstring GetErrorName() const;
-        std::wstring GetErrorDescription() const;
-        virtual std::wstring GetFullMessage() const override;
-        virtual std::wstring GetExceptionType() const override;
+        std::wstring get_error_name() const;
+        std::wstring get_error_description() const;
+        virtual std::wstring get_full_message() const override;
+        virtual std::wstring get_exception_type() const override;
     private:
-        HRESULT hr;
+        HRESULT m_hr;
     };
 private:
     // vertex format for the framebuffer fullscreen textured quad
@@ -50,26 +50,26 @@ public:
     Graphics(class HWNDKey &key);
     Graphics(const Graphics &) = delete;
     Graphics &operator=(const Graphics &) = delete;
-    void EndFrame();
-    void BeginFrame();
-    void PutPixel(int x, int y, int r, int g, int b);
-    void PutPixel(int x, int y, Color c);
+    void end_frame();
+    void begin_frame();
+    void put_pixel(int x, int y, int r, int g, int b);
+    void put_pixel(int x, int y, Color c);
     ~Graphics();
 private:
-    Microsoft::WRL::ComPtr<IDXGISwapChain>              pSwapChain;
-    Microsoft::WRL::ComPtr<ID3D11Device>                pDevice;
-    Microsoft::WRL::ComPtr<ID3D11DeviceContext>         pImmediateContext;
-    Microsoft::WRL::ComPtr<ID3D11RenderTargetView>      pRenderTargetView;
-    Microsoft::WRL::ComPtr<ID3D11Texture2D>             pSysBufferTexture;
-    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>    pSysBufferTextureView;
-    Microsoft::WRL::ComPtr<ID3D11PixelShader>           pPixelShader;
-    Microsoft::WRL::ComPtr<ID3D11VertexShader>          pVertexShader;
-    Microsoft::WRL::ComPtr<ID3D11Buffer>                pVertexBuffer;
-    Microsoft::WRL::ComPtr<ID3D11InputLayout>           pInputLayout;
-    Microsoft::WRL::ComPtr<ID3D11SamplerState>          pSamplerState;
-    D3D11_MAPPED_SUBRESOURCE                            mappedSysBufferTexture;
-    Color *pSysBuffer = nullptr;
+    Microsoft::WRL::ComPtr<IDXGISwapChain>              m_swapchain_ptr;
+    Microsoft::WRL::ComPtr<ID3D11Device>                m_device_ptr;
+    Microsoft::WRL::ComPtr<ID3D11DeviceContext>         m_device_context_ptr;
+    Microsoft::WRL::ComPtr<ID3D11RenderTargetView>      m_render_target_ptr;
+    Microsoft::WRL::ComPtr<ID3D11Texture2D>             m_sysbuffer_texture_ptr;
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>    m_sysbuffer_texture_view_ptr;
+    Microsoft::WRL::ComPtr<ID3D11PixelShader>           m_fshader_ptr;
+    Microsoft::WRL::ComPtr<ID3D11VertexShader>          m_vshader_ptr;
+    Microsoft::WRL::ComPtr<ID3D11Buffer>                m_vertex_buffer_ptr;
+    Microsoft::WRL::ComPtr<ID3D11InputLayout>           m_input_layout_ptr;
+    Microsoft::WRL::ComPtr<ID3D11SamplerState>          m_sampler_state_ptr;
+    D3D11_MAPPED_SUBRESOURCE                            m_mapped_sysbuffer_texture;
+    Color *m_sysbuffer = nullptr;
 public:
-    static constexpr int ScreenWidth = 800;
-    static constexpr int ScreenHeight = 600;
+    static constexpr int k_screen_width = 800;
+    static constexpr int k_screen_height = 600;
 };

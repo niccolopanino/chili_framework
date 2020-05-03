@@ -40,60 +40,60 @@ public:
             Invalid
         };
     private:
-        Type type;
-        bool leftIsPressed;
-        bool rightIsPressed;
-        int x;
-        int y;
+        Type m_type;
+        bool m_left_pressed;
+        bool m_right_pressed;
+        int m_x;
+        int m_y;
     public:
         Event() :
-            type(Type::Invalid),
-            leftIsPressed(false), rightIsPressed(false),
-            x(0), y(0)
+            m_type(Type::Invalid),
+            m_left_pressed(false), m_right_pressed(false),
+            m_x(0), m_y(0)
         { }
         Event(Type type, const Mouse &parent) :
-            type(type),
-            leftIsPressed(parent.leftIsPressed), rightIsPressed(parent.rightIsPressed),
-            x(parent.x), y(parent.y)
+            m_type(type),
+            m_left_pressed(parent.m_left_pressed), m_right_pressed(parent.m_right_pressed),
+            m_x(parent.m_x), m_y(parent.m_y)
         { }
-        bool IsValid() const;
-        Type GetType() const;
-        std::pair<int, int> GetPos() const;
-        int GetPosX() const;
-        int GetPosY() const;
-        bool LeftIsPressed() const;
-        bool RightIsPressed() const;
+        bool is_valid() const;
+        Type get_type() const;
+        std::pair<int, int> get_pos() const;
+        int get_pos_x() const;
+        int get_pos_y() const;
+        bool is_left_pressed() const;
+        bool is_right_pressed() const;
     };
 public:
     Mouse() = default;
     Mouse(const Mouse &) = delete;
     Mouse &operator=(const Mouse &) = delete;
-    std::pair<int, int> GetPos() const;
-    int GetPosX() const;
-    int GetPosY() const;
-    bool LeftIsPressed() const;
-    bool RightIsPressed() const;
-    bool IsInWindow() const;
-    Mouse::Event Read();
-    bool IsEmpty() const;
-    void Flush();
+    std::pair<int, int> get_pos() const;
+    int get_pos_x() const;
+    int get_pos_y() const;
+    bool is_left_pressed() const;
+    bool is_right_pressed() const;
+    bool is_in_window() const;
+    Mouse::Event read();
+    bool is_empty() const;
+    void flush();
 private:
-    void OnMouseMove(int x, int y);
-    void OnMouseLeave();
-    void OnMouseEnter();
-    void OnLeftPressed(int x, int y);
-    void OnLeftReleased(int x, int y);
-    void OnRightPressed(int x, int y);
-    void OnRightReleased(int x, int y);
-    void OnWheelUp(int x, int y);
-    void OnWheelDown(int x, int y);
-    void TrimBuffer();
+    void on_mouse_move(int x, int y);
+    void on_mouse_leave();
+    void on_mouse_enter();
+    void on_left_pressed(int x, int y);
+    void on_left_released(int x, int y);
+    void on_right_pressed(int x, int y);
+    void on_right_released(int x, int y);
+    void on_wheel_up(int x, int y);
+    void on_wheel_down(int x, int y);
+    void trim_buffer();
 private:
-    static constexpr unsigned int bufferSize = 4u;
-    int x = 0;
-    int y = 0;
-    bool leftIsPressed = false;
-    bool rightIsPressed = false;
-    bool isInWindow = false;
-    std::queue<Event> buffer;
+    static constexpr unsigned int k_buffer_size = 4u;
+    int m_x = 0;
+    int m_y = 0;
+    bool m_left_pressed = false;
+    bool m_right_pressed = false;
+    bool m_in_window = false;
+    std::queue<Event> m_buffer;
 };

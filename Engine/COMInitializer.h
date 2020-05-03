@@ -7,5 +7,5 @@ public:
     COMInitializer();
     ~COMInitializer();
 private:
-    HRESULT hr;
+    HRESULT m_hr;
 };

@@ -40,31 +40,31 @@
 #define CHILI_SOUND_API_EXCEPTION( hr,note ) SoundSystem::APIException( hr,_CRT_WIDE(__FILE__),__LINE__,note )
 #define CHILI_SOUND_FILE_EXCEPTION( filename,note ) SoundSystem::FileException( _CRT_WIDE(__FILE__),__LINE__,note,filename )
 
-SoundSystem &SoundSystem::Get()
+SoundSystem &SoundSystem::get()
 {
     static SoundSystem instance;
     return instance;
 }
 
-void SoundSystem::SetMasterVolume(float vol)
+void SoundSystem::set_master_volume(float vol)
 {
     HRESULT hr;
-    if (FAILED(hr = Get().pMaster->SetVolume(vol)))
+    if (FAILED(hr = get().m_master->SetVolume(vol)))
         throw CHILI_SOUND_API_EXCEPTION(hr, L"Setting master volume");
 }
 
-const WAVEFORMATEX &SoundSystem::GetFormat()
+const WAVEFORMATEX &SoundSystem::get_format()
 {
-    return *Get().format;
+    return *get().m_format;
 }
 
-void SoundSystem::PlaySoundBuffer(Sound &s, float freqMod, float vol)
+void SoundSystem::play_sound_buffer(Sound &s, float freqMod, float vol)
 {
-    std::lock_guard<std::mutex> lock(mutex);
-    if (idleChannelPtrs.size() > 0) {
-        activeChannelPtrs.push_back(std::move(idleChannelPtrs.back()));
-        idleChannelPtrs.pop_back();
-        activeChannelPtrs.back()->PlaySoundBuffer(s, freqMod, vol);
+    std::lock_guard<std::mutex> lock(m_mutex);
+    if (m_idle_channel_ptrs.size() > 0) {
+        m_active_channel_ptrs.push_back(std::move(m_idle_channel_ptrs.back()));
+        m_idle_channel_ptrs.pop_back();
+        m_active_channel_ptrs.back()->play_sound_buffer(s, freqMod, vol);
     }
 }
 
@@ -73,8 +73,8 @@ SoundSystem::XAudioDll::XAudioDll()
     LoadType type = LoadType::System;
     while (true)
     {
-        hModule = LoadLibrary(GetDllPath(type));
-        if (hModule != 0) {
+        m_hmodule = LoadLibrary(get_dll_path(type));
+        if (m_hmodule != 0) {
             return;
         } else {
             switch (type)
@@ -90,9 +90,9 @@ SoundSystem::XAudioDll::XAudioDll()
                         HRESULT_FROM_WIN32(GetLastError()),
                         std::wstring(
                             L"The XAudio2 DLL Could not be loaded. It is required that:\n"
-                            L"A) [ ") + std::wstring(GetDllPath(LoadType::Folder)) +
+                            L"A) [ ") + std::wstring(get_dll_path(LoadType::Folder)) +
                         std::wstring(L" ] exist in the same folder as this executable;\n"
-                            L"B) [ ") + std::wstring(GetDllPath(LoadType::Local)) +
+                            L"B) [ ") + std::wstring(get_dll_path(LoadType::Local)) +
                         std::wstring(L" ] exist in the same folder as this executable; or\n"
                             L"C) [ XAudio2_7.dll ] be installed on this system via the DirectX"
                             L" Redistributable Installer Version June 2010\n"));
@@ -105,54 +105,54 @@ SoundSystem::XAudioDll::XAudioDll()
 
 SoundSystem::XAudioDll::~XAudioDll()
 {
-    if (hModule != 0) {
-        FreeLibrary(hModule);
-        hModule = 0;
+    if (m_hmodule != 0) {
+        FreeLibrary(m_hmodule);
+        m_hmodule = 0;
     }
 }
 
 SoundSystem::XAudioDll::operator HMODULE() const
 {
-    return hModule;
+    return m_hmodule;
 }
 
-const wchar_t *SoundSystem::XAudioDll::GetDllPath(LoadType type)
+const wchar_t *SoundSystem::XAudioDll::get_dll_path(LoadType type)
 {
     switch (type)
     {
         case LoadType::System:
-            return systemPath;
+            return k_system_path;
         case LoadType::Folder:
-            return folderPath;
+            return k_folder_path;
         case LoadType::Local:
-            return localPath;
+            return k_local_path;
         default:
-            assert(false && "Bad LoadType in GetDllPath function");
+            assert(false && "Bad LoadType in get_dll_path function");
             return nullptr;
     }
 }
 
-SoundSystem::SoundSystem() : format(std::make_unique<WAVEFORMATEX>())
+SoundSystem::SoundSystem() : m_format(std::make_unique<WAVEFORMATEX>())
 {
     // setup wave format info structure
-    static_assert(nChannelsPerSound > 0u, "WAVE File Format Error: At least one channel required per audio stream");
-    static_assert(nChannelsPerSound <= XAUDIO2_MAX_AUDIO_CHANNELS, "WAVE File Format Error: Maximum audio channels per audio stream exceeded");
-    static_assert(nSamplesPerSec >= XAUDIO2_MIN_SAMPLE_RATE, "WAVE File Format Error: Sample rate lower than minimum allowed");
-    static_assert(nSamplesPerSec <= XAUDIO2_MAX_SAMPLE_RATE, "WAVE File Format Error: Sample rate exceeds maximum allowed");
-    static_assert(nBitsPerSample > 0u, "WAVE File Format Error: Bit depth of 0 bits per sample is not allowed");
-    static_assert(nBitsPerSample % 8u == 0, "WAVE File Format Error: Bit depth must be multiple of 8");
-    format->nChannels = nChannelsPerSound;
-    format->nSamplesPerSec = nSamplesPerSec;
-    format->wBitsPerSample = nBitsPerSample;
-    format->nBlockAlign = (nBitsPerSample / 8) * nChannelsPerSound;
-    format->nAvgBytesPerSec = format->nBlockAlign * nSamplesPerSec;
-    format->cbSize = 0;
-    format->wFormatTag = WAVE_FORMAT_PCM;
+    static_assert(k_num_channnels_per_sound > 0u, "WAVE File Format Error: At least one channel required per audio stream");
+    static_assert(k_num_channnels_per_sound <= XAUDIO2_MAX_AUDIO_CHANNELS, "WAVE File Format Error: Maximum audio channels per audio stream exceeded");
+    static_assert(k_num_samples_per_sec >= XAUDIO2_MIN_SAMPLE_RATE, "WAVE File Format Error: Sample rate lower than minimum allowed");
+    static_assert(k_num_samples_per_sec <= XAUDIO2_MAX_SAMPLE_RATE, "WAVE File Format Error: Sample rate exceeds maximum allowed");
+    static_assert(k_num_bits_per_sample > 0u, "WAVE File Format Error: Bit depth of 0 bits per sample is not allowed");
+    static_assert(k_num_bits_per_sample % 8u == 0, "WAVE File Format Error: Bit depth must be multiple of 8");
+    m_format->nChannels = k_num_channnels_per_sound;
+    m_format->nSamplesPerSec = k_num_samples_per_sec;
+    m_format->wBitsPerSample = k_num_bits_per_sample;
+    m_format->nBlockAlign = (k_num_bits_per_sample / 8) * k_num_channnels_per_sound;
+    m_format->nAvgBytesPerSec = m_format->nBlockAlign * k_num_samples_per_sec;
+    m_format->cbSize = 0;
+    m_format->wFormatTag = WAVE_FORMAT_PCM;
 
     // find address of DllGetClassObject() function in the dll
     const std::function<HRESULT(REFCLSID, REFIID, LPVOID)> DllGetClassObject =
         reinterpret_cast<HRESULT(WINAPI *)(REFCLSID, REFIID, LPVOID)>(
-            GetProcAddress(xaudio_dll, "DllGetClassObject"));
+            GetProcAddress(m_xaudio_dll, "DllGetClassObject"));
     if (!DllGetClassObject) {
         throw CHILI_SOUND_API_EXCEPTION(
             HRESULT_FROM_WIN32(GetLastError()),
@@ -172,37 +172,37 @@ SoundSystem::SoundSystem() : format(std::make_unique<WAVEFORMATEX>())
 
     // create the XAudio2 component object itself
     if (FAILED(hr = pClassFactory->CreateInstance(nullptr,
-        __uuidof(IXAudio2), &pEngine)))
+        __uuidof(IXAudio2), &m_engine_ptr)))
     {
         throw CHILI_SOUND_API_EXCEPTION(hr, L"Creating XAudio2 object");
     }
 
     // initialize the XAudio2 component object
-    if (FAILED(hr = pEngine->Initialize(0, XAUDIO2_DEFAULT_PROCESSOR)))
+    if (FAILED(hr = m_engine_ptr->Initialize(0, XAUDIO2_DEFAULT_PROCESSOR)))
         throw CHILI_SOUND_API_EXCEPTION(hr, L"Initializing XAudio2 object");
 
     // create the mastering voice
-    if (FAILED(hr = pEngine->CreateMasteringVoice(&pMaster)))
+    if (FAILED(hr = m_engine_ptr->CreateMasteringVoice(&m_master)))
         throw CHILI_SOUND_API_EXCEPTION(hr, L"Creating mastering voice");
 
     // create channel objects
-    for (int i = 0; i < nChannels; i++)
-        idleChannelPtrs.push_back(std::make_unique<Channel>(*this));
+    for (int i = 0; i < k_num_channels; i++)
+        m_idle_channel_ptrs.push_back(std::make_unique<Channel>(*this));
 }
 
-void SoundSystem::DeactivateChannel(Channel &channel)
+void SoundSystem::deactivate_channel(Channel &channel)
 {
-    std::lock_guard<std::mutex> lock(mutex);
-    auto i = std::find_if(activeChannelPtrs.begin(), activeChannelPtrs.end(),
+    std::lock_guard<std::mutex> lock(m_mutex);
+    auto i = std::find_if(m_active_channel_ptrs.begin(), m_active_channel_ptrs.end(),
         [&channel](const std::unique_ptr<Channel> &pChan) -> bool
     {
         return &channel == pChan.get();
     });
-    idleChannelPtrs.push_back(std::move(*i));
-    activeChannelPtrs.erase(i);
+    m_idle_channel_ptrs.push_back(std::move(*i));
+    m_active_channel_ptrs.erase(i);
 }
 
-SoundSystem::Channel::Channel(SoundSystem &sys) : xaBuffer(std::make_unique<XAUDIO2_BUFFER>())
+SoundSystem::Channel::Channel(SoundSystem &sys) : m_xa_buffer(std::make_unique<XAUDIO2_BUFFER>())
 {
     class VoiceCallback : public IXAudio2VoiceCallback
     {
@@ -213,79 +213,79 @@ SoundSystem::Channel::Channel(SoundSystem &sys) : xaBuffer(std::make_unique<XAUD
         void STDMETHODCALLTYPE OnBufferEnd(void *pBufferContext) override
         {
             Channel &chan = *reinterpret_cast<Channel *>(pBufferContext);
-            chan.Stop();
+            chan.stop();
             {
-                std::lock_guard<std::mutex> lock(chan.pSound->mutex);
-                chan.pSound->activeChannelPtrs.erase(std::find(
-                    chan.pSound->activeChannelPtrs.begin(), chan.pSound->activeChannelPtrs.end(), &chan));
+                std::lock_guard<std::mutex> lock(chan.m_sound->m_mutex);
+                chan.m_sound->m_active_channel_ptrs.erase(std::find(
+                    chan.m_sound->m_active_channel_ptrs.begin(), chan.m_sound->m_active_channel_ptrs.end(), &chan));
                 // notify any thread that might be waiting for activeChannels
                 // to become zero (i.e. thread calling destructor)
-                chan.pSound->cvDeath.notify_all();
+                chan.m_sound->m_cv_death.notify_all();
             }
-            chan.pSound = nullptr;
-            SoundSystem::Get().DeactivateChannel(chan);
+            chan.m_sound = nullptr;
+            SoundSystem::get().deactivate_channel(chan);
         }
         void STDMETHODCALLTYPE OnBufferStart(void *pBufferContext) override { }
         void STDMETHODCALLTYPE OnLoopEnd(void *pBufferContext) override { }
         void STDMETHODCALLTYPE OnVoiceError(void *pBufferContext, HRESULT Error) override { }
     };
     static VoiceCallback vcb;
-    ZeroMemory(xaBuffer.get(), sizeof(*xaBuffer));
-    xaBuffer->pContext = this;
+    ZeroMemory(m_xa_buffer.get(), sizeof(*m_xa_buffer));
+    m_xa_buffer->pContext = this;
     HRESULT hr;
-    if (FAILED(hr = sys.pEngine->CreateSourceVoice(&pSource, sys.format.get(), 0u, 2.0f, &vcb)))
+    if (FAILED(hr = sys.m_engine_ptr->CreateSourceVoice(&m_src, sys.m_format.get(), 0u, 2.0f, &vcb)))
         throw CHILI_SOUND_API_EXCEPTION(hr, L"Creating source voice for channel");
 }
 
 SoundSystem::Channel::~Channel()
 {
-    assert(!pSound);
-    if (pSource) {
-        pSource->DestroyVoice();
-        pSource = nullptr;
+    assert(!m_sound);
+    if (m_src) {
+        m_src->DestroyVoice();
+        m_src = nullptr;
     }
 }
 
-void SoundSystem::Channel::PlaySoundBuffer(Sound &s, float freqMod, float vol)
+void SoundSystem::Channel::play_sound_buffer(Sound &s, float freqMod, float vol)
 {
-    assert(pSource && !pSound);
+    assert(m_src && !m_sound);
     {
-        std::lock_guard<std::mutex> lock(s.mutex);
-        s.activeChannelPtrs.push_back(this);
+        std::lock_guard<std::mutex> lock(s.m_mutex);
+        s.m_active_channel_ptrs.push_back(this);
     }
-    // callback thread not running yet, so no sync necessary for pSound
-    pSound = &s;
-    xaBuffer->pAudioData = s.pData.get();
-    xaBuffer->AudioBytes = s.nBytes;
-    if (s.looping) {
-        xaBuffer->LoopBegin = s.loopStart;
-        xaBuffer->LoopLength = s.loopEnd - s.loopStart;
-        xaBuffer->LoopCount = XAUDIO2_LOOP_INFINITE;
+    // callback thread not running yet, so no sync necessary for m_sound
+    m_sound = &s;
+    m_xa_buffer->pAudioData = s.m_data.get();
+    m_xa_buffer->AudioBytes = s.m_num_bytes;
+    if (s.m_looping) {
+        m_xa_buffer->LoopBegin = s.m_loop_start;
+        m_xa_buffer->LoopLength = s.m_loop_end - s.m_loop_start;
+        m_xa_buffer->LoopCount = XAUDIO2_LOOP_INFINITE;
     } else {
-        xaBuffer->LoopCount = 0u;
+        m_xa_buffer->LoopCount = 0u;
     }
     HRESULT hr;
-    if (FAILED(hr = pSource->SubmitSourceBuffer(xaBuffer.get(), nullptr)))
+    if (FAILED(hr = m_src->SubmitSourceBuffer(m_xa_buffer.get(), nullptr)))
         throw CHILI_SOUND_API_EXCEPTION(hr, L"Starting playback - submitting source buffer");
-    if (FAILED(hr = pSource->SetFrequencyRatio(freqMod)))
+    if (FAILED(hr = m_src->SetFrequencyRatio(freqMod)))
         throw CHILI_SOUND_API_EXCEPTION(hr, L"Starting playback - setting frequency");
-    if (FAILED(hr = pSource->SetVolume(vol)))
+    if (FAILED(hr = m_src->SetVolume(vol)))
         throw CHILI_SOUND_API_EXCEPTION(hr, L"Starting playback - setting volume");
-    if (FAILED(hr = pSource->Start()))
+    if (FAILED(hr = m_src->Start()))
         throw CHILI_SOUND_API_EXCEPTION(hr, L"Starting playback - starting");
 }
 
-void SoundSystem::Channel::Stop()
+void SoundSystem::Channel::stop()
 {
-    assert(pSource && pSound);
-    pSource->Stop();
-    pSource->FlushSourceBuffers();
+    assert(m_src && m_sound);
+    m_src->Stop();
+    m_src->FlushSourceBuffers();
 }
 
-void SoundSystem::Channel::RetargetSound(const Sound *pOld, Sound *pNew)
+void SoundSystem::Channel::retarget_sound(const Sound *pOld, Sound *pNew)
 {
-    assert(pOld == pSound);
-    pSound = pNew;
+    assert(pOld == m_sound);
+    m_sound = pNew;
 }
 
 Sound::Sound(const std::wstring &fileName, bool loopingWithAutoCueDetect) :
@@ -296,28 +296,28 @@ Sound::Sound(const std::wstring &fileName, bool loopingWithAutoCueDetect) :
 Sound::Sound(const std::wstring &fileName, LoopType loopType)
 {
     if (fileName.substr(fileName.size() - 4u, 4u) == std::wstring{ L".wav" })
-        *this = Sound(fileName, loopType, nullSample, nullSample, nullSeconds, nullSeconds);
+        *this = Sound(fileName, loopType, k_null_sample, k_null_sample, k_null_seconds, k_null_seconds);
     else
-        *this = LoadNonWav(fileName, loopType, nullSample, nullSample, nullSeconds, nullSeconds);
+        *this = load_non_wav(fileName, loopType, k_null_sample, k_null_sample, k_null_seconds, k_null_seconds);
 }
 
 Sound::Sound(const std::wstring &fileName, unsigned int loopStart, unsigned int loopEnd)
 {
     if (fileName.substr(fileName.size() - 4u, 4u) == std::wstring{ L".wav" })
-        *this = Sound(fileName, LoopType::ManualSample, loopStart, loopEnd, nullSeconds, nullSeconds);
+        *this = Sound(fileName, LoopType::ManualSample, loopStart, loopEnd, k_null_seconds, k_null_seconds);
     else
-        *this = LoadNonWav(fileName, LoopType::ManualSample, loopStart, loopEnd, nullSeconds, nullSeconds);
+        *this = load_non_wav(fileName, LoopType::ManualSample, loopStart, loopEnd, k_null_seconds, k_null_seconds);
 }
 
 Sound::Sound(const std::wstring &fileName, float loopStart, float loopEnd)
 {
     if (fileName.substr(fileName.size() - 4u, 4u) == std::wstring{ L".wav" })
-        *this = Sound(fileName, LoopType::ManualFloat, nullSample, nullSample, loopStart, loopEnd);
+        *this = Sound(fileName, LoopType::ManualFloat, k_null_sample, k_null_sample, loopStart, loopEnd);
     else
-        *this = LoadNonWav(fileName, LoopType::ManualFloat, nullSample, nullSample, loopStart, loopEnd);
+        *this = load_non_wav(fileName, LoopType::ManualFloat, k_null_sample, k_null_sample, loopStart, loopEnd);
 }
 
-Sound Sound::LoadNonWav(const std::wstring &fileName, LoopType loopType,
+Sound Sound::load_non_wav(const std::wstring &fileName, LoopType loopType,
     unsigned int loopStartSample, unsigned int loopEndSample,
     float loopStartSeconds, float loopEndSeconds)
 {
@@ -325,11 +325,11 @@ Sound Sound::LoadNonWav(const std::wstring &fileName, LoopType loopType,
 
     // if manual float looping, second inputs cannot be null
     assert((loopType == LoopType::ManualFloat) !=
-        (loopStartSeconds == nullSeconds || loopEndSeconds == nullSeconds) &&
+        (loopStartSeconds == k_null_seconds || loopEndSeconds == k_null_seconds) &&
         "Did you pass a LoopType::Manual to the constructor? (BAD!)");
     // if manual sample looping, sample inputs cannot be null
     assert((loopType == LoopType::ManualSample) !=
-        (loopStartSample == nullSample || loopEndSample == nullSample) &&
+        (loopStartSample == k_null_sample || loopEndSample == k_null_sample) &&
         "Did you pass a LoopType::Manual to the constructor? (BAD!)");
     // load from non-wav cannot use embedded loop points
     assert(loopType != LoopType::AutoEmbeddedCuePoints &&
@@ -339,7 +339,7 @@ Sound Sound::LoadNonWav(const std::wstring &fileName, LoopType loopType,
     HRESULT hr;
 
     // make sure that the sound system is loaded first!
-    SoundSystem::Get();
+    SoundSystem::get();
 
     // creating source reader
     wrl::ComPtr<IMFSourceReader> pReader;
@@ -418,7 +418,7 @@ Sound Sound::LoadNonWav(const std::wstring &fileName, LoopType loopType,
 
         // compare format with sound system format
         {
-            const WAVEFORMATEX &sysFormat = SoundSystem::GetFormat();
+            const WAVEFORMATEX &sysFormat = SoundSystem::get_format();
 
             if (pFormat->nChannels != sysFormat.nChannels)
                 throw CHILI_SOUND_FILE_EXCEPTION(fileName, L"bad decompressed wave format (nChannels)");
@@ -460,12 +460,12 @@ Sound Sound::LoadNonWav(const std::wstring &fileName, LoopType loopType,
 
             // calculating number of bytes for samples (duration is in units of 100ns)
             // (adding extra 1 sec of padding for length calculation error margin)
-            sound.nBytes = UINT32((pFormat->nAvgBytesPerSec * duration) / 10000000 + pFormat->nAvgBytesPerSec);
+            sound.m_num_bytes = UINT32((pFormat->nAvgBytesPerSec * duration) / 10000000 + pFormat->nAvgBytesPerSec);
         }
     }
 
     // allocate memory for sample data
-    sound.pData = std::make_unique<BYTE[]>(sound.nBytes);
+    sound.m_data = std::make_unique<BYTE[]>(sound.m_num_bytes);
 
     // decode samples and copy into data buffer
     size_t nBytesWritten = 0u;
@@ -502,11 +502,11 @@ Sound Sound::LoadNonWav(const std::wstring &fileName, LoopType loopType,
             throw CHILI_SOUND_API_EXCEPTION(hr, L"locking sample buffer");
 
         // Make sure not to exceed the size of the buffer
-        if (nBytesWritten + cbBuffer > sound.nBytes)
+        if (nBytesWritten + cbBuffer > sound.m_num_bytes)
             throw std::runtime_error("too many bytes being decoded wtf??!~");
 
         // copy the sample bytes
-        memcpy(&sound.pData[nBytesWritten], pAudioData, cbBuffer);
+        memcpy(&sound.m_data[nBytesWritten], pAudioData, cbBuffer);
 
         // Update running total of audio data.
         nBytesWritten += cbBuffer;
@@ -520,11 +520,11 @@ Sound Sound::LoadNonWav(const std::wstring &fileName, LoopType loopType,
     {
         auto pAdjustedBuffer = std::make_unique<BYTE[]>(nBytesWritten);
         // copy over bytes
-        memcpy(pAdjustedBuffer.get(), sound.pData.get(), nBytesWritten);
+        memcpy(pAdjustedBuffer.get(), sound.m_data.get(), nBytesWritten);
         // move buffer
-        sound.pData = std::move(pAdjustedBuffer);
+        sound.m_data = std::move(pAdjustedBuffer);
         // adjust byte count
-        sound.nBytes = UINT32(nBytesWritten);
+        sound.m_num_bytes = UINT32(nBytesWritten);
     }
 
     // setting looping parameters
@@ -534,47 +534,47 @@ Sound Sound::LoadNonWav(const std::wstring &fileName, LoopType loopType,
     {
         case LoopType::ManualFloat:
         {
-            sound.looping = true;
+            sound.m_looping = true;
 
-            const WAVEFORMATEX &sysFormat = SoundSystem::GetFormat();
-            const unsigned int nFrames = sound.nBytes / sysFormat.nBlockAlign;
+            const WAVEFORMATEX &sysFormat = SoundSystem::get_format();
+            const unsigned int nFrames = sound.m_num_bytes / sysFormat.nBlockAlign;
 
             const unsigned int nFramesPerSec = sysFormat.nAvgBytesPerSec / sysFormat.nBlockAlign;
-            sound.loopStart = unsigned int(loopStartSeconds * float(nFramesPerSec));
-            assert(sound.loopStart < nFrames);
-            sound.loopEnd = unsigned int(loopEndSeconds * float(nFramesPerSec));
-            assert(sound.loopEnd > sound.loopStart && sound.loopEnd < nFrames);
+            sound.m_loop_start = unsigned int(loopStartSeconds * float(nFramesPerSec));
+            assert(sound.m_loop_start < nFrames);
+            sound.m_loop_end = unsigned int(loopEndSeconds * float(nFramesPerSec));
+            assert(sound.m_loop_end > sound.m_loop_start && sound.m_loop_end < nFrames);
 
             // just in case ;)
-            sound.loopStart = std::min(sound.loopStart, nFrames - 1u);
-            sound.loopEnd = std::min(sound.loopEnd, nFrames - 1u);
+            sound.m_loop_start = std::min(sound.m_loop_start, nFrames - 1u);
+            sound.m_loop_end = std::min(sound.m_loop_end, nFrames - 1u);
         }
         break;
         case LoopType::ManualSample:
         {
-            sound.looping = true;
+            sound.m_looping = true;
 
-            const WAVEFORMATEX &sysFormat = SoundSystem::GetFormat();
-            const unsigned int nFrames = sound.nBytes / sysFormat.nBlockAlign;
+            const WAVEFORMATEX &sysFormat = SoundSystem::get_format();
+            const unsigned int nFrames = sound.m_num_bytes / sysFormat.nBlockAlign;
 
             assert(loopStartSample < nFrames);
-            sound.loopStart = loopStartSample;
+            sound.m_loop_start = loopStartSample;
             assert(loopEndSample > loopStartSample && loopEndSample < nFrames);
-            sound.loopEnd = loopEndSample;
+            sound.m_loop_end = loopEndSample;
 
             // just in case ;)
-            sound.loopStart = std::min(sound.loopStart, nFrames - 1u);
-            sound.loopEnd = std::min(sound.loopEnd, nFrames - 1u);
+            sound.m_loop_start = std::min(sound.m_loop_start, nFrames - 1u);
+            sound.m_loop_end = std::min(sound.m_loop_end, nFrames - 1u);
         }
         break;
         case LoopType::AutoFullSound:
         {
-            sound.looping = true;
+            sound.m_looping = true;
 
-            const unsigned int nFrames = sound.nBytes / SoundSystem::GetFormat().nBlockAlign;
+            const unsigned int nFrames = sound.m_num_bytes / SoundSystem::get_format().nBlockAlign;
             assert(nFrames != 0u && "Cannot auto full-loop on zero-length sound!");
-            sound.loopStart = 0u;
-            sound.loopEnd = nFrames != 0u ? nFrames - 1u : 0u;
+            sound.m_loop_start = 0u;
+            sound.m_loop_end = nFrames != 0u ? nFrames - 1u : 0u;
         }
         break;
         case LoopType::NotLooping:
@@ -594,11 +594,11 @@ Sound::Sound(const std::wstring &fileName, LoopType loopType,
 {
     // if manual float looping, second inputs cannot be null
     assert((loopType == LoopType::ManualFloat) !=
-        (loopStartSeconds == nullSeconds || loopEndSeconds == nullSeconds) &&
+        (loopStartSeconds == k_null_seconds || loopEndSeconds == k_null_seconds) &&
         "Did you pass a LoopType::Manual to the constructor? (BAD!)");
     // if manual sample looping, sample inputs cannot be null
     assert((loopType == LoopType::ManualSample) !=
-        (loopStartSample == nullSample || loopEndSample == nullSample) &&
+        (loopStartSample == k_null_sample || loopEndSample == k_null_sample) &&
         "Did you pass a LoopType::Manual to the constructor? (BAD!)");
 
     const auto IsFourCC = [](const BYTE *pData, const char *pFourcc)
@@ -660,7 +660,7 @@ Sound::Sound(const std::wstring &fileName, LoopType loopType,
 
         // compare format with sound system format
         {
-            const WAVEFORMATEX &sysFormat = SoundSystem::GetFormat();
+            const WAVEFORMATEX &sysFormat = SoundSystem::get_format();
 
             if (format.nChannels != sysFormat.nChannels)
                 throw CHILI_SOUND_FILE_EXCEPTION(fileName, L"bad wave format (nChannels)");
@@ -684,9 +684,9 @@ Sound::Sound(const std::wstring &fileName, LoopType loopType,
             memcpy(&chunkSize, &pFileIn[i + 4u], sizeof(chunkSize));
             if (IsFourCC(&pFileIn[i], "data"))
             {
-                pData = std::make_unique<BYTE[]>(chunkSize);
-                nBytes = chunkSize;
-                memcpy(pData.get(), &pFileIn[i + 8u], nBytes);
+                m_data = std::make_unique<BYTE[]>(chunkSize);
+                m_num_bytes = chunkSize;
+                memcpy(m_data.get(), &pFileIn[i + 8u], m_num_bytes);
 
                 bFilledData = true;
                 break;
@@ -701,7 +701,7 @@ Sound::Sound(const std::wstring &fileName, LoopType loopType,
         {
             case LoopType::AutoEmbeddedCuePoints:
             {
-                looping = true;
+                m_looping = true;
 
                 //look for 'cue' chunk id
                 bool bFilledCue = false;
@@ -727,8 +727,8 @@ Sound::Sound(const std::wstring &fileName, LoopType loopType,
                         {
                             CuePoint cuePts[2];
                             memcpy(cuePts, &pFileIn[i + 12u], sizeof(cuePts));
-                            loopStart = cuePts[0].frameOffset;
-                            loopEnd = cuePts[1].frameOffset;
+                            m_loop_start = cuePts[0].frameOffset;
+                            m_loop_end = cuePts[1].frameOffset;
                             bFilledCue = true;
                             break;
                         }
@@ -742,47 +742,47 @@ Sound::Sound(const std::wstring &fileName, LoopType loopType,
             break;
             case LoopType::ManualFloat:
             {
-                looping = true;
+                m_looping = true;
 
-                const WAVEFORMATEX &sysFormat = SoundSystem::GetFormat();
-                const unsigned int nFrames = nBytes / sysFormat.nBlockAlign;
+                const WAVEFORMATEX &sysFormat = SoundSystem::get_format();
+                const unsigned int nFrames = m_num_bytes / sysFormat.nBlockAlign;
 
                 const unsigned int nFramesPerSec = sysFormat.nAvgBytesPerSec / sysFormat.nBlockAlign;
-                loopStart = unsigned int(loopStartSeconds * float(nFramesPerSec));
-                assert(loopStart < nFrames);
-                loopEnd = unsigned int(loopEndSeconds * float(nFramesPerSec));
-                assert(loopEnd > loopStart && loopEnd < nFrames);
+                m_loop_start = unsigned int(loopStartSeconds * float(nFramesPerSec));
+                assert(m_loop_start < nFrames);
+                m_loop_end = unsigned int(loopEndSeconds * float(nFramesPerSec));
+                assert(m_loop_end > m_loop_start && m_loop_end < nFrames);
 
                 // just in case ;)
-                loopStart = std::min(loopStart, nFrames - 1u);
-                loopEnd = std::min(loopEnd, nFrames - 1u);
+                m_loop_start = std::min(m_loop_start, nFrames - 1u);
+                m_loop_end = std::min(m_loop_end, nFrames - 1u);
             }
             break;
             case LoopType::ManualSample:
             {
-                looping = true;
+                m_looping = true;
 
-                const WAVEFORMATEX &sysFormat = SoundSystem::GetFormat();
-                const unsigned int nFrames = nBytes / sysFormat.nBlockAlign;
+                const WAVEFORMATEX &sysFormat = SoundSystem::get_format();
+                const unsigned int nFrames = m_num_bytes / sysFormat.nBlockAlign;
 
                 assert(loopStartSample < nFrames);
-                loopStart = loopStartSample;
+                m_loop_start = loopStartSample;
                 assert(loopEndSample > loopStartSample && loopEndSample < nFrames);
-                loopEnd = loopEndSample;
+                m_loop_end = loopEndSample;
 
                 // just in case ;)
-                loopStart = std::min(loopStart, nFrames - 1u);
-                loopEnd = std::min(loopEnd, nFrames - 1u);
+                m_loop_start = std::min(m_loop_start, nFrames - 1u);
+                m_loop_end = std::min(m_loop_end, nFrames - 1u);
             }
             break;
             case LoopType::AutoFullSound:
             {
-                looping = true;
+                m_looping = true;
 
-                const unsigned int nFrames = nBytes / SoundSystem::GetFormat().nBlockAlign;
+                const unsigned int nFrames = m_num_bytes / SoundSystem::get_format().nBlockAlign;
                 assert(nFrames != 0u && "Cannot auto full-loop on zero-length sound!");
-                loopStart = 0u;
-                loopEnd = nFrames != 0u ? nFrames - 1u : 0u;
+                m_loop_start = 0u;
+                m_loop_end = nFrames != 0u ? nFrames - 1u : 0u;
             }
             break;
             case LoopType::NotLooping:
@@ -794,156 +794,156 @@ Sound::Sound(const std::wstring &fileName, LoopType loopType,
     }
     catch (const SoundSystem::FileException &e)
     {
-        nBytes = 0u;
-        looping = false;
-        pData.release();
+        m_num_bytes = 0u;
+        m_looping = false;
+        m_data.release();
         throw e;
     }
     catch (const std::exception &e)
     {
-        nBytes = 0u;
-        looping = false;
-        pData.release();
+        m_num_bytes = 0u;
+        m_looping = false;
+        m_data.release();
         // needed for conversion to wide string
         const std::string what = e.what();
         throw CHILI_SOUND_FILE_EXCEPTION(fileName, std::wstring(what.begin(), what.end()));
     }
 }
 
-Sound::Sound(Sound &&donor)
+Sound::Sound(Sound &&donor) noexcept
 {
-    std::lock_guard<std::mutex> lock(donor.mutex);
-    nBytes = donor.nBytes;
-    donor.nBytes = 0u;
-    looping = donor.looping;
-    loopStart = donor.loopStart;
-    loopEnd = donor.loopEnd;
-    pData = std::move(donor.pData);
-    activeChannelPtrs = std::move(donor.activeChannelPtrs);
-    for (auto &pChan : activeChannelPtrs)
-        pChan->RetargetSound(&donor, this);
-    donor.cvDeath.notify_all();
+    std::lock_guard<std::mutex> lock(donor.m_mutex);
+    m_num_bytes = donor.m_num_bytes;
+    donor.m_num_bytes = 0u;
+    m_looping = donor.m_looping;
+    m_loop_start = donor.m_loop_start;
+    m_loop_end = donor.m_loop_end;
+    m_data = std::move(donor.m_data);
+    m_active_channel_ptrs = std::move(donor.m_active_channel_ptrs);
+    for (auto &pChan : m_active_channel_ptrs)
+        pChan->retarget_sound(&donor, this);
+    donor.m_cv_death.notify_all();
 }
 
-Sound &Sound::operator=(Sound &&donor)
+Sound &Sound::operator=(Sound &&donor) noexcept
 {
     // make sure nobody messes with our shit (also needed for cv.wait())
-    std::unique_lock<std::mutex> lock(mutex);
+    std::unique_lock<std::mutex> lock(m_mutex);
     // check if there are even any active channels playing our jam
-    if (activeChannelPtrs.size() != 0u)
+    if (m_active_channel_ptrs.size() != 0u)
     {
         // stop all channels currently playing our jam
-        for (auto pChannel : activeChannelPtrs)
-            pChannel->Stop();
+        for (auto pChannel : m_active_channel_ptrs)
+            pChannel->stop();
         // wait for those channels to actually stop playing our jam
-        cvDeath.wait(lock, [this] { return activeChannelPtrs.size() == 0u; });
+        m_cv_death.wait(lock, [this] { return m_active_channel_ptrs.size() == 0u; });
     }
 
-    std::lock_guard<std::mutex> lock_donor(donor.mutex);
-    nBytes = donor.nBytes;
-    donor.nBytes = 0u;
-    looping = donor.looping;
-    loopStart = donor.loopStart;
-    loopEnd = donor.loopEnd;
-    pData = std::move(donor.pData);
-    activeChannelPtrs = std::move(donor.activeChannelPtrs);
-    for (auto &pChan : activeChannelPtrs)
-        pChan->RetargetSound(&donor, this);
-    donor.cvDeath.notify_all();
+    std::lock_guard<std::mutex> lock_donor(donor.m_mutex);
+    m_num_bytes = donor.m_num_bytes;
+    donor.m_num_bytes = 0u;
+    m_looping = donor.m_looping;
+    m_loop_start = donor.m_loop_start;
+    m_loop_end = donor.m_loop_end;
+    m_data = std::move(donor.m_data);
+    m_active_channel_ptrs = std::move(donor.m_active_channel_ptrs);
+    for (auto &pChan : m_active_channel_ptrs)
+        pChan->retarget_sound(&donor, this);
+    donor.m_cv_death.notify_all();
     return *this;
 }
 
-void Sound::Play(float freqMod, float vol)
+void Sound::play(float freqMod, float vol)
 {
-    SoundSystem::Get().PlaySoundBuffer(*this, freqMod, vol);
+    SoundSystem::get().play_sound_buffer(*this, freqMod, vol);
 }
 
-void Sound::StopOne()
+void Sound::stop_one()
 {
-    std::lock_guard<std::mutex> lock(mutex);
-    if (activeChannelPtrs.size() > 0u)
-        activeChannelPtrs.front()->Stop();
+    std::lock_guard<std::mutex> lock(m_mutex);
+    if (m_active_channel_ptrs.size() > 0u)
+        m_active_channel_ptrs.front()->stop();
 }
 
-void Sound::StopAll()
+void Sound::stop_all()
 {
-    std::lock_guard<std::mutex> lock(mutex);
-    for (auto pChannel : activeChannelPtrs)
-        pChannel->Stop();
+    std::lock_guard<std::mutex> lock(m_mutex);
+    for (auto pChannel : m_active_channel_ptrs)
+        pChannel->stop();
 }
 
 Sound::~Sound()
 {
     // make sure nobody messes with our shit (also needed for cv.wait())
-    std::unique_lock<std::mutex> lock(mutex);
+    std::unique_lock<std::mutex> lock(m_mutex);
 
     // check if there are even any active channels playing our jam
-    if (activeChannelPtrs.size() == 0u)
+    if (m_active_channel_ptrs.size() == 0u)
         return;
 
     // stop all channels currently playing our jam
-    for (auto pChannel : activeChannelPtrs)
-        pChannel->Stop();
+    for (auto pChannel : m_active_channel_ptrs)
+        pChannel->stop();
 
     // wait for those channels to actually stop playing our jam
-    cvDeath.wait(lock, [this] { return activeChannelPtrs.size() == 0u; });
+    m_cv_death.wait(lock, [this] { return m_active_channel_ptrs.size() == 0u; });
 }
 
 SoundSystem::APIException::APIException(HRESULT hr, const wchar_t *file, unsigned int line, const std::wstring &note)
     :
-    hr(hr), ChiliException(file, line, note)
+    m_hr(hr), ChiliException(file, line, note)
 { }
 
-std::wstring SoundSystem::APIException::GetFullMessage() const
+std::wstring SoundSystem::APIException::get_full_message() const
 {
-    return L"Error Name: " + GetErrorName() + L"\n\n" +
-        L"Error Description: " + GetErrorDescription() + L"\n\n" +
-        L"Note: " + GetNote() + L"\n\n" +
-        L"Location: " + GetLocation();
+    return L"Error Name: " + get_error_name() + L"\n\n" +
+        L"Error Description: " + get_error_description() + L"\n\n" +
+        L"Note: " + get_note() + L"\n\n" +
+        L"Location: " + get_location();
 }
 
-std::wstring SoundSystem::APIException::GetExceptionType() const
+std::wstring SoundSystem::APIException::get_exception_type() const
 {
     return L"Sound System API Exception";
 }
 
-std::wstring SoundSystem::APIException::GetErrorName() const
+std::wstring SoundSystem::APIException::get_error_name() const
 {
-    return DXGetErrorString(hr);
+    return DXGetErrorString(m_hr);
 }
 
-std::wstring SoundSystem::APIException::GetErrorDescription() const
+std::wstring SoundSystem::APIException::get_error_description() const
 {
     std::array<wchar_t, 512> wideDescription;
-    DXGetErrorDescription(hr, wideDescription.data(), wideDescription.size());
+    DXGetErrorDescription(m_hr, wideDescription.data(), wideDescription.size());
     return wideDescription.data();
 }
 
 SoundSystem::FileException::FileException(const wchar_t *file, unsigned int line, const std::wstring &note, const std::wstring &filename)
     :
-    ChiliException(file, line, note), filename(filename)
+    ChiliException(file, line, note), m_filename(filename)
 { }
 
-std::wstring SoundSystem::FileException::GetFullMessage() const
+std::wstring SoundSystem::FileException::get_full_message() const
 {
-    return L"Filename: " + filename + L"\n\n" +
-        L"Note: " + GetNote() + L"\n\n" +
-        L"Location: " + GetLocation();
+    return L"Filename: " + m_filename + L"\n\n" +
+        L"Note: " + get_note() + L"\n\n" +
+        L"Location: " + get_location();
 }
 
-std::wstring SoundSystem::FileException::GetExceptionType() const
+std::wstring SoundSystem::FileException::get_exception_type() const
 {
     return L"Sound System File Exception";
 }
 
 SoundSystem::MFInitializer::MFInitializer()
 {
-    hr = MFStartup(MF_VERSION);
+    m_hr = MFStartup(MF_VERSION);
 }
 
 SoundSystem::MFInitializer::~MFInitializer()
 {
-    if (hr == S_OK)
+    if (m_hr == S_OK)
     {
         MFShutdown();
     }

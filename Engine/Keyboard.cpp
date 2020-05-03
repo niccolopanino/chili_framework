@@ -20,122 +20,122 @@
  ******************************************************************************************/
 #include "Keyboard.h"
 
-bool Keyboard::KeyIsPressed(unsigned char keycode) const
+bool Keyboard::is_key_pressed(unsigned char keycode) const
 {
-    return keystates[keycode];
+    return m_keystates[keycode];
 }
 
-Keyboard::Event Keyboard::ReadKey()
+Keyboard::Event Keyboard::read_key()
 {
-    if (keybuffer.size() > 0u) {
-        Keyboard::Event e = keybuffer.front();
-        keybuffer.pop();
+    if (m_keybuffer.size() > 0u) {
+        Keyboard::Event e = m_keybuffer.front();
+        m_keybuffer.pop();
         return e;
     } else {
         return Keyboard::Event();
     }
 }
 
-bool Keyboard::KeyIsEmpty() const
+bool Keyboard::is_key_empty() const
 {
-    return keybuffer.empty();
+    return m_keybuffer.empty();
 }
 
-char Keyboard::ReadChar()
+char Keyboard::read_char()
 {
-    if (charbuffer.size() > 0u) {
-        unsigned char charcode = charbuffer.front();
-        charbuffer.pop();
+    if (m_charbuffer.size() > 0u) {
+        unsigned char charcode = m_charbuffer.front();
+        m_charbuffer.pop();
         return charcode;
     } else {
         return 0;
     }
 }
 
-bool Keyboard::CharIsEmpty() const
+bool Keyboard::is_char_empty() const
 {
-    return charbuffer.empty();
+    return m_charbuffer.empty();
 }
 
-void Keyboard::FlushKey()
+void Keyboard::flush_key()
 {
-    keybuffer = std::queue<Event>();
+    m_keybuffer = std::queue<Event>();
 }
 
-void Keyboard::FlushChar()
+void Keyboard::flush_char()
 {
-    charbuffer = std::queue<char>();
+    m_charbuffer = std::queue<char>();
 }
 
-void Keyboard::Flush()
+void Keyboard::flush()
 {
-    FlushKey();
-    FlushChar();
+    flush_key();
+    flush_char();
 }
 
-void Keyboard::EnableAutorepeat()
+void Keyboard::enable_autorepeat()
 {
-    autorepeatEnabled = true;
+    m_autorepeat_enabled = true;
 }
 
-void Keyboard::DisableAutorepeat()
+void Keyboard::disable_autorepeat()
 {
-    autorepeatEnabled = false;
+    m_autorepeat_enabled = false;
 }
 
-bool Keyboard::AutorepeatIsEnabled() const
+bool Keyboard::is_autorepeat_enabled() const
 {
-    return autorepeatEnabled;
+    return m_autorepeat_enabled;
 }
 
-void Keyboard::OnKeyPressed(unsigned char keycode)
+void Keyboard::on_key_pressed(unsigned char keycode)
 {
-    keystates[keycode] = true;
-    keybuffer.push(Keyboard::Event(Keyboard::Event::Type::Press, keycode));
-    TrimBuffer(keybuffer);
+    m_keystates[keycode] = true;
+    m_keybuffer.push(Keyboard::Event(Keyboard::Event::Type::Press, keycode));
+    trim_buffer(m_keybuffer);
 }
 
-void Keyboard::OnKeyReleased(unsigned char keycode)
+void Keyboard::on_key_released(unsigned char keycode)
 {
-    keystates[keycode] = false;
-    keybuffer.push(Keyboard::Event(Keyboard::Event::Type::Release, keycode));
-    TrimBuffer(keybuffer);
+    m_keystates[keycode] = false;
+    m_keybuffer.push(Keyboard::Event(Keyboard::Event::Type::Release, keycode));
+    trim_buffer(m_keybuffer);
 }
 
-void Keyboard::OnChar(char character)
+void Keyboard::on_char(char character)
 {
-    charbuffer.push(character);
-    TrimBuffer(charbuffer);
+    m_charbuffer.push(character);
+    trim_buffer(m_charbuffer);
 }
 
-void Keyboard::ClearState()
+void Keyboard::clear_state()
 {
-    keystates.reset();
+    m_keystates.reset();
 }
 
 template<typename T>
-void Keyboard::TrimBuffer(std::queue<T> &buffer)
+void Keyboard::trim_buffer(std::queue<T> &buffer)
 {
-    while (buffer.size() > bufferSize)
+    while (buffer.size() > k_buffer_size)
         buffer.pop();
 }
 
-bool Keyboard::Event::IsPress() const
+bool Keyboard::Event::is_press() const
 {
-    return type == Type::Press;
+    return m_type == Type::Press;
 }
 
-bool Keyboard::Event::IsRelease() const
+bool Keyboard::Event::is_release() const
 {
-    return type == Type::Release;
+    return m_type == Type::Release;
 }
 
-bool Keyboard::Event::IsValid() const
+bool Keyboard::Event::is_valid() const
 {
-    return type != Type::Invalid;
+    return m_type != Type::Invalid;
 }
 
-unsigned char Keyboard::Event::GetCode() const
+unsigned char Keyboard::Event::get_code() const
 {
-    return code;
+    return m_code;
 }

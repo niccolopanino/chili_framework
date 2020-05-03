@@ -30,16 +30,16 @@ public:
     Game(class MainWindow &wnd);
     Game(const Game &) = delete;
     Game &operator=(const Game &) = delete;
-    void Go();
+    void go();
 private:
-    void ComposeFrame();
-    void UpdateModel();
+    void compose_frame();
+    void update_model();
     /********************************/
     /*  User Functions              */
     /********************************/
 private:
-    MainWindow &wnd;
-    Graphics gfx;
+    MainWindow &m_wnd;
+    Graphics m_gfx;
     /********************************/
     /*  User Variables              */
     /********************************/

@@ -3,11 +3,11 @@
 
 COMInitializer::COMInitializer()
 {
-    hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
+    m_hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
 }
 
 COMInitializer::~COMInitializer()
 {
-    if (hr == S_OK)
+    if (m_hr == S_OK)
         CoUninitialize();
 }
