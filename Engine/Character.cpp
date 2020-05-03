@@ -1,11 +1,16 @@
 #include "Character.h"
 
-Character::Character(const Vec2f &pos) : m_sprite("resources\\img\\link90x90.bmp"), m_pos(pos)
+Character::Character(const Vec2f &pos) : Character(pos, 1.f)
+{ }
+
+Character::Character(const Vec2f &pos, float ghost_alpha) :
+    m_sprite("resources\\img\\link90x90.bmp"), m_pos(pos), m_ghost_alpha(ghost_alpha)
 {
     for (int i = 0; i < (int)Sequence::StandingLeft; i++)
-        m_animations.emplace_back(Animation(90, 90 * i, 90, 90, 4, m_sprite, .16f));
+        m_animations.emplace_back(Animation(90, 90 * i, 90, 90, 4, m_sprite, .16f, m_ghost_alpha));
     for (int i = (int)Sequence::StandingLeft; i < (int)Sequence::Count; i++)
-        m_animations.emplace_back(Animation(0, 90 * (i - (int)Sequence::StandingLeft), 90, 90, 1, m_sprite, .16f));
+        m_animations.emplace_back(Animation(0, 90 * (i - (int)Sequence::StandingLeft), 90, 90, 1,
+            m_sprite, .16f, m_ghost_alpha));
 }
 
 void Character::draw(Graphics &gfx) const

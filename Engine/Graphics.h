@@ -56,6 +56,7 @@ public:
     Graphics &operator=(const Graphics &) = delete;
     void end_frame();
     void begin_frame();
+    Color get_pixel(int x, int y) const;
     void put_pixel(int x, int y, int r, int g, int b);
     void put_pixel(int x, int y, Color c);
     void draw_sprite_non_chroma(int x, int y, const Surface &s);
@@ -73,6 +74,13 @@ public:
         const Surface &s, Color chroma = Colors::Magenta);
     void draw_sprite_substitute(int x, int y, Color substitute, IRect src_rect, const IRect &clip,
         const Surface &s, Color chroma = Colors::Magenta);
+    // draw (semi-)transparent sprite
+    void draw_sprite_ghost(int x, int y, const Surface &s, float alpha,
+        Color chroma = Colors::Magenta);
+    void draw_sprite_ghost(int x, int y, const IRect &src_rect, const Surface &s, float alpha,
+        Color chroma = Colors::Magenta);
+    void draw_sprite_ghost(int x, int y, IRect src_rect, const IRect &clip, const Surface &s,
+        float alpha, Color chroma = Colors::Magenta);
     ~Graphics();
 public:
     static constexpr int k_screen_width = 800;

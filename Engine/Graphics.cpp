@@ -303,6 +303,15 @@ void Graphics::begin_frame()
     memset(m_sysbuffer, 0u, sizeof(Color) * Graphics::k_screen_height * Graphics::k_screen_width);
 }
 
+Color Graphics::get_pixel(int x, int y) const
+{
+    assert(x >= 0);
+    assert(x < int(Graphics::k_screen_width));
+    assert(y >= 0);
+    assert(y < int(Graphics::k_screen_height));
+    return m_sysbuffer[Graphics::k_screen_width * y + x];
+}
+
 void Graphics::put_pixel(int x, int y, int r, int g, int b)
 {
     put_pixel(x, y, { unsigned char(r),unsigned char(g),unsigned char(b) });
@@ -432,6 +441,60 @@ void Graphics::draw_sprite_substitute(int x, int y, Color substitute,
             const Color src_pixel = s.get_pixel(dx, dy);
             if (src_pixel != chroma)
                 put_pixel(x + dx - src_rect.m_left, y + dy - src_rect.m_top, substitute);
+        }
+    }
+}
+
+void Graphics::draw_sprite_ghost(int x, int y, const Surface &s, float alpha, Color chroma)
+{
+    draw_sprite_ghost(x, y, s.get_rect(), s, alpha, chroma);
+}
+
+void Graphics::draw_sprite_ghost(int x, int y, const IRect &src_rect,
+    const Surface &s, float alpha, Color chroma)
+{
+    draw_sprite_ghost(x, y, src_rect, get_screen_rect(), s, alpha, chroma);
+}
+
+void Graphics::draw_sprite_ghost(int x, int y, IRect src_rect,
+    const IRect &clip, const Surface &s, float alpha, Color chroma)
+{
+    assert(src_rect.m_left >= 0);
+    assert(src_rect.m_right <= s.get_width());
+    assert(src_rect.m_top >= 0);
+    assert(src_rect.m_bottom <= s.get_height());
+    assert(alpha >= 0.f);
+    assert(alpha <= 1.f);
+
+    if (x < clip.m_left) {
+        src_rect.m_left += clip.m_left - x;
+        x = clip.m_left;
+    }
+    if (y < clip.m_top) {
+        src_rect.m_top += clip.m_top - y;
+        y = clip.m_top;
+    }
+    if (x + src_rect.get_width() > clip.m_right)
+        src_rect.m_right -= x + src_rect.get_width() - clip.m_right;
+    if (y + src_rect.get_height() > clip.m_bottom)
+        src_rect.m_bottom -= y + src_rect.get_height() - clip.m_bottom;
+
+    for (int dy = src_rect.m_top; dy < src_rect.m_bottom; dy++) {
+        for (int dx = src_rect.m_left; dx < src_rect.m_right; dx++) {
+            const Color src_pixel = s.get_pixel(dx, dy);
+            if (src_pixel != chroma)
+            {
+                const int x_dst = x + dx - src_rect.m_left;
+                const int y_dst = y + dy - src_rect.m_top;
+                const Color dst_pixel = get_pixel(x_dst, y_dst);
+
+                const Color blended_pixel = Color(
+                    unsigned char(dst_pixel.get_r() * (1.f - alpha) + src_pixel.get_r() * alpha),
+                    unsigned char(dst_pixel.get_g() * (1.f - alpha) + src_pixel.get_g() * alpha),
+                    unsigned char(dst_pixel.get_b() * (1.f - alpha) + src_pixel.get_b() * alpha)
+                );
+                put_pixel(x + dx - src_rect.m_left, y + dy - src_rect.m_top, blended_pixel);
+            }
         }
     }
 }

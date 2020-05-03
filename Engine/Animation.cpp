@@ -3,8 +3,15 @@
 Animation::Animation(int x, int y, int width, int height, int count, const Surface &sprite,
     float hold_time, Color chroma)
     :
+    Animation(x, y, width, height, count, sprite, hold_time, 1.f, chroma)
+{ }
+
+Animation::Animation(int x, int y, int width, int height, int count, const Surface &sprite,
+    float hold_time, float alpha, Color chroma)
+    :
     m_sprite(sprite),
     m_hold_time(hold_time),
+    m_alpha(alpha),
     m_chroma(chroma)
 {
     for (int i = 0; i < count; i++)
@@ -13,12 +20,13 @@ Animation::Animation(int x, int y, int width, int height, int count, const Surfa
 
 void Animation::draw(const Vec2i &pos, Graphics &gfx) const
 {
-    gfx.draw_sprite(pos.m_x, pos.m_y, m_frames[m_cur_frame], m_sprite, m_chroma);
+    gfx.draw_sprite_ghost(pos.m_x, pos.m_y, m_frames[m_cur_frame], m_sprite, m_alpha, m_chroma);
 }
 
 void Animation::draw(const Vec2i &pos, Graphics &gfx, const IRect &clip) const
 {
-    gfx.draw_sprite(pos.m_x, pos.m_y, m_frames[m_cur_frame], clip, m_sprite, m_chroma);
+    gfx.draw_sprite_ghost(pos.m_x, pos.m_y, m_frames[m_cur_frame],
+        clip, m_sprite, m_alpha, m_chroma);
 }
 
 void Animation::draw_color(const Vec2i &pos, Graphics &gfx, Color c) const

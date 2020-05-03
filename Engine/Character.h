@@ -19,6 +19,7 @@ private:
     };
 public:
     Character(const Vec2f &pos);
+    Character(const Vec2f &pos, float ghost_alpha);
     void draw(Graphics &gfx) const;
     void set_direction(const Vec2f &dir);
     void update(float dt);
@@ -26,6 +27,7 @@ public:
     void activate_effect();
 private:
     Surface m_sprite;
+    float m_ghost_alpha;
     Vec2f m_pos;
     Vec2f m_vel = { 0.f, 0.f };
     std::vector<Animation> m_animations;

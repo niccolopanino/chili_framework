@@ -8,6 +8,8 @@ class Animation
 public:
     Animation(int x, int y, int width, int height, int count, const Surface &sprite,
         float hold_time, Color chroma = Colors::Magenta);
+    Animation(int x, int y, int width, int height, int count, const Surface &sprite,
+        float hold_time, float alpha, Color chroma = Colors::Magenta);
     void draw(const Vec2i &pos, Graphics &gfx) const;
     void draw(const Vec2i &pos, Graphics &gfx, const IRect &clip) const;
     // this version of draw replaces all opaque pixels with specified color
@@ -18,6 +20,7 @@ private:
 private:
     Color m_chroma;
     const Surface &m_sprite;
+    float m_alpha;
     std::vector<IRect> m_frames;
     int m_cur_frame = 0;
     float m_hold_time;
