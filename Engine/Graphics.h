@@ -24,6 +24,7 @@
 #include <wrl.h>
 #include "ChiliException.h"
 #include "Colors.h"
+#include "Surface.h"
 
 class Graphics
 {
@@ -54,6 +55,7 @@ public:
     void begin_frame();
     void put_pixel(int x, int y, int r, int g, int b);
     void put_pixel(int x, int y, Color c);
+    void draw_sprite(int x, int y, const Surface &s);
     ~Graphics();
 private:
     Microsoft::WRL::ComPtr<IDXGISwapChain>              m_swapchain_ptr;

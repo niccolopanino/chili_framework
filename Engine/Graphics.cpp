@@ -312,6 +312,16 @@ void Graphics::put_pixel(int x, int y, Color c)
     m_sysbuffer[Graphics::k_screen_width * y + x] = c;
 }
 
+void Graphics::draw_sprite(int x, int y, const Surface &s)
+{
+    const int width = s.get_width();
+    const int height = s.get_height();
+    for (int dy = 0; dy < height; dy++) {
+        for (int dx = 0; dx < width; dx++)
+            put_pixel(x + dx, y + dy, s.get_pixel(dx, dy));
+    }
+}
+
 //////////////////////////////////////////////////
 //           Graphics Exception
 Graphics::Exception::Exception(HRESULT hr, const std::wstring &note, const wchar_t *file, unsigned int line)
