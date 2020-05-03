@@ -34,6 +34,17 @@ void Game::go()
 
 void Game::update_model()
 {
+    // process key messages while any remain
+    while (!m_wnd.m_kbd.is_key_empty()) {
+        const auto e = m_wnd.m_kbd.read_key();
+        // only interested in space bar presses
+        if (e.is_press() && e.get_code() == VK_SPACE) {
+            m_link.activate_effect();
+            m_hit_sound.play();
+        }
+    }
+
+    // process arrow keys state
     Vec2f dir = { 0.f, 0.f };
     if (m_wnd.m_kbd.is_key_pressed(VK_UP))
         dir.m_y -= 1.f;

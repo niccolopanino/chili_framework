@@ -10,7 +10,11 @@ Character::Character(const Vec2f &pos) : m_sprite("link90x90.bmp"), m_pos(pos)
 
 void Character::draw(Graphics &gfx) const
 {
-    m_animations[(int)m_cur_seq].draw((Vec2i)m_pos, gfx);
+    // if effect active, draw sprite replacing opaque pixels with red
+    if (m_effect_active)
+        m_animations[(int)m_cur_seq].draw_color((Vec2i)m_pos, gfx, Colors::Red);
+    else
+        m_animations[(int)m_cur_seq].draw((Vec2i)m_pos, gfx);
 }
 
 void Character::set_direction(const Vec2f &dir)
@@ -40,4 +44,17 @@ void Character::update(float dt)
 {
     m_pos += m_vel * dt;
     m_animations[(int)m_cur_seq].update(dt);
+    // update effect time if active
+    if (m_effect_active) {
+        m_effect_time += dt;
+        // decativate effect if duration exceeded
+        if (m_effect_time >= k_effect_duration)
+            m_effect_active = false;
+    }
+}
+
+void Character::activate_effect()
+{
+    m_effect_active = true;
+    m_effect_time = 0.f;
 }

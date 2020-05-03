@@ -10,6 +10,8 @@ public:
         float hold_time, Color chroma = Colors::Magenta);
     void draw(const Vec2i &pos, Graphics &gfx) const;
     void draw(const Vec2i &pos, Graphics &gfx, const IRect &clip) const;
+    // this version of draw replaces all opaque pixels with specified color
+    void draw_color(const Vec2i &pos, Graphics &gfx, Color c) const;
     void update(float dt);
 private:
     void advance();

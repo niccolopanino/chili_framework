@@ -28,6 +28,7 @@
 #include "FrameTimer.h"
 #include "Character.h"
 #include "Font.h"
+#include "Sound.h"
 
 class Game
 {
@@ -50,5 +51,6 @@ private:
     FrameTimer m_ft;
     Character m_link = Character({ 100.f, 100.f });
     Font m_font = Font("Fixedsys16x28.bmp");
+    Sound m_hit_sound = Sound(L"hit.wav");
     /********************************/
 };
