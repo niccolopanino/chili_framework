@@ -1,6 +1,7 @@
 #pragma once
 #include "Colors.h"
 #include <string>
+#include "IRect.h"
 
 class Surface
 {
@@ -12,8 +13,9 @@ public:
     ~Surface();
     void put_pixel(int x, int y, Color c);
     Color get_pixel(int x, int y) const;
-    int get_height() const;
     int get_width() const;
+    int get_height() const;
+    IRect get_rect() const;
 private:
     Color *m_pixels_ptr = nullptr;
     int m_width = 0;

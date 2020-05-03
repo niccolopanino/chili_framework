@@ -111,3 +111,8 @@ int Surface::get_height() const
 {
     return m_height;
 }
+
+IRect Surface::get_rect() const
+{
+    return { 0, m_width, 0, m_height };
+}

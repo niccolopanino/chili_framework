@@ -40,6 +40,11 @@ namespace FramebufferShaders
 
 using Microsoft::WRL::ComPtr;
 
+IRect Graphics::get_screen_rect()
+{
+    return { 0, k_screen_width, 0, k_screen_height };
+}
+
 Graphics::Graphics(HWNDKey &key) : m_mapped_sysbuffer_texture({ 0 })
 {
     assert(key.m_hwnd != nullptr);
@@ -314,11 +319,37 @@ void Graphics::put_pixel(int x, int y, Color c)
 
 void Graphics::draw_sprite(int x, int y, const Surface &s)
 {
-    const int width = s.get_width();
-    const int height = s.get_height();
-    for (int dy = 0; dy < height; dy++) {
-        for (int dx = 0; dx < width; dx++)
-            put_pixel(x + dx, y + dy, s.get_pixel(dx, dy));
+    draw_sprite(x, y, s.get_rect(), s);
+}
+
+void Graphics::draw_sprite(int x, int y, const IRect &src_rect, const Surface &s)
+{
+    draw_sprite(x, y, src_rect, get_screen_rect(), s);
+}
+
+void Graphics::draw_sprite(int x, int y, IRect src_rect, const IRect &clip, const Surface &s)
+{
+    assert(src_rect.m_left >= 0);
+    assert(src_rect.m_right <= s.get_width());
+    assert(src_rect.m_top >= 0);
+    assert(src_rect.m_bottom <= s.get_height());
+
+    if (x < clip.m_left) {
+        src_rect.m_left += clip.m_left - x;
+        x = clip.m_left;
+    }
+    if (y < clip.m_top) {
+        src_rect.m_top += clip.m_top - y;
+        y = clip.m_top;
+    }
+    if (x + src_rect.get_width() > clip.m_right)
+        src_rect.m_right -= x + src_rect.get_width() - clip.m_right;
+    if (y + src_rect.get_height() > clip.m_bottom)
+        src_rect.m_bottom -= y + src_rect.get_height() - clip.m_bottom;
+
+    for (int dy = src_rect.m_top; dy < src_rect.m_bottom; dy++) {
+        for (int dx = src_rect.m_left; dx < src_rect.m_right; dx++)
+            put_pixel(x + dx - src_rect.m_left, y + dy - src_rect.m_top, s.get_pixel(dx, dy));
     }
 }
 

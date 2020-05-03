@@ -25,6 +25,7 @@
 #include "ChiliException.h"
 #include "Colors.h"
 #include "Surface.h"
+#include "IRect.h"
 
 class Graphics
 {
@@ -48,6 +49,8 @@ private:
         float u, v;			// texcoords
     };
 public:
+    static IRect get_screen_rect();
+public:
     Graphics(class HWNDKey &key);
     Graphics(const Graphics &) = delete;
     Graphics &operator=(const Graphics &) = delete;
@@ -56,7 +59,12 @@ public:
     void put_pixel(int x, int y, int r, int g, int b);
     void put_pixel(int x, int y, Color c);
     void draw_sprite(int x, int y, const Surface &s);
+    void draw_sprite(int x, int y, const IRect &src_rect, const Surface &s);
+    void draw_sprite(int x, int y, IRect src_rect, const IRect &clip, const Surface &s);
     ~Graphics();
+public:
+    static constexpr int k_screen_width = 800;
+    static constexpr int k_screen_height = 600;
 private:
     Microsoft::WRL::ComPtr<IDXGISwapChain>              m_swapchain_ptr;
     Microsoft::WRL::ComPtr<ID3D11Device>                m_device_ptr;
@@ -71,7 +79,4 @@ private:
     Microsoft::WRL::ComPtr<ID3D11SamplerState>          m_sampler_state_ptr;
     D3D11_MAPPED_SUBRESOURCE                            m_mapped_sysbuffer_texture;
     Color *m_sysbuffer = nullptr;
-public:
-    static constexpr int k_screen_width = 800;
-    static constexpr int k_screen_height = 600;
 };
