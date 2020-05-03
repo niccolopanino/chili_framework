@@ -16,9 +16,20 @@ void Font::draw_text(const std::string &text, const Vec2i &pos, Color color, Gra
 {
     // cur_pos is the pos that we are drawing to on the screen
     auto cur_pos = pos;
-    for (auto c : text) {
+    for (auto c : text)
+    {
+        // on a newline character, reset x position and move down by 1 glyph height
+        if (c == '\n') {
+            // carriage return
+            cur_pos.m_x = pos.m_x;
+            // line feed
+            cur_pos.m_y += m_glyph_height;
+            // we don't want to advance the character position right for a newline
+            continue;
+        }
+
         // only draw characters that are on the font sheet
-        // k_first_char + 1 because might as well skip ' ' as well
+        // start at k_first_char + 1 because might as well skip ' ' as well
         if (c >= k_first_char + 1 && c <= k_last_char)
             gfx.draw_sprite_substitute(cur_pos.m_x, cur_pos.m_y, color,
                 map_glyph_rect(c), m_surf, m_chroma);
