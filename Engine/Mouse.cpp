@@ -20,157 +20,157 @@
  ******************************************************************************************/
 #include "Mouse.h"
 
-std::pair<int, int> Mouse::GetPos() const
+std::pair<int, int> Mouse::get_pos() const
 {
-    return { x,y };
+    return { m_x,m_y };
 }
 
-int Mouse::GetPosX() const
+int Mouse::get_pos_x() const
 {
-    return x;
+    return m_x;
 }
 
-int Mouse::GetPosY() const
+int Mouse::get_pos_y() const
 {
-    return y;
+    return m_y;
 }
 
-bool Mouse::LeftIsPressed() const
+bool Mouse::is_left_pressed() const
 {
-    return leftIsPressed;
+    return m_left_pressed;
 }
 
-bool Mouse::RightIsPressed() const
+bool Mouse::is_right_pressed() const
 {
-    return rightIsPressed;
+    return m_right_pressed;
 }
 
-bool Mouse::IsInWindow() const
+bool Mouse::is_in_window() const
 {
-    return isInWindow;
+    return m_in_window;
 }
 
-Mouse::Event Mouse::Read()
+Mouse::Event Mouse::read()
 {
-    if (buffer.size() > 0u) {
-        Mouse::Event e = buffer.front();
-        buffer.pop();
+    if (m_buffer.size() > 0u) {
+        Mouse::Event e = m_buffer.front();
+        m_buffer.pop();
         return e;
     } else {
         return Mouse::Event();
     }
 }
 
-bool Mouse::IsEmpty() const
+bool Mouse::is_empty() const
 {
-    return buffer.empty();
+    return m_buffer.empty();
 }
 
-void Mouse::Flush()
+void Mouse::flush()
 {
-    buffer = std::queue<Event>();
+    m_buffer = std::queue<Event>();
 }
 
-void Mouse::OnMouseLeave()
+void Mouse::on_mouse_leave()
 {
-    isInWindow = false;
+    m_in_window = false;
 }
 
-void Mouse::OnMouseEnter()
+void Mouse::on_mouse_enter()
 {
-    isInWindow = true;
+    m_in_window = true;
 }
 
-void Mouse::OnMouseMove(int newx, int newy)
+void Mouse::on_mouse_move(int newx, int newy)
 {
-    x = newx;
-    y = newy;
+    m_x = newx;
+    m_y = newy;
 
-    buffer.push(Mouse::Event(Mouse::Event::Type::Move, *this));
-    TrimBuffer();
+    m_buffer.push(Mouse::Event(Mouse::Event::Type::Move, *this));
+    trim_buffer();
 }
 
-void Mouse::OnLeftPressed(int x, int y)
+void Mouse::on_left_pressed(int x, int y)
 {
-    leftIsPressed = true;
+    m_left_pressed = true;
 
-    buffer.push(Mouse::Event(Mouse::Event::Type::LPress, *this));
-    TrimBuffer();
+    m_buffer.push(Mouse::Event(Mouse::Event::Type::LPress, *this));
+    trim_buffer();
 }
 
-void Mouse::OnLeftReleased(int x, int y)
+void Mouse::on_left_released(int x, int y)
 {
-    leftIsPressed = false;
+    m_left_pressed = false;
 
-    buffer.push(Mouse::Event(Mouse::Event::Type::LRelease, *this));
-    TrimBuffer();
+    m_buffer.push(Mouse::Event(Mouse::Event::Type::LRelease, *this));
+    trim_buffer();
 }
 
-void Mouse::OnRightPressed(int x, int y)
+void Mouse::on_right_pressed(int x, int y)
 {
-    rightIsPressed = true;
+    m_right_pressed = true;
 
-    buffer.push(Mouse::Event(Mouse::Event::Type::RPress, *this));
-    TrimBuffer();
+    m_buffer.push(Mouse::Event(Mouse::Event::Type::RPress, *this));
+    trim_buffer();
 }
 
-void Mouse::OnRightReleased(int x, int y)
+void Mouse::on_right_released(int x, int y)
 {
-    rightIsPressed = false;
+    m_right_pressed = false;
 
-    buffer.push(Mouse::Event(Mouse::Event::Type::RRelease, *this));
-    TrimBuffer();
+    m_buffer.push(Mouse::Event(Mouse::Event::Type::RRelease, *this));
+    trim_buffer();
 }
 
-void Mouse::OnWheelUp(int x, int y)
+void Mouse::on_wheel_up(int x, int y)
 {
-    buffer.push(Mouse::Event(Mouse::Event::Type::WheelUp, *this));
-    TrimBuffer();
+    m_buffer.push(Mouse::Event(Mouse::Event::Type::WheelUp, *this));
+    trim_buffer();
 }
 
-void Mouse::OnWheelDown(int x, int y)
+void Mouse::on_wheel_down(int x, int y)
 {
-    buffer.push(Mouse::Event(Mouse::Event::Type::WheelDown, *this));
-    TrimBuffer();
+    m_buffer.push(Mouse::Event(Mouse::Event::Type::WheelDown, *this));
+    trim_buffer();
 }
 
-void Mouse::TrimBuffer()
+void Mouse::trim_buffer()
 {
-    while (buffer.size() > bufferSize)
-        buffer.pop();
+    while (m_buffer.size() > k_buffer_size)
+        m_buffer.pop();
 }
 
-bool Mouse::Event::IsValid() const
+bool Mouse::Event::is_valid() const
 {
-    return type != Type::Invalid;
+    return m_type != Type::Invalid;
 }
 
-Mouse::Event::Type Mouse::Event::GetType() const
+Mouse::Event::Type Mouse::Event::get_type() const
 {
-    return type;
+    return m_type;
 }
 
-std::pair<int, int> Mouse::Event::GetPos() const
+std::pair<int, int> Mouse::Event::get_pos() const
 {
-    return{ x,y };
+    return{ m_x,m_y };
 }
 
-int Mouse::Event::GetPosX() const
+int Mouse::Event::get_pos_x() const
 {
-    return x;
+    return m_x;
 }
 
-int Mouse::Event::GetPosY() const
+int Mouse::Event::get_pos_y() const
 {
-    return y;
+    return m_y;
 }
 
-bool Mouse::Event::LeftIsPressed() const
+bool Mouse::Event::is_left_pressed() const
 {
-    return leftIsPressed;
+    return m_left_pressed;
 }
 
-bool Mouse::Event::RightIsPressed() const
+bool Mouse::Event::is_right_pressed() const
 {
-    return rightIsPressed;
+    return m_right_pressed;
 }

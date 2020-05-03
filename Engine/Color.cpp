@@ -2,56 +2,56 @@
 
 Color &Color::operator=(Color color)
 {
-    dword = color.dword;
+    m_dword = color.m_dword;
     return *this;
 }
 
-constexpr unsigned char Color::GetX() const
+constexpr unsigned char Color::get_x() const
 {
-    return dword >> 24u;
+    return m_dword >> 24u;
 }
 
-constexpr unsigned char Color::GetA() const
+constexpr unsigned char Color::get_a() const
 {
-    return GetX();
+    return get_x();
 }
 
-constexpr unsigned char Color::GetR() const
+constexpr unsigned char Color::get_r() const
 {
-    return (dword >> 16u) & 0xFFu;
+    return (m_dword >> 16u) & 0xFFu;
 }
 
-constexpr unsigned char Color::GetG() const
+constexpr unsigned char Color::get_g() const
 {
-    return (dword >> 8u) & 0xFFu;
+    return (m_dword >> 8u) & 0xFFu;
 }
 
-constexpr unsigned char Color::GetB() const
+constexpr unsigned char Color::get_b() const
 {
-    return dword & 0xFFu;
+    return m_dword & 0xFFu;
 }
 
-void Color::SetX(unsigned char x)
+void Color::set_x(unsigned char x)
 {
-    dword = (dword & 0xFFFFFFu) | (x << 24u);
+    m_dword = (m_dword & 0xFFFFFFu) | (x << 24u);
 }
 
-void Color::SetA(unsigned char a)
+void Color::set_a(unsigned char a)
 {
-    SetX(a);
+    set_x(a);
 }
 
-void Color::SetR(unsigned char r)
+void Color::set_r(unsigned char r)
 {
-    dword = (dword & 0xFF00FFFFu) | (r << 16u);
+    m_dword = (m_dword & 0xFF00FFFFu) | (r << 16u);
 }
 
-void Color::SetG(unsigned char g)
+void Color::set_g(unsigned char g)
 {
-    dword = (dword & 0xFFFF00FFu) | (g << 8u);
+    m_dword = (m_dword & 0xFFFF00FFu) | (g << 8u);
 }
 
-void Color::SetB(unsigned char b)
+void Color::set_b(unsigned char b)
 {
-    dword = (dword & 0xFFFFFF00u) | b;
+    m_dword = (m_dword & 0xFFFFFF00u) | b;
 }

@@ -25,16 +25,16 @@ class ChiliException
 {
 public:
     ChiliException(const wchar_t *file, unsigned int line, const std::wstring &note = L"") :
-        note(note), file(file), line(line)
+        m_note(note), m_file(file), m_line(line)
     { }
-    const std::wstring &GetNote() const;
-    const std::wstring &GetFile() const;
-    unsigned int GetLine() const;
-    std::wstring GetLocation() const;
-    virtual std::wstring GetFullMessage() const = 0;
-    virtual std::wstring GetExceptionType() const = 0;
+    const std::wstring &get_note() const;
+    const std::wstring &get_file() const;
+    unsigned int get_line() const;
+    std::wstring get_location() const;
+    virtual std::wstring get_full_message() const = 0;
+    virtual std::wstring get_exception_type() const = 0;
 private:
-    std::wstring note;
-    std::wstring file;
-    unsigned int line;
+    std::wstring m_note;
+    std::wstring m_file;
+    unsigned int m_line;
 };

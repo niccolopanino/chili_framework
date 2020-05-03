@@ -30,15 +30,9 @@ public:
     SoundEffect(const std::initializer_list<std::wstring> &wavFiles,
         bool soft_fail = false, float freqStdDevFactor = 0.06f);
     template<class T>
-    void Play(T &rng, float vol = 1.0f);
+    void play(T &rng, float vol = 1.0f);
 private:
-    std::uniform_int_distribution<unsigned int> soundDist;
-    std::normal_distribution<float> freqDist;
-    std::vector<Sound> sounds;
+    std::uniform_int_distribution<unsigned int> m_sound_dist;
+    std::normal_distribution<float> m_freq_dist;
+    std::vector<Sound> m_sounds;
 };
-
-template<class T>
-inline void SoundEffect::Play(T &rng, float vol)
-{
-    sounds[soundDist(rng)].Play(exp2(freqDist(rng)), vol);
-}

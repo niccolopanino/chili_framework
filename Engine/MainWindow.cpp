@@ -25,12 +25,12 @@
 #include "Game.h"
 #include <assert.h>
 
-MainWindow::MainWindow(HINSTANCE hInst, wchar_t *pArgs) : args(pArgs), hInst(hInst)
+MainWindow::MainWindow(HINSTANCE hInst, wchar_t *pArgs) : m_args(pArgs), m_hinst(hInst)
 {
     // register window class
-    WNDCLASSEX wc = { sizeof(WNDCLASSEX),CS_CLASSDC,_HandleMsgSetup,0,0,
+    WNDCLASSEX wc = { sizeof(WNDCLASSEX),CS_CLASSDC,handle_msg_setup,0,0,
         hInst,nullptr,nullptr,nullptr,nullptr,
-        wndClassName,nullptr };
+        m_wnd_class_name,nullptr };
     wc.hIconSm = (HICON)LoadImage(hInst, MAKEINTRESOURCE(IDI_APPICON), IMAGE_ICON, 16, 16, 0);
     wc.hIcon = (HICON)LoadImage(hInst, MAKEINTRESOURCE(IDI_APPICON), IMAGE_ICON, 32, 32, 0);
     wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
@@ -39,54 +39,54 @@ MainWindow::MainWindow(HINSTANCE hInst, wchar_t *pArgs) : args(pArgs), hInst(hIn
     // create window & get hWnd
     RECT wr;
     wr.left = 350;
-    wr.right = Graphics::ScreenWidth + wr.left;
+    wr.right = Graphics::k_screen_width + wr.left;
     wr.top = 100;
-    wr.bottom = Graphics::ScreenHeight + wr.top;
+    wr.bottom = Graphics::k_screen_height + wr.top;
     AdjustWindowRect(&wr, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE);
-    hWnd = CreateWindow(wndClassName, L"Chili DirectX Framework",
+    m_hwnd = CreateWindow(m_wnd_class_name, L"Chili DirectX Framework",
         WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,
         wr.left, wr.top, wr.right - wr.left, wr.bottom - wr.top,
         nullptr, nullptr, hInst, this);
 
     // throw exception if something went terribly wrong
-    if (hWnd == nullptr)
+    if (m_hwnd == nullptr)
     {
         throw Exception(_CRT_WIDE(__FILE__), __LINE__,
             L"Failed to get valid window handle.");
     }
 
     // show and update
-    ShowWindow(hWnd, SW_SHOWDEFAULT);
-    UpdateWindow(hWnd);
+    ShowWindow(m_hwnd, SW_SHOWDEFAULT);
+    UpdateWindow(m_hwnd);
 }
 
 MainWindow::~MainWindow()
 {
     // unregister window class
-    UnregisterClass(wndClassName, hInst);
+    UnregisterClass(m_wnd_class_name, m_hinst);
 }
 
-bool MainWindow::IsActive() const
+bool MainWindow::is_active() const
 {
-    return GetActiveWindow() == hWnd;
+    return GetActiveWindow() == m_hwnd;
 }
 
-bool MainWindow::IsMinimized() const
+bool MainWindow::is_minimized() const
 {
-    return IsIconic(hWnd) != 0;
+    return IsIconic(m_hwnd) != 0;
 }
 
-void MainWindow::ShowMessageBox(const std::wstring &title, const std::wstring &message, UINT type) const
+void MainWindow::show_message_box(const std::wstring &title, const std::wstring &message, UINT type) const
 {
-    MessageBox(hWnd, message.c_str(), title.c_str(), type);
+    MessageBox(m_hwnd, message.c_str(), title.c_str(), type);
 }
 
-void MainWindow::Kill()
+void MainWindow::kill()
 {
     PostQuitMessage(0);
 }
 
-bool MainWindow::ProcessMessage()
+bool MainWindow::process_message()
 {
     MSG msg;
     while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
@@ -99,12 +99,12 @@ bool MainWindow::ProcessMessage()
     return true;
 }
 
-const std::wstring &MainWindow::GetArgs() const
+const std::wstring &MainWindow::get_args() const
 {
-    return args;
+    return m_args;
 }
 
-LRESULT WINAPI MainWindow::_HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+LRESULT WINAPI MainWindow::handle_msg_setup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     // use create parameter passed in from CreateWindow() to store window class pointer at WinAPI side
     if (msg == WM_NCCREATE)
@@ -117,23 +117,23 @@ LRESULT WINAPI MainWindow::_HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, L
         // set WinAPI-managed user data to store ptr to window class
         SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWnd));
         // set message proc to normal (non-setup) handler now that setup is finished
-        SetWindowLongPtr(hWnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(&MainWindow::_HandleMsgThunk));
+        SetWindowLongPtr(hWnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(&MainWindow::handle_msg_thunk));
         // forward message to window class handler
-        return pWnd->HandleMsg(hWnd, msg, wParam, lParam);
+        return pWnd->handle_msg(hWnd, msg, wParam, lParam);
     }
     // if we get a message before the WM_NCCREATE message, handle with default handler
     return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
-LRESULT WINAPI MainWindow::_HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+LRESULT WINAPI MainWindow::handle_msg_thunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     // retrieve ptr to window class
     MainWindow *const pWnd = reinterpret_cast<MainWindow *>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
     // forward message to window class handler
-    return pWnd->HandleMsg(hWnd, msg, wParam, lParam);
+    return pWnd->handle_msg(hWnd, msg, wParam, lParam);
 }
 
-LRESULT MainWindow::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+LRESULT MainWindow::handle_msg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
     {
@@ -141,19 +141,19 @@ LRESULT MainWindow::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
             PostQuitMessage(0);
             break;
         case WM_KILLFOCUS:
-            kbd.ClearState();
+            m_kbd.clear_state();
             break;
 
         // ************ KEYBOARD MESSAGES ************ //
         case WM_KEYDOWN:
-            if (!(lParam & 0x40000000) || kbd.AutorepeatIsEnabled()) // no thank you on the autorepeat
-                kbd.OnKeyPressed(static_cast<unsigned char>(wParam));
+            if (!(lParam & 0x40000000) || m_kbd.is_autorepeat_enabled()) // no thank you on the autorepeat
+                m_kbd.on_key_pressed(static_cast<unsigned char>(wParam));
             break;
         case WM_KEYUP:
-            kbd.OnKeyReleased(static_cast<unsigned char>(wParam));
+            m_kbd.on_key_released(static_cast<unsigned char>(wParam));
             break;
         case WM_CHAR:
-            kbd.OnChar(static_cast<unsigned char>(wParam));
+            m_kbd.on_char(static_cast<unsigned char>(wParam));
             break;
         // ************ END KEYBOARD MESSAGES ************ //
 
@@ -161,12 +161,12 @@ LRESULT MainWindow::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
         case WM_MOUSEMOVE:
         {
             POINTS pt = MAKEPOINTS(lParam);
-            if (pt.x > 0 && pt.x < Graphics::ScreenWidth && pt.y > 0 && pt.y < Graphics::ScreenHeight)
+            if (pt.x > 0 && pt.x < Graphics::k_screen_width && pt.y > 0 && pt.y < Graphics::k_screen_height)
             {
-                mouse.OnMouseMove(pt.x, pt.y);
-                if (!mouse.IsInWindow()) {
+                m_mouse.on_mouse_move(pt.x, pt.y);
+                if (!m_mouse.is_in_window()) {
                     SetCapture(hWnd);
-                    mouse.OnMouseEnter();
+                    m_mouse.on_mouse_enter();
                 }
             }
             else
@@ -174,17 +174,17 @@ LRESULT MainWindow::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
                 if (wParam & (MK_LBUTTON | MK_RBUTTON))
                 {
                     pt.x = std::max(short(0), pt.x);
-                    pt.x = std::min(short(Graphics::ScreenWidth - 1), pt.x);
+                    pt.x = std::min(short(Graphics::k_screen_width - 1), pt.x);
                     pt.y = std::max(short(0), pt.y);
-                    pt.y = std::min(short(Graphics::ScreenHeight - 1), pt.y);
-                    mouse.OnMouseMove(pt.x, pt.y);
+                    pt.y = std::min(short(Graphics::k_screen_height - 1), pt.y);
+                    m_mouse.on_mouse_move(pt.x, pt.y);
                 }
                 else
                 {
                     ReleaseCapture();
-                    mouse.OnMouseLeave();
-                    mouse.OnLeftReleased(pt.x, pt.y);
-                    mouse.OnRightReleased(pt.x, pt.y);
+                    m_mouse.on_mouse_leave();
+                    m_mouse.on_left_released(pt.x, pt.y);
+                    m_mouse.on_right_released(pt.x, pt.y);
                 }
             }
             break;
@@ -192,39 +192,40 @@ LRESULT MainWindow::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
         case WM_LBUTTONDOWN:
         {
             const POINTS pt = MAKEPOINTS(lParam);
-            mouse.OnLeftPressed(pt.x, pt.y);
+            m_mouse.on_left_pressed(pt.x, pt.y);
             SetForegroundWindow(hWnd);
             break;
         }
         case WM_RBUTTONDOWN:
         {
             const POINTS pt = MAKEPOINTS(lParam);
-            mouse.OnRightPressed(pt.x, pt.y);
+            m_mouse.on_right_pressed(pt.x, pt.y);
             break;
         }
         case WM_LBUTTONUP:
         {
             const POINTS pt = MAKEPOINTS(lParam);
-            mouse.OnLeftReleased(pt.x, pt.y);
+            m_mouse.on_left_released(pt.x, pt.y);
             break;
         }
         case WM_RBUTTONUP:
         {
             const POINTS pt = MAKEPOINTS(lParam);
-            mouse.OnRightReleased(pt.x, pt.y);
+            m_mouse.on_right_released(pt.x, pt.y);
             break;
         }
         case WM_MOUSEWHEEL:
         {
             const POINTS pt = MAKEPOINTS(lParam);
             if (GET_WHEEL_DELTA_WPARAM(wParam) > 0) {
-                mouse.OnWheelUp(pt.x, pt.y);
+                m_mouse.on_wheel_up(pt.x, pt.y);
             } else if (GET_WHEEL_DELTA_WPARAM(wParam) < 0) {
-                mouse.OnWheelDown(pt.x, pt.y);
+                m_mouse.on_wheel_down(pt.x, pt.y);
                 break;
             }
-            // ************ END MOUSE MESSAGES ************ //
         }
+        // ************ END MOUSE MESSAGES ************ //
 
-        return DefWindowProc(hWnd, msg, wParam, lParam);
     }
+    return DefWindowProc(hWnd, msg, wParam, lParam);
+}

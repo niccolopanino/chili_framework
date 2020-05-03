@@ -1,21 +1,21 @@
 #include "ChiliException.h"
 
-const std::wstring &ChiliException::GetNote() const
+const std::wstring &ChiliException::get_note() const
 {
-    return note;
+    return m_note;
 }
 
-const std::wstring &ChiliException::GetFile() const
+const std::wstring &ChiliException::get_file() const
 {
-    return file;
+    return m_file;
 }
 
-unsigned int ChiliException::GetLine() const
+unsigned int ChiliException::get_line() const
 {
-    return line;
+    return m_line;
 }
 
-std::wstring ChiliException::GetLocation() const
+std::wstring ChiliException::get_location() const
 {
-    return std::wstring(L"Line [") + std::to_wstring(line) + L"] in " + file;
+    return std::wstring(L"Line [") + std::to_wstring(m_line) + L"] in " + m_file;
 }

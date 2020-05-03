@@ -21,19 +21,19 @@
 #include "MainWindow.h"
 #include "Game.h"
 
-Game::Game(MainWindow &wnd) : wnd(wnd), gfx(wnd)
+Game::Game(MainWindow &wnd) : m_wnd(wnd), m_gfx(wnd)
 { }
 
-void Game::Go()
+void Game::go()
 {
-    gfx.BeginFrame();
-    UpdateModel();
-    ComposeFrame();
-    gfx.EndFrame();
+    m_gfx.begin_frame();
+    update_model();
+    compose_frame();
+    m_gfx.end_frame();
 }
 
-void Game::UpdateModel()
+void Game::update_model()
 { }
 
-void Game::ComposeFrame()
+void Game::compose_frame()
 { }

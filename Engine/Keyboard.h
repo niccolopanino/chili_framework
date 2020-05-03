@@ -36,43 +36,43 @@ public:
             Invalid
         };
     private:
-        Type type;
-        unsigned char code;
+        Type m_type;
+        unsigned char m_code;
     public:
-        Event() : type(Type::Invalid), code(0u) { }
-        Event(Type type, unsigned char code) : type(type), code(code) { }
-        bool IsPress() const;
-        bool IsRelease() const;
-        bool IsValid() const;
-        unsigned char GetCode() const;
+        Event() : m_type(Type::Invalid), m_code(0u) { }
+        Event(Type type, unsigned char code) : m_type(type), m_code(code) { }
+        bool is_press() const;
+        bool is_release() const;
+        bool is_valid() const;
+        unsigned char get_code() const;
     };
 public:
     Keyboard() = default;
     Keyboard(const Keyboard &) = delete;
     Keyboard &operator=(const Keyboard &) = delete;
-    bool KeyIsPressed(unsigned char keycode) const;
-    Event ReadKey();
-    bool KeyIsEmpty() const;
-    char ReadChar();
-    bool CharIsEmpty() const;
-    void FlushKey();
-    void FlushChar();
-    void Flush();
-    void EnableAutorepeat();
-    void DisableAutorepeat();
-    bool AutorepeatIsEnabled() const;
+    bool is_key_pressed(unsigned char keycode) const;
+    Event read_key();
+    bool is_key_empty() const;
+    char read_char();
+    bool is_char_empty() const;
+    void flush_key();
+    void flush_char();
+    void flush();
+    void enable_autorepeat();
+    void disable_autorepeat();
+    bool is_autorepeat_enabled() const;
 private:
-    void OnKeyPressed(unsigned char keycode);
-    void OnKeyReleased(unsigned char keycode);
-    void OnChar(char character);
-    void ClearState();
+    void on_key_pressed(unsigned char keycode);
+    void on_key_released(unsigned char keycode);
+    void on_char(char character);
+    void clear_state();
     template<typename T>
-    void TrimBuffer(std::queue<T> &buffer);
+    void trim_buffer(std::queue<T> &buffer);
 private:
-    static constexpr unsigned int nKeys = 256u;
-    static constexpr unsigned int bufferSize = 4u;
-    bool autorepeatEnabled = false;
-    std::bitset<nKeys> keystates;
-    std::queue<Event> keybuffer;
-    std::queue<char> charbuffer;
+    static constexpr unsigned int k_nkeys = 256u;
+    static constexpr unsigned int k_buffer_size = 4u;
+    bool m_autorepeat_enabled = false;
+    std::bitset<k_nkeys> m_keystates;
+    std::queue<Event> m_keybuffer;
+    std::queue<char> m_charbuffer;
 };

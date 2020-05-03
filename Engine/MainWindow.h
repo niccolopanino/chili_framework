@@ -36,7 +36,7 @@ public:
 protected:
     HWNDKey() = default;
 protected:
-    HWND hWnd = nullptr;
+    HWND m_hwnd = nullptr;
 };
 
 class MainWindow : public HWNDKey
@@ -46,30 +46,30 @@ public:
     {
     public:
         using ChiliException::ChiliException;
-        virtual std::wstring GetFullMessage() const override { return GetNote() + L"\nAt: " + GetLocation(); }
-        virtual std::wstring GetExceptionType() const override { return L"Windows Exception"; }
+        virtual std::wstring get_full_message() const override { return get_note() + L"\nAt: " + get_location(); }
+        virtual std::wstring get_exception_type() const override { return L"Windows Exception"; }
     };
 public:
     MainWindow(HINSTANCE hInst, wchar_t *pArgs);
     MainWindow(const MainWindow &) = delete;
     MainWindow &operator=(const MainWindow &) = delete;
     ~MainWindow();
-    bool IsActive() const;
-    bool IsMinimized() const;
-    void ShowMessageBox(const std::wstring &title, const std::wstring &message, UINT type = MB_OK) const;
-    void Kill();
+    bool is_active() const;
+    bool is_minimized() const;
+    void show_message_box(const std::wstring &title, const std::wstring &message, UINT type = MB_OK) const;
+    void kill();
     // returns false if quitting
-    bool ProcessMessage();
-    const std::wstring &GetArgs() const;
+    bool process_message();
+    const std::wstring &get_args() const;
 private:
-    static LRESULT WINAPI _HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-    static LRESULT WINAPI _HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-    LRESULT HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+    static LRESULT WINAPI handle_msg_setup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+    static LRESULT WINAPI handle_msg_thunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+    LRESULT handle_msg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 public:
-    Keyboard kbd;
-    Mouse mouse;
+    Keyboard m_kbd;
+    Mouse m_mouse;
 private:
-    static constexpr wchar_t *wndClassName = L"Chili DirectX Framework Window";
-    HINSTANCE hInst = nullptr;
-    std::wstring args;
+    static constexpr wchar_t *m_wnd_class_name = L"Chili DirectX Framework Window";
+    HINSTANCE m_hinst = nullptr;
+    std::wstring m_args;
 };
