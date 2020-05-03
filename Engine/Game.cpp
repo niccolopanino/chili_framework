@@ -37,5 +37,6 @@ void Game::update_model()
 
 void Game::compose_frame()
 {
-    m_gfx.draw_sprite(200, 200, m_surf);
+    m_gfx.draw_sprite(m_wnd.m_mouse.get_pos_x(), m_wnd.m_mouse.get_pos_y(),
+        { 32, 64, 48, 96 }, m_gfx.get_screen_rect(), m_surf);
 }
