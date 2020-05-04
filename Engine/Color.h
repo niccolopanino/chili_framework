@@ -16,11 +16,13 @@ public:
     { }
     constexpr Color(Color col, unsigned char x) : Color((x << 24u) | col.m_dword) { }
     Color &operator =(Color color);
-    constexpr unsigned char get_x() const;
-    constexpr unsigned char get_a() const;
-    constexpr unsigned char get_r() const;
-    constexpr unsigned char get_g() const;
-    constexpr unsigned char get_b() const;
+    bool operator==(const Color &rhs) const;
+    bool operator!=(const Color &rhs) const;
+    constexpr unsigned char get_x() const { return m_dword >> 24u; }
+    constexpr unsigned char get_a() const { return get_x(); }
+    constexpr unsigned char get_r() const { return (m_dword >> 16u) & 0xFFu; }
+    constexpr unsigned char get_g() const { return (m_dword >> 8u) & 0xFFu; }
+    constexpr unsigned char get_b() const { return (m_dword >> 8u) & 0xFFu; }
     void set_x(unsigned char x);
     void set_a(unsigned char a);
     void set_r(unsigned char r);
