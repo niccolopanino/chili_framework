@@ -1,5 +1,6 @@
 #include "Font.h"
 #include <cassert>
+#include "SpriteEffect.h"
 
 Font::Font(const std::string &filename, Color chroma) :
     m_surf(filename),
@@ -30,9 +31,10 @@ void Font::draw_text(const std::string &text, const Vec2i &pos, Color color, Gra
 
         // only draw characters that are on the font sheet
         // start at k_first_char + 1 because might as well skip ' ' as well
-        if (c >= k_first_char + 1 && c <= k_last_char)
-            gfx.draw_sprite_substitute(cur_pos.m_x, cur_pos.m_y, color,
-                map_glyph_rect(c), m_surf, m_chroma);
+        if (c >= k_first_char + 1 && c <= k_last_char) {
+            gfx.draw_sprite(cur_pos.m_x, cur_pos.m_y, map_glyph_rect(c), m_surf,
+                SpriteEffect::Substitution(m_chroma, color));
+        }
         // advance screen pos for next character
         cur_pos.m_x += m_glyph_width;
     }

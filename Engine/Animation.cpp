@@ -1,4 +1,5 @@
 #include "Animation.h"
+#include "SpriteEffect.h"
 
 Animation::Animation(int x, int y, int width, int height, int count, const Surface &sprite,
     float hold_time, Color chroma)
@@ -20,18 +21,20 @@ Animation::Animation(int x, int y, int width, int height, int count, const Surfa
 
 void Animation::draw(const Vec2i &pos, Graphics &gfx) const
 {
-    gfx.draw_sprite_ghost(pos.m_x, pos.m_y, m_frames[m_cur_frame], m_sprite, m_alpha, m_chroma);
+    gfx.draw_sprite(pos.m_x, pos.m_y, m_frames[m_cur_frame], m_sprite,
+        SpriteEffect::Ghost(m_chroma, m_alpha));
 }
 
 void Animation::draw(const Vec2i &pos, Graphics &gfx, const IRect &clip) const
 {
-    gfx.draw_sprite_ghost(pos.m_x, pos.m_y, m_frames[m_cur_frame],
-        clip, m_sprite, m_alpha, m_chroma);
+    gfx.draw_sprite(pos.m_x, pos.m_y, m_frames[m_cur_frame], clip, m_sprite,
+        SpriteEffect::Ghost(m_chroma, m_alpha));
 }
 
 void Animation::draw_color(const Vec2i &pos, Graphics &gfx, Color c) const
 {
-    gfx.draw_sprite_substitute(pos.m_x, pos.m_y, c, m_frames[m_cur_frame], m_sprite, m_chroma);
+    gfx.draw_sprite(pos.m_x, pos.m_y, m_frames[m_cur_frame], m_sprite,
+        SpriteEffect::Substitution(m_chroma, c));
 }
 
 void Animation::update(float dt)
