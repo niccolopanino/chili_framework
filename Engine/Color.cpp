@@ -6,29 +6,14 @@ Color &Color::operator=(Color color)
     return *this;
 }
 
-constexpr unsigned char Color::get_x() const
+bool Color::operator==(const Color &rhs) const
 {
-    return m_dword >> 24u;
+    return m_dword ==  rhs.m_dword;
 }
 
-constexpr unsigned char Color::get_a() const
+bool Color::operator!=(const Color &rhs) const
 {
-    return get_x();
-}
-
-constexpr unsigned char Color::get_r() const
-{
-    return (m_dword >> 16u) & 0xFFu;
-}
-
-constexpr unsigned char Color::get_g() const
-{
-    return (m_dword >> 8u) & 0xFFu;
-}
-
-constexpr unsigned char Color::get_b() const
-{
-    return m_dword & 0xFFu;
+    return !(*this == rhs);
 }
 
 void Color::set_x(unsigned char x)
