@@ -16,31 +16,6 @@ bool Color::operator!=(const Color &rhs) const
     return !(*this == rhs);
 }
 
-unsigned char Color::get_x() const
-{
-    return m_dword >> 24u;
-}
-
-unsigned char Color::get_a() const
-{
-    return get_x();
-}
-
-unsigned char Color::get_r() const
-{
-    return (m_dword >> 16u) & 0xFFu;
-}
-
-unsigned char Color::get_g() const
-{
-    return (m_dword >> 8u) & 0xFFu;
-}
-
-unsigned char Color::get_b() const
-{
-    return m_dword & 0xFFu;
-}
-
 void Color::set_x(unsigned char x)
 {
     m_dword = (m_dword & 0xFFFFFFu) | (x << 24u);
