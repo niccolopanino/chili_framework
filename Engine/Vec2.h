@@ -28,8 +28,8 @@ public:
     T m_y;
 };
 
-typedef Vec2<float> Vec2f;
 typedef Vec2<int> Vec2i;
+typedef Vec2<float> Vec2f;
 
 template<typename T>
 inline Vec2<T> Vec2<T>::get_normalized() const
