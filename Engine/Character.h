@@ -1,6 +1,6 @@
 #pragma once
 #include "Animation.h"
-#include "Vec2f.h"
+#include "Vec2.h"
 
 class Character
 {

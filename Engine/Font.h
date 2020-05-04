@@ -1,7 +1,7 @@
 #pragma once
 #include "Graphics.h"
 #include "Surface.h"
-#include "Vec2i.h"
+#include "Vec2.h"
 
 class Font
 {

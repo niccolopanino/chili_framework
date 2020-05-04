@@ -156,8 +156,7 @@
     <ClInclude Include="Sound.h" />
     <ClInclude Include="SoundEffect.h" />
     <ClInclude Include="Surface.h" />
-    <ClInclude Include="Vec2f.h" />
-    <ClInclude Include="Vec2i.h" />
+    <ClInclude Include="Vec2.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Animation.cpp" />
@@ -178,8 +177,6 @@
     <ClCompile Include="Sound.cpp" />
     <ClCompile Include="SoundEffect.cpp" />
     <ClCompile Include="Surface.cpp" />
-    <ClCompile Include="Vec2f.cpp" />
-    <ClCompile Include="Vec2i.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="FramebufferPS.hlsl">

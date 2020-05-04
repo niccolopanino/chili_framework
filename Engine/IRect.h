@@ -1,5 +1,5 @@
 #pragma once
-#include "Vec2i.h"
+#include "Vec2.h"
 
 class IRect
 {
