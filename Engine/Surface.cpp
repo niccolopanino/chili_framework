@@ -65,23 +65,49 @@ Surface::Surface(const Surface &rhs) : Surface(rhs.m_width, rhs.m_height)
     }
 }
 
-Surface &Surface::operator=(const Surface &rhs)
+Surface::Surface(Surface &&donor) noexcept :
+    m_width(donor.m_width), m_height(donor.m_height), m_pixels_ptr(donor.m_pixels_ptr)
 {
-    m_width = rhs.m_width;
-    m_height = rhs.m_height;
-    delete[] m_pixels_ptr;
-    m_pixels_ptr = new Color[m_width * m_height];
-    const int num_pixels = m_width * m_height;
-    for (int i = 0; i < num_pixels; i++) {
-        m_pixels_ptr[i] = rhs.m_pixels_ptr[i];
-    }
-    return *this;
+    donor.m_pixels_ptr = nullptr;
+    donor.m_width = 0;
+    donor.m_height = 0;
 }
 
 Surface::~Surface()
 {
     delete[] m_pixels_ptr;
     m_pixels_ptr = nullptr;
+}
+
+Surface &Surface::operator=(const Surface &rhs)
+{
+    if (&rhs != this)
+    {
+        m_width = rhs.m_width;
+        m_height = rhs.m_height;
+        delete[] m_pixels_ptr;
+        m_pixels_ptr = new Color[m_width * m_height];
+        const int num_pixels = m_width * m_height;
+        for (int i = 0; i < num_pixels; i++)
+            m_pixels_ptr[i] = rhs.m_pixels_ptr[i];
+    }
+    return *this;
+}
+
+Surface &Surface::operator=(Surface &&donor) noexcept
+{
+    if (&donor != this)
+    {
+        m_width = donor.m_width;
+        m_height = donor.m_height;
+
+        delete[] m_pixels_ptr;
+        m_pixels_ptr = donor.m_pixels_ptr;
+        donor.m_pixels_ptr = nullptr;
+        donor.m_width = 0;
+        donor.m_height = 0;
+    }
+    return *this;
 }
 
 void Surface::put_pixel(int x, int y, Color c)

@@ -6,11 +6,14 @@
 class Surface
 {
 public:
+    Surface() = default;
     Surface(const std::string &filename);
     Surface(int width, int height);
     Surface(const Surface &);
-    Surface &operator=(const Surface &);
+    Surface(Surface &&) noexcept;
     ~Surface();
+    Surface &operator=(const Surface &);
+    Surface &operator=(Surface &&) noexcept;
     void put_pixel(int x, int y, Color c);
     Color get_pixel(int x, int y) const;
     int get_width() const;
