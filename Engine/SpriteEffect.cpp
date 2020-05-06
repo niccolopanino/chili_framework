@@ -38,5 +38,6 @@ void SpriteEffect::Ghost::operator()(int x, int y, Color c, Graphics &gfx) const
             unsigned char(c.get_g() * m_alpha + dst.get_g() * (1.f - m_alpha)),
             unsigned char(c.get_b() * m_alpha + dst.get_b() * (1.f - m_alpha))
         );
+        gfx.put_pixel(x, y, blend);
     }
 }
