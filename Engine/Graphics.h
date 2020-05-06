@@ -83,7 +83,7 @@ private:
     Microsoft::WRL::ComPtr<ID3D11InputLayout>           m_input_layout_ptr;
     Microsoft::WRL::ComPtr<ID3D11SamplerState>          m_sampler_state_ptr;
     D3D11_MAPPED_SUBRESOURCE                            m_mapped_sysbuffer_texture;
-    Color *m_sysbuffer = nullptr;
+    Surface m_sysbuffer;
 };
 
 template<typename T>

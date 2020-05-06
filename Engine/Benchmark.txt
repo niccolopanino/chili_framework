@@ -9,3 +9,15 @@ Sample size: 50
 Mean: 1895.19ms
 Min: 1848.08ms
 Max: 2123.27ms
+
+surface as graphics buffer - release:
+Sample size: 50
+Mean: 16.788ms
+Min: 15.1202ms
+Max: 18.9126ms
+
+surface as graphics buffer - debug:
+Sample size: 50
+Mean: 2429.2ms
+Min: 2377.01ms
+Max: 2909.2ms

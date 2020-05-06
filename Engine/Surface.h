@@ -19,6 +19,8 @@ public:
     int get_width() const;
     int get_height() const;
     IRect get_rect() const;
+    void fill(Color c);
+    const Color *data() const;
 private:
     Color *m_pixels_ptr = nullptr;
     int m_width = 0;

@@ -45,7 +45,8 @@ IRect Graphics::get_screen_rect()
     return { 0, k_screen_width, 0, k_screen_height };
 }
 
-Graphics::Graphics(HWNDKey &key) : m_mapped_sysbuffer_texture({ 0 })
+Graphics::Graphics(HWNDKey &key) :
+    m_mapped_sysbuffer_texture({ 0 }), m_sysbuffer(k_screen_width, k_screen_height)
 {
     assert(key.m_hwnd != nullptr);
 
@@ -231,22 +232,13 @@ Graphics::Graphics(HWNDKey &key) : m_mapped_sysbuffer_texture({ 0 })
     {
         throw CHILI_GFX_EXCEPTION(hr, L"Creating sampler state");
     }
-
-    // allocate memory for sysbuffer (16-byte aligned for faster access)
-    m_sysbuffer = reinterpret_cast<Color *>(
-        _aligned_malloc(sizeof(Color) * Graphics::k_screen_width * Graphics::k_screen_height, 16u));
 }
 
 Graphics::~Graphics()
 {
-    // free sysbuffer memory (aligned free)
-    if (m_sysbuffer)
-    {
-        _aligned_free(m_sysbuffer);
-        m_sysbuffer = nullptr;
-    }
     // clear the state of the device context before destruction
-    if (m_device_context_ptr) m_device_context_ptr->ClearState();
+    if (m_device_context_ptr)
+        m_device_context_ptr->ClearState();
 }
 
 void Graphics::end_frame()
@@ -267,7 +259,7 @@ void Graphics::end_frame()
     // perform the copy line-by-line
     for (size_t y = 0u; y < Graphics::k_screen_height; y++)
     {
-        memcpy(&pDst[y * dstPitch], &m_sysbuffer[y * srcPitch], rowBytes);
+        memcpy(&pDst[y * dstPitch], &m_sysbuffer.data()[y * srcPitch], rowBytes);
     }
     // release the adapter memory
     m_device_context_ptr->Unmap(m_sysbuffer_texture_ptr.Get(), 0u);
@@ -300,16 +292,12 @@ void Graphics::end_frame()
 void Graphics::begin_frame()
 {
     // clear the sysbuffer
-    memset(m_sysbuffer, 0u, sizeof(Color) * Graphics::k_screen_height * Graphics::k_screen_width);
+    m_sysbuffer.fill(Colors::Black);
 }
 
 Color Graphics::get_pixel(int x, int y) const
 {
-    assert(x >= 0);
-    assert(x < int(Graphics::k_screen_width));
-    assert(y >= 0);
-    assert(y < int(Graphics::k_screen_height));
-    return m_sysbuffer[Graphics::k_screen_width * y + x];
+    return m_sysbuffer.get_pixel(x, y);
 }
 
 void Graphics::put_pixel(int x, int y, int r, int g, int b)
@@ -319,11 +307,7 @@ void Graphics::put_pixel(int x, int y, int r, int g, int b)
 
 void Graphics::put_pixel(int x, int y, Color c)
 {
-    assert(x >= 0);
-    assert(x < int(Graphics::k_screen_width));
-    assert(y >= 0);
-    assert(y < int(Graphics::k_screen_height));
-    m_sysbuffer[Graphics::k_screen_width * y + x] = c;
+    m_sysbuffer.put_pixel(x, y, c);
 }
 
 //////////////////////////////////////////////////
