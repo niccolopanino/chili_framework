@@ -1,0 +1,11 @@
+original - release:
+Sample size: 50
+Mean: 13.3753ms
+Min: 11.8771ms
+Max: 19.3991ms
+
+original - debug:
+Sample size: 50
+Mean: 1895.19ms
+Min: 1848.08ms
+Max: 2123.27ms

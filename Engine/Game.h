@@ -19,16 +19,11 @@
  *	along with The Chili DirectX Framework.  If not, see <http://www.gnu.org/licenses/>.  *
  ******************************************************************************************/
 #pragma once
-
 #include "Keyboard.h"
 #include "Mouse.h"
 #include "Graphics.h"
 #include "Surface.h"
-#include "Animation.h"
-#include "FrameTimer.h"
-#include "Character.h"
-#include "Font.h"
-#include "Sound.h"
+#include "Benchmark.h"
 
 class Game
 {
@@ -48,9 +43,8 @@ private:
     Graphics m_gfx;
     /********************************/
     /*  User Variables              */
-    FrameTimer m_ft;
-    Character m_link = Character({ 100.f, 100.f }, .65f);
-    Font m_font = Font("resources\\img\\Fixedsys16x28.bmp");
-    Sound m_hit_sound = Sound(L"resources\\sound\\hit.wav");
+    std::vector<Vec2i> m_positions;
+    Surface m_surf = Surface("resources\\img\\link90x90.bmp");
+    Benchmark m_bencher;
     /********************************/
 };

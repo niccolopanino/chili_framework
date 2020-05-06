@@ -20,9 +20,17 @@
  ******************************************************************************************/
 #include "MainWindow.h"
 #include "Game.h"
+#include <random>
+#include "SpriteEffect.h"
 
 Game::Game(MainWindow &wnd) : m_wnd(wnd), m_gfx(wnd)
-{ }
+{
+    std::mt19937 rng(69);
+    std::uniform_int_distribution<int> xd(0, Graphics::k_screen_width - m_surf.get_width() - 1);
+    std::uniform_int_distribution<int> yd(0, Graphics::k_screen_height - m_surf.get_height() - 1);
+    for (int i = 0; i < 50; i++)
+        m_positions.push_back({ xd(rng), yd(rng) });
+}
 
 void Game::go()
 {
@@ -33,34 +41,15 @@ void Game::go()
 }
 
 void Game::update_model()
-{
-    // process key messages while any remain
-    while (!m_wnd.m_kbd.is_key_empty()) {
-        const auto e = m_wnd.m_kbd.read_key();
-        // only interested in space bar presses
-        if (e.is_press() && e.get_code() == VK_SPACE) {
-            m_link.activate_effect();
-            m_hit_sound.play();
-        }
-    }
-
-    // process arrow keys state
-    Vec2f dir = { 0.f, 0.f };
-    if (m_wnd.m_kbd.is_key_pressed(VK_UP))
-        dir.m_y -= 1.f;
-    if (m_wnd.m_kbd.is_key_pressed(VK_DOWN))
-        dir.m_y += 1.f;
-    if (m_wnd.m_kbd.is_key_pressed(VK_LEFT))
-        dir.m_x -= 1.f;
-    if (m_wnd.m_kbd.is_key_pressed(VK_RIGHT))
-        dir.m_x += 1.f;
-
-    m_link.set_direction(dir);
-    m_link.update(m_ft.mark());
-}
+{ }
 
 void Game::compose_frame()
 {
-    m_font.draw_text("Becky.\nLemme smash.", m_wnd.m_mouse.get_pos() - Vec2i(50, 150), Colors::White, m_gfx);
-    m_link.draw(m_gfx);
+    m_bencher.start();
+
+    for (const auto &pos : m_positions)
+        m_gfx.draw_sprite(pos.m_x, pos.m_y, m_surf, SpriteEffect::Copy());
+
+    if (m_bencher.end())
+        OutputDebugStringW((std::wstring(m_bencher) + L"\n").c_str());
 }
