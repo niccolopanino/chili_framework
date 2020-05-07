@@ -57,3 +57,15 @@ Sample size: 50
 Mean: 998.802ms
 Min: 976.697ms
 Max: 1179.89ms
+
+graphics without surface - release:
+Sample size: 50
+Mean: 16.1933ms
+Min: 13.8579ms
+Max: 19.974ms
+
+graphics without surface - debug:
+Sample size: 50
+Mean: 952.01ms
+Min: 918.62ms
+Max: 1247.21ms
