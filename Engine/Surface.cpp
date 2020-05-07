@@ -63,7 +63,7 @@ Surface::Surface(Surface &&donor) noexcept
     *this = std::move(donor);
 }
 
-Surface &Surface::operator=(Surface &&donor)
+Surface &Surface::operator=(Surface &&donor) noexcept
 {
     m_width = donor.m_width;
     m_height = donor.m_height;

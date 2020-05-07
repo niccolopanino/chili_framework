@@ -69,3 +69,15 @@ Sample size: 50
 Mean: 952.01ms
 Min: 918.62ms
 Max: 1247.21ms
+
+extern template bs - release:
+Sample size: 50
+Mean: 14.0008ms
+Min: 13.3282ms
+Max: 16.3202ms
+
+extern template bs - debug:
+Sample size: 50
+Mean: 336.613ms
+Min: 317.027ms
+Max: 512.841ms

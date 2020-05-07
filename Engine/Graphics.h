@@ -124,3 +124,9 @@ inline void Graphics::draw_sprite(int x, int y, IRect src_rect, const IRect &cli
             effect(x + dx - src_rect.m_left, y + dy - src_rect.m_top, s.get_pixel(dx, dy), *this);
     }
 }
+
+#ifndef GOD_GRAPHICS
+#include "SpriteEffect.h"
+extern template
+void Graphics::draw_sprite<SpriteEffect::Copy>(int x, int y, IRect src_rect, const IRect &clip, const Surface &s, SpriteEffect::Copy effect);
+#endif // !GOD_GRAPHICS

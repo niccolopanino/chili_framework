@@ -13,7 +13,7 @@ public:
     Surface(const Surface &) = default;
     Surface(Surface &&) noexcept;
     Surface &operator=(const Surface &) = default;
-    Surface &operator=(Surface &&);
+    Surface &operator=(Surface &&) noexcept;
     Color get_pixel(int x, int y) const;
     void put_pixel(int x, int y, Color c);
     int get_width() const;

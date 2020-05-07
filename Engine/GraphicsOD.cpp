@@ -1,4 +1,6 @@
+#define GOD_GRAPHICS
 #include "Graphics.h"
+#include "SpriteEffect.h"
 #include <cassert>
 
 void Graphics::begin_frame()
@@ -23,4 +25,9 @@ void Graphics::put_pixel(int x, int y, Color c)
     assert(y >= 0);
     assert(y < Graphics::k_screen_height);
     m_sysbuffer[Graphics::k_screen_width * y + x] = c;
+}
+
+void dummy(Graphics &gfx)
+{
+    gfx.draw_sprite(0, 0, IRect(0, 0, 0, 0), IRect(0, 0, 0, 0), Surface(), SpriteEffect::Copy());
 }

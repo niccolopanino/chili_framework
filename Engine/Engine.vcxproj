@@ -190,7 +190,6 @@
     <ClCompile Include="Mouse.cpp" />
     <ClCompile Include="Sound.cpp" />
     <ClCompile Include="SoundEffect.cpp" />
-    <ClCompile Include="SpriteEffect.cpp" />
     <ClCompile Include="Surface.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
       <FavorSizeOrSpeed Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Neither</FavorSizeOrSpeed>
