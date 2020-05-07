@@ -33,3 +33,9 @@ Sample size: 50
 Mean: 3050.02ms
 Min: 3006.96ms
 Max: 3252.03ms
+
+optimization in surface.cpp - debug:
+Sample size: 50
+Mean: 1505.77ms
+Min: 1478.36ms
+Max: 1769.45ms
