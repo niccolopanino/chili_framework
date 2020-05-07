@@ -10,6 +10,10 @@ public:
     Surface() = default;
     Surface(const std::string &filename);
     Surface(int width, int height);
+    Surface(const Surface &) = default;
+    Surface(Surface &&) noexcept;
+    Surface &operator=(const Surface &) = default;
+    Surface &operator=(Surface &&);
     Color get_pixel(int x, int y) const;
     void put_pixel(int x, int y, Color c);
     int get_width() const;

@@ -58,6 +58,21 @@ Surface::Surface(int width, int height) :
     m_pixels((size_t)width * height)
 { }
 
+Surface::Surface(Surface &&donor) noexcept
+{
+    *this = std::move(donor);
+}
+
+Surface &Surface::operator=(Surface &&donor)
+{
+    m_width = donor.m_width;
+    m_height = donor.m_height;
+    m_pixels = std::move(m_pixels);
+    donor.m_width = 0;
+    donor.m_height = 0;
+    return *this;
+}
+
 int Surface::get_width() const
 {
     return m_width;
