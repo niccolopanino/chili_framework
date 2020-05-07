@@ -128,5 +128,15 @@ inline void Graphics::draw_sprite(int x, int y, IRect src_rect, const IRect &cli
 #ifndef GOD_GRAPHICS
 #include "SpriteEffect.h"
 extern template
-void Graphics::draw_sprite<SpriteEffect::Copy>(int x, int y, IRect src_rect, const IRect &clip, const Surface &s, SpriteEffect::Copy effect);
+void Graphics::draw_sprite<SpriteEffect::Copy>(int x, int y,
+    IRect src_rect, const IRect &clip, const Surface &s, SpriteEffect::Copy effect);
+extern template
+void Graphics::draw_sprite<SpriteEffect::Chroma>(int x, int y,
+    IRect src_rect, const IRect &clip, const Surface &s, SpriteEffect::Chroma effect);
+extern template
+void Graphics::draw_sprite<SpriteEffect::Substitution>(int x, int y,
+    IRect src_rect, const IRect &clip, const Surface &s, SpriteEffect::Substitution effect);
+extern template
+void Graphics::draw_sprite<SpriteEffect::Ghost>(int x, int y,
+    IRect src_rect, const IRect &clip, const Surface &s, SpriteEffect::Ghost effect);
 #endif // !GOD_GRAPHICS

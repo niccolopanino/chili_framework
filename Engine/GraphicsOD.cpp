@@ -30,4 +30,7 @@ void Graphics::put_pixel(int x, int y, Color c)
 void dummy(Graphics &gfx)
 {
     gfx.draw_sprite(0, 0, IRect(0, 0, 0, 0), IRect(0, 0, 0, 0), Surface(), SpriteEffect::Copy());
+    gfx.draw_sprite(0, 0, IRect(0, 0, 0, 0), IRect(0, 0, 0, 0), Surface(), SpriteEffect::Chroma(Colors::Black));
+    gfx.draw_sprite(0, 0, IRect(0, 0, 0, 0), IRect(0, 0, 0, 0), Surface(), SpriteEffect::Substitution(Colors::Black, Colors::Black));
+    gfx.draw_sprite(0, 0, IRect(0, 0, 0, 0), IRect(0, 0, 0, 0), Surface(), SpriteEffect::Ghost(Colors::Black));
 }
