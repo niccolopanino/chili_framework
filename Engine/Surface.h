@@ -10,8 +10,8 @@ public:
     Surface() = default;
     Surface(const std::string &filename);
     Surface(int width, int height);
-    void put_pixel(int x, int y, Color c);
     Color get_pixel(int x, int y) const;
+    void put_pixel(int x, int y, Color c);
     int get_width() const;
     int get_height() const;
     IRect get_rect() const;

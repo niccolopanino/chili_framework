@@ -58,24 +58,6 @@ Surface::Surface(int width, int height) :
     m_pixels((size_t)width * height)
 { }
 
-void Surface::put_pixel(int x, int y, Color c)
-{
-    assert(x >= 0);
-    assert(x < m_width);
-    assert(y >= 0);
-    assert(y < m_height);
-    m_pixels.data()[(size_t)y * m_width + x] = c;
-}
-
-Color Surface::get_pixel(int x, int y) const
-{
-    assert(x >= 0);
-    assert(x < m_width);
-    assert(y >= 0);
-    assert(y < m_height);
-    return m_pixels.data()[(size_t)y * m_width + x];
-}
-
 int Surface::get_width() const
 {
     return m_width;
@@ -89,11 +71,6 @@ int Surface::get_height() const
 IRect Surface::get_rect() const
 {
     return { 0, m_width, 0, m_height };
-}
-
-void Surface::fill(Color c)
-{
-    std::fill(m_pixels.begin(), m_pixels.begin() + (size_t)m_height * m_width, c);
 }
 
 const Color *Surface::data() const

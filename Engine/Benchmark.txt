@@ -45,3 +45,15 @@ Sample size: 50
 Mean: 1501.1ms
 Min: 1461.11ms
 Max: 1763.75ms
+
+separate .cpps - release:
+Sample size: 50
+Mean: 21.943ms
+Min: 20.2647ms
+Max: 24.3801ms
+
+separate .cpps - debug:
+Sample size: 50
+Mean: 998.802ms
+Min: 976.697ms
+Max: 1179.89ms
