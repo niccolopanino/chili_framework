@@ -21,3 +21,15 @@ Sample size: 50
 Mean: 2429.2ms
 Min: 2377.01ms
 Max: 2909.2ms
+
+surface with std::vector - release:
+Sample size: 50
+Mean: 24.3187ms
+Min: 19.6078ms
+Max: 35.3601ms
+
+surface with std::vector - debug:
+Sample size: 50
+Mean: 3050.02ms
+Min: 3006.96ms
+Max: 3252.03ms

@@ -1,6 +1,7 @@
 #pragma once
 #include "Colors.h"
 #include <string>
+#include <vector>
 #include "Rect.h"
 
 class Surface
@@ -9,11 +10,6 @@ public:
     Surface() = default;
     Surface(const std::string &filename);
     Surface(int width, int height);
-    Surface(const Surface &);
-    Surface(Surface &&) noexcept;
-    ~Surface();
-    Surface &operator=(const Surface &);
-    Surface &operator=(Surface &&) noexcept;
     void put_pixel(int x, int y, Color c);
     Color get_pixel(int x, int y) const;
     int get_width() const;
@@ -22,7 +18,7 @@ public:
     void fill(Color c);
     const Color *data() const;
 private:
-    Color *m_pixels_ptr = nullptr;
+    std::vector<Color> m_pixels;
     int m_width = 0;
     int m_height = 0;
 };

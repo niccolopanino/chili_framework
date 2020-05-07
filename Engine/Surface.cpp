@@ -36,7 +36,7 @@ Surface::Surface(const std::string &filename)
         dy = -1;
     }
 
-    m_pixels_ptr = new Color[m_width * m_height];
+    m_pixels.resize((size_t)m_width * m_height);
 
     file.seekg(bm_fheader.bfOffBits);
     const int padding24 = (4 - (m_width * 3) % 4) % 4;
@@ -55,61 +55,8 @@ Surface::Surface(const std::string &filename)
 
 Surface::Surface(int width, int height) :
     m_width(width), m_height(height),
-    m_pixels_ptr(new Color[width * height])
+    m_pixels((size_t)width * height)
 { }
-
-Surface::Surface(const Surface &rhs) : Surface(rhs.m_width, rhs.m_height)
-{
-    const int num_pixels = m_width * m_height;
-    for (int i = 0; i < num_pixels; i++) {
-        m_pixels_ptr[i] = rhs.m_pixels_ptr[i];
-    }
-}
-
-Surface::Surface(Surface &&donor) noexcept :
-    m_width(donor.m_width), m_height(donor.m_height), m_pixels_ptr(donor.m_pixels_ptr)
-{
-    donor.m_pixels_ptr = nullptr;
-    donor.m_width = 0;
-    donor.m_height = 0;
-}
-
-Surface::~Surface()
-{
-    delete[] m_pixels_ptr;
-    m_pixels_ptr = nullptr;
-}
-
-Surface &Surface::operator=(const Surface &rhs)
-{
-    if (&rhs != this)
-    {
-        m_width = rhs.m_width;
-        m_height = rhs.m_height;
-        delete[] m_pixels_ptr;
-        m_pixels_ptr = new Color[m_width * m_height];
-        const int num_pixels = m_width * m_height;
-        for (int i = 0; i < num_pixels; i++)
-            m_pixels_ptr[i] = rhs.m_pixels_ptr[i];
-    }
-    return *this;
-}
-
-Surface &Surface::operator=(Surface &&donor) noexcept
-{
-    if (&donor != this)
-    {
-        m_width = donor.m_width;
-        m_height = donor.m_height;
-
-        delete[] m_pixels_ptr;
-        m_pixels_ptr = donor.m_pixels_ptr;
-        donor.m_pixels_ptr = nullptr;
-        donor.m_width = 0;
-        donor.m_height = 0;
-    }
-    return *this;
-}
 
 void Surface::put_pixel(int x, int y, Color c)
 {
@@ -117,7 +64,7 @@ void Surface::put_pixel(int x, int y, Color c)
     assert(x < m_width);
     assert(y >= 0);
     assert(y < m_height);
-    m_pixels_ptr[y * m_width + x] = c;
+    m_pixels[(size_t)y * m_width + x] = c;
 }
 
 Color Surface::get_pixel(int x, int y) const
@@ -126,7 +73,7 @@ Color Surface::get_pixel(int x, int y) const
     assert(x < m_width);
     assert(y >= 0);
     assert(y < m_height);
-    return m_pixels_ptr[y * m_width + x];
+    return m_pixels[(size_t)y * m_width + x];
 }
 
 int Surface::get_width() const
@@ -146,10 +93,10 @@ IRect Surface::get_rect() const
 
 void Surface::fill(Color c)
 {
-    std::fill(m_pixels_ptr, m_pixels_ptr + m_height * m_width, c);
+    std::fill(m_pixels.begin(), m_pixels.begin() + (size_t)m_height * m_width, c);
 }
 
 const Color *Surface::data() const
 {
-    return m_pixels_ptr;
+    return m_pixels.data();
 }
