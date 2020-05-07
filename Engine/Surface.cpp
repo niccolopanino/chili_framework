@@ -64,7 +64,7 @@ void Surface::put_pixel(int x, int y, Color c)
     assert(x < m_width);
     assert(y >= 0);
     assert(y < m_height);
-    m_pixels[(size_t)y * m_width + x] = c;
+    m_pixels.data()[(size_t)y * m_width + x] = c;
 }
 
 Color Surface::get_pixel(int x, int y) const
@@ -73,7 +73,7 @@ Color Surface::get_pixel(int x, int y) const
     assert(x < m_width);
     assert(y >= 0);
     assert(y < m_height);
-    return m_pixels[(size_t)y * m_width + x];
+    return m_pixels.data()[(size_t)y * m_width + x];
 }
 
 int Surface::get_width() const

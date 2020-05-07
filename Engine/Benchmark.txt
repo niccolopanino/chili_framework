@@ -39,3 +39,9 @@ Sample size: 50
 Mean: 1505.77ms
 Min: 1478.36ms
 Max: 1769.45ms
+
+data() instead of [] - debug:
+Sample size: 50
+Mean: 1501.1ms
+Min: 1461.11ms
+Max: 1763.75ms
