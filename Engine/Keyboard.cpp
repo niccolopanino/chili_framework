@@ -59,12 +59,12 @@ bool Keyboard::is_char_empty() const
 
 void Keyboard::flush_key()
 {
-    m_keybuffer = std::queue<Event>();
+    std::swap(m_keybuffer, std::queue<Event>());
 }
 
 void Keyboard::flush_char()
 {
-    m_charbuffer = std::queue<char>();
+    std::swap(m_charbuffer, std::queue<char>());
 }
 
 void Keyboard::flush()

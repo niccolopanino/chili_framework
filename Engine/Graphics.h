@@ -22,8 +22,13 @@
 #include "ChiliWin.h"
 #include <d3d11.h>
 #include <wrl.h>
+#include "GDIPlusManager.h"
 #include "ChiliException.h"
+#include "Surface.h"
 #include "Colors.h"
+#include "Vec2.h"
+
+#define CHILI_GFX_EXCEPTION(hr, note) Graphics::Exception(hr, note, _CRT_WIDE(__FILE__), __LINE__)
 
 class Graphics
 {
@@ -43,33 +48,36 @@ private:
     // vertex format for the framebuffer fullscreen textured quad
     struct FSQVertex
     {
-        float x, y, z;		// position
-        float u, v;			// texcoords
+        float x, y, z;      // position
+        float u, v;         // texcoords
     };
 public:
     Graphics(class HWNDKey &key);
     Graphics(const Graphics &) = delete;
+    ~Graphics();
     Graphics &operator=(const Graphics &) = delete;
-    void end_frame();
     void begin_frame();
+    void end_frame();
+    void draw_line(const Vec2f &v1, const Vec2f &v2, Color c);
+    void draw_line(float x1, float y1, float x2, float y2, Color c);
     void put_pixel(int x, int y, int r, int g, int b);
     void put_pixel(int x, int y, Color c);
-    ~Graphics();
 private:
-    Microsoft::WRL::ComPtr<IDXGISwapChain>              m_swapchain_ptr;
-    Microsoft::WRL::ComPtr<ID3D11Device>                m_device_ptr;
-    Microsoft::WRL::ComPtr<ID3D11DeviceContext>         m_device_context_ptr;
-    Microsoft::WRL::ComPtr<ID3D11RenderTargetView>      m_render_target_ptr;
-    Microsoft::WRL::ComPtr<ID3D11Texture2D>             m_sysbuffer_texture_ptr;
-    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>    m_sysbuffer_texture_view_ptr;
-    Microsoft::WRL::ComPtr<ID3D11PixelShader>           m_fshader_ptr;
-    Microsoft::WRL::ComPtr<ID3D11VertexShader>          m_vshader_ptr;
-    Microsoft::WRL::ComPtr<ID3D11Buffer>                m_vertex_buffer_ptr;
-    Microsoft::WRL::ComPtr<ID3D11InputLayout>           m_input_layout_ptr;
-    Microsoft::WRL::ComPtr<ID3D11SamplerState>          m_sampler_state_ptr;
+    Microsoft::WRL::ComPtr<IDXGISwapChain>              m_swapchain;
+    Microsoft::WRL::ComPtr<ID3D11Device>                m_device;
+    Microsoft::WRL::ComPtr<ID3D11DeviceContext>         m_device_context;
+    Microsoft::WRL::ComPtr<ID3D11RenderTargetView>      m_render_target;
+    Microsoft::WRL::ComPtr<ID3D11Texture2D>             m_sysbuffer_texture;
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>    m_sysbuffer_texture_view;
+    Microsoft::WRL::ComPtr<ID3D11PixelShader>           m_fshader;
+    Microsoft::WRL::ComPtr<ID3D11VertexShader>          m_vshader;
+    Microsoft::WRL::ComPtr<ID3D11Buffer>                m_vertex_buffer;
+    Microsoft::WRL::ComPtr<ID3D11InputLayout>           m_input_layout;
+    Microsoft::WRL::ComPtr<ID3D11SamplerState>          m_sampler_state;
     D3D11_MAPPED_SUBRESOURCE                            m_mapped_sysbuffer_texture;
-    Color *m_sysbuffer = nullptr;
+    GDIPlusManager                                      m_gdip_man;
+    Surface                                             m_sysbuffer;
 public:
-    static constexpr int k_screen_width = 800;
-    static constexpr int k_screen_height = 600;
+    static constexpr unsigned int k_screen_width = 800u;
+    static constexpr unsigned int k_screen_height = 600u;
 };

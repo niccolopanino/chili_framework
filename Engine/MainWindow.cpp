@@ -217,12 +217,11 @@ LRESULT MainWindow::handle_msg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
         case WM_MOUSEWHEEL:
         {
             const POINTS pt = MAKEPOINTS(lParam);
-            if (GET_WHEEL_DELTA_WPARAM(wParam) > 0) {
+            if (GET_WHEEL_DELTA_WPARAM(wParam) > 0)
                 m_mouse.on_wheel_up(pt.x, pt.y);
-            } else if (GET_WHEEL_DELTA_WPARAM(wParam) < 0) {
+            else if (GET_WHEEL_DELTA_WPARAM(wParam) < 0)
                 m_mouse.on_wheel_down(pt.x, pt.y);
-                break;
-            }
+            break;
         }
         // ************ END MOUSE MESSAGES ************ //
 

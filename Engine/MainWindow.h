@@ -52,8 +52,8 @@ public:
 public:
     MainWindow(HINSTANCE hInst, wchar_t *pArgs);
     MainWindow(const MainWindow &) = delete;
-    MainWindow &operator=(const MainWindow &) = delete;
     ~MainWindow();
+    MainWindow &operator=(const MainWindow &) = delete;
     bool is_active() const;
     bool is_minimized() const;
     void show_message_box(const std::wstring &title, const std::wstring &message, UINT type = MB_OK) const;

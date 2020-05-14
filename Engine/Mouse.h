@@ -20,6 +20,7 @@
  ******************************************************************************************/
 #pragma once
 #include <queue>
+#include "Vec2.h"
 
 class Mouse
 {
@@ -58,7 +59,7 @@ public:
         { }
         bool is_valid() const;
         Type get_type() const;
-        std::pair<int, int> get_pos() const;
+        Vec2i get_pos() const;
         int get_pos_x() const;
         int get_pos_y() const;
         bool is_left_pressed() const;
@@ -68,7 +69,7 @@ public:
     Mouse() = default;
     Mouse(const Mouse &) = delete;
     Mouse &operator=(const Mouse &) = delete;
-    std::pair<int, int> get_pos() const;
+    Vec2i get_pos() const;
     int get_pos_x() const;
     int get_pos_y() const;
     bool is_left_pressed() const;

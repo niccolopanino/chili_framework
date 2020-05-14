@@ -20,9 +20,9 @@
  ******************************************************************************************/
 #include "Mouse.h"
 
-std::pair<int, int> Mouse::get_pos() const
+Vec2i Mouse::get_pos() const
 {
-    return { m_x,m_y };
+    return Vec2i(m_x, m_y);
 }
 
 int Mouse::get_pos_x() const
@@ -68,7 +68,7 @@ bool Mouse::is_empty() const
 
 void Mouse::flush()
 {
-    m_buffer = std::queue<Event>();
+    std::swap(m_buffer, std::queue<Event>());
 }
 
 void Mouse::on_mouse_leave()
@@ -150,9 +150,9 @@ Mouse::Event::Type Mouse::Event::get_type() const
     return m_type;
 }
 
-std::pair<int, int> Mouse::Event::get_pos() const
+Vec2i Mouse::Event::get_pos() const
 {
-    return{ m_x,m_y };
+    return Vec2i(m_x, m_y);
 }
 
 int Mouse::Event::get_pos_x() const
