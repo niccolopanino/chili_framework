@@ -20,9 +20,8 @@
  ******************************************************************************************/
 #include "MainWindow.h"
 #include "Game.h"
-#include "PubeScreenTransformer.h"
 
-Game::Game(MainWindow &wnd) : m_wnd(wnd), m_gfx(wnd)
+Game::Game(MainWindow &wnd) : m_wnd(wnd), m_gfx(wnd), m_cube(1.f)
 { }
 
 void Game::go()
@@ -38,11 +37,13 @@ void Game::update_model()
 
 void Game::compose_frame()
 {
-    PubeScreenTransformer pms;
-    Vec3f v0(0.f, .5f, 0.f);
-    Vec3f v1(.5f, -.5f, 0.f);
-    Vec3f v2(-.5f, -.5f, 0.f);
-    m_gfx.draw_line(pms.get_transformed(v0), pms.get_transformed(v1), Colors::White);
-    m_gfx.draw_line(pms.get_transformed(v1), pms.get_transformed(v2), Colors::White);
-    m_gfx.draw_line(pms.get_transformed(v2), pms.get_transformed(v0), Colors::White);
+    auto lines = m_cube.get_lines();
+    for (auto &v : lines.m_vertices)
+        m_pms.transform(v);
+    for (auto i = lines.m_indices.cbegin(), end = lines.m_indices.cend();
+        i != end;
+        std::advance(i, 2))
+    {
+        m_gfx.draw_line(lines.m_vertices[*i], lines.m_vertices[*std::next(i)], Colors::White);
+    }
 }
