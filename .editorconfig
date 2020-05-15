@@ -1,0 +1,5 @@
+# vertical guideline at column 100
+# for C++ header and source files, hlsl files, etc.
+[*.{h,cpp,hlsl}]
+guidelines = 100
+guidelines_style = 1px dotted gray
