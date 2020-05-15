@@ -13,7 +13,7 @@ public:
 
     static Mat2 identity() { return { (T)1, (T)0, (T)0, (T)1 }; }
     static Mat2 rotation(T theta);
-    static Mat2 scaling(T factor) { return { factor, (T)0, (T)0, factor }; }
+    static Mat2 scale(T factor) { return { factor, (T)0, (T)0, factor }; }
 public:
     // [row][col]
     T m_elements[2][2];
@@ -65,14 +65,14 @@ inline Mat2<T> Mat2<T>::rotation(T theta)
 }
 
 template<typename T>
-inline Vec2<T> operator*(const Vec2<T> &lhs, const Mat2<T> &rhs)
+inline Vec2<T> operator*(const Vec2<T> &v, const Mat2<T> &m)
 {
-    return Vec2<T>(rhs.m_elements[0][0] * lhs.m_x + rhs.m_elements[1][0] * lhs.m_y,
-        rhs.m_elements[0][1] * lhs.m_x + rhs.m_elements[1][1] * lhs.m_y);
+    return Vec2<T>(m.m_elements[0][0] * v.m_x + m.m_elements[1][0] * v.m_y,
+        m.m_elements[0][1] * v.m_x + m.m_elements[1][1] * v.m_y);
 }
 
 template<typename T>
-Vec2<T> &operator*=(Vec2<T> &lhs, const Mat2<T> &rhs)
+Vec2<T> &operator*=(Vec2<T> &v, const Mat2<T> &m)
 {
-    return lhs = lhs * rhs;
+    return v = v * m;
 }

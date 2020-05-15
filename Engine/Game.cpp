@@ -20,6 +20,7 @@
  ******************************************************************************************/
 #include "MainWindow.h"
 #include "Game.h"
+#include "Mat3.h"
 
 Game::Game(MainWindow &wnd) : m_wnd(wnd), m_gfx(wnd)
 { }
@@ -36,4 +37,8 @@ void Game::update_model()
 { }
 
 void Game::compose_frame()
-{ }
+{
+    Vec3f v(1.f, 1.f, 1.f);
+    Mat3f m = Mat3f::scale(3.f);
+    v *= m;
+}
