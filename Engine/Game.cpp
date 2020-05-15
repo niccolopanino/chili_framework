@@ -20,16 +20,9 @@
  ******************************************************************************************/
 #include "MainWindow.h"
 #include "Game.h"
-#include "Mat2.h"
 
 Game::Game(MainWindow &wnd) : m_wnd(wnd), m_gfx(wnd)
-{
-    const float dtheta = 2.f * PI / float(k_num_flares * 2);
-    for (int i = 0; i < k_num_flares * 2; i++) {
-        const float rad = (i % 2 == 0) ? k_rad_outer : k_rad_inner;
-        m_star.emplace_back(rad * cos(float(i) * dtheta), rad * sin(float(i) * dtheta));
-    }
-}
+{ }
 
 void Game::go()
 {
@@ -40,21 +33,7 @@ void Game::go()
 }
 
 void Game::update_model()
-{
-    if (!m_wnd.m_kbd.is_key_pressed(VK_SPACE))
-        m_theta += k_vrot;
-}
+{ }
 
 void Game::compose_frame()
-{
-    const Vec2f trl(float(Graphics::k_screen_width) / 2.f, float(Graphics::k_screen_height) / 2.f);
-    const Mat2f trf = Mat2f::rotation(m_theta) * Mat2f::scaling(k_size);
-    auto vtx(m_star);
-    for (auto &v : vtx) {
-        v *= trf;
-        v += trl;
-    }
-    for (auto i = vtx.cbegin(), end = std::prev(vtx.cend()); i != end; i++)
-        m_gfx.draw_line(*i, *std::next(i), Colors::White);
-    m_gfx.draw_line(vtx.front(), vtx.back(), Colors::White);
-}
+{ }

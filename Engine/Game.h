@@ -20,9 +20,6 @@
  ******************************************************************************************/
 #pragma once
 #include "Graphics.h"
-#include "Vec2.h"
-#include <vector>
-#include "ChiliMath.h"
 
 class Game
 {
@@ -42,12 +39,5 @@ private:
     Graphics m_gfx;
     /********************************/
     /*  User Variables              */
-    std::vector<Vec2f> m_star;
-    float m_theta = 0.f;
-    static constexpr float k_vrot = PI / 60.f;
-    static constexpr float k_rad_inner = 1.f;
-    static constexpr float k_rad_outer = 2.f;
-    static constexpr int k_num_flares = 5;
-    static constexpr float k_size = 100.f;
     /********************************/
 };
