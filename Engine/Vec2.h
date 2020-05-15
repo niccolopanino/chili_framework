@@ -14,7 +14,7 @@ public:
     Vec2 operator-() const { return Vec2(-m_x, -m_y); }
     Vec2 &operator=(const Vec2 &rhs);
     Vec2 operator+(const Vec2 &rhs) const { return Vec2(m_x + rhs.m_x, m_y + rhs.m_y); }
-    Vec2 &operator+=(const Vec2 &rhs) { return *this = this + rhs; }
+    Vec2 &operator+=(const Vec2 &rhs) { return *this = *this + rhs; }
     Vec2 operator-(const Vec2 &rhs) const { return Vec2(m_x - rhs.m_x, m_y - rhs.m_y); }
     Vec2 &operator-=(const Vec2 &rhs) { return *this = this - rhs; }
     Vec2 operator*(const T rhs) const { return Vec2(m_x * rhs, m_y * rhs); }

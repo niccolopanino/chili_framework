@@ -67,7 +67,7 @@ inline Mat2<T> Mat2<T>::rotation(T theta)
 template<typename T>
 inline Vec2<T> operator*(const Vec2<T> &lhs, const Mat2<T> &rhs)
 {
-    return Vec2(rhs.m_elements[0][0] * lhs.m_x + rhs.m_elements[0][1] * lhs.m_y,
+    return Vec2<T>(rhs.m_elements[0][0] * lhs.m_x + rhs.m_elements[0][1] * lhs.m_y,
         rhs.m_elements[1][0] * lhs.m_x + rhs.m_elements[1][1] * lhs.m_y);
 }
 
