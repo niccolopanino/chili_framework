@@ -43,5 +43,9 @@ private:
     /*  User Variables              */
     PubeScreenTransformer m_pms;
     Cube m_cube;
+    static constexpr float k_dtheta = PI;
+    float m_theta_x = 0.f;
+    float m_theta_y = 0.f;
+    float m_theta_z = 0.f;
     /********************************/
 };

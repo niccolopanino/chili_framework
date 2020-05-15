@@ -20,6 +20,7 @@
  ******************************************************************************************/
 #include "MainWindow.h"
 #include "Game.h"
+#include "Mat3.h"
 
 Game::Game(MainWindow &wnd) : m_wnd(wnd), m_gfx(wnd), m_cube(1.f)
 { }
@@ -33,12 +34,30 @@ void Game::go()
 }
 
 void Game::update_model()
-{ }
+{
+    const float dt = 1.f / 60.f;
+    if (m_wnd.m_kbd.is_key_pressed('Q'))
+        m_theta_x = wrap_angle(m_theta_x + k_dtheta * dt);
+    if (m_wnd.m_kbd.is_key_pressed('W'))
+        m_theta_y = wrap_angle(m_theta_y + k_dtheta * dt);
+    if (m_wnd.m_kbd.is_key_pressed('E'))
+        m_theta_z = wrap_angle(m_theta_z + k_dtheta * dt);
+    if (m_wnd.m_kbd.is_key_pressed('A'))
+        m_theta_x = wrap_angle(m_theta_x - k_dtheta * dt);
+    if (m_wnd.m_kbd.is_key_pressed('S'))
+        m_theta_y = wrap_angle(m_theta_y - k_dtheta * dt);
+    if (m_wnd.m_kbd.is_key_pressed('D'))
+        m_theta_z = wrap_angle(m_theta_z - k_dtheta * dt);
+}
 
 void Game::compose_frame()
 {
     auto lines = m_cube.get_lines();
+    Mat3f rot = Mat3f::rotate_x(m_theta_x)
+        * Mat3f::rotate_y(m_theta_y)
+        * Mat3f::rotate_z(m_theta_z);
     for (auto &v : lines.m_vertices) {
+        v *= rot;
         v += Vec3f(0.f, 0.f, 1.f);
         m_pms.transform(v);
     }

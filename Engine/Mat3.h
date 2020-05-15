@@ -13,6 +13,9 @@ public:
 
     static Mat3 identity();
     static Mat3 scale(T factor);
+    static Mat3 rotate_x(T theta);
+    static Mat3 rotate_y(T theta);
+    static Mat3 rotate_z(T theta);
 public:
     // [row][col]
     T m_elements[3][3];
@@ -72,6 +75,42 @@ inline Mat3<T> Mat3<T>::scale(T factor)
         factor, (T)0,   (T)0,
         (T)0,   factor, (T)0,
         (T)0,   (T)0,   factor
+    };
+}
+
+template<typename T>
+inline Mat3<T> Mat3<T>::rotate_x(T theta)
+{
+    const T sin_theta = sin(theta);
+    const T cos_theta = cos(theta);
+    return {
+        (T)1,  (T)0,      (T)0,
+        (T)0,  cos_theta, sin_theta,
+        (T)0, -sin_theta, cos_theta
+    };
+}
+
+template<typename T>
+inline Mat3<T> Mat3<T>::rotate_y(T theta)
+{
+    const T sin_theta = sin(theta);
+    const T cos_theta = cos(theta);
+    return {
+        cos_theta, (T)0, -sin_theta,
+        (T)0,      (T)1,  (T)0,
+        sin_theta, (T)0,  cos_theta
+    };
+}
+
+template<typename T>
+inline Mat3<T> Mat3<T>::rotate_z(T theta)
+{
+    const T sin_theta = sin(theta);
+    const T cos_theta = cos(theta);
+    return {
+         cos_theta, sin_theta, (T)0,
+        -sin_theta, cos_theta, (T)0,
+        (T)0,       (T)0,      (T)1
     };
 }
 
