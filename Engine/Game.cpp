@@ -48,6 +48,10 @@ void Game::update_model()
         m_theta_y = wrap_angle(m_theta_y - k_dtheta * dt);
     if (m_wnd.m_kbd.is_key_pressed('D'))
         m_theta_z = wrap_angle(m_theta_z - k_dtheta * dt);
+    if (m_wnd.m_kbd.is_key_pressed('R'))
+        m_offset_z += 2.f * dt;
+    if (m_wnd.m_kbd.is_key_pressed('F'))
+        m_offset_z -= 2.f * dt;
 }
 
 void Game::compose_frame()
@@ -58,7 +62,7 @@ void Game::compose_frame()
         * Mat3f::rotate_z(m_theta_z);
     for (auto &v : lines.m_vertices) {
         v *= rot;
-        v += Vec3f(0.f, 0.f, 1.f);
+        v += Vec3f(0.f, 0.f, m_offset_z);
         m_pms.transform(v);
     }
     for (auto i = lines.m_indices.cbegin(), end = lines.m_indices.cend();

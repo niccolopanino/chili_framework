@@ -7,8 +7,9 @@ PubeScreenTransformer::PubeScreenTransformer() :
 
 Vec3f &PubeScreenTransformer::transform(Vec3f & v) const
 {
-    v.m_x = (v.m_x + 1.f) * m_xfac;
-    v.m_y = (-v.m_y + 1.f) * m_yfac;
+    const float zinv = 1.f / v.m_z;
+    v.m_x = (v.m_x * zinv + 1.f) * m_xfac;
+    v.m_y = (-v.m_y * zinv + 1.f) * m_yfac;
     return v;
 }
 
