@@ -20,7 +20,7 @@
  ******************************************************************************************/
 #include "MainWindow.h"
 #include "Game.h"
-#include "Mat3.h"
+#include "PubeScreenTransformer.h"
 
 Game::Game(MainWindow &wnd) : m_wnd(wnd), m_gfx(wnd)
 { }
@@ -38,7 +38,11 @@ void Game::update_model()
 
 void Game::compose_frame()
 {
-    Vec3f v(1.f, 1.f, 1.f);
-    Mat3f m = Mat3f::scale(3.f);
-    v *= m;
+    PubeScreenTransformer pms;
+    Vec3f v0(0.f, .5f, 0.f);
+    Vec3f v1(.5f, -.5f, 0.f);
+    Vec3f v2(-.5f, -.5f, 0.f);
+    m_gfx.draw_line(pms.get_transformed(v0), pms.get_transformed(v1), Colors::White);
+    m_gfx.draw_line(pms.get_transformed(v1), pms.get_transformed(v2), Colors::White);
+    m_gfx.draw_line(pms.get_transformed(v2), pms.get_transformed(v0), Colors::White);
 }
