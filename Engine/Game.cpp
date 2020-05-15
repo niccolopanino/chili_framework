@@ -38,8 +38,10 @@ void Game::update_model()
 void Game::compose_frame()
 {
     auto lines = m_cube.get_lines();
-    for (auto &v : lines.m_vertices)
+    for (auto &v : lines.m_vertices) {
+        v += Vec3f(0.f, 0.f, 1.f);
         m_pms.transform(v);
+    }
     for (auto i = lines.m_indices.cbegin(), end = lines.m_indices.cend();
         i != end;
         std::advance(i, 2))

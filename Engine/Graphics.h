@@ -78,6 +78,6 @@ private:
     GDIPlusManager                                      m_gdip_man;
     Surface                                             m_sysbuffer;
 public:
-    static constexpr unsigned int k_screen_width = 800u;
-    static constexpr unsigned int k_screen_height = 600u;
+    static constexpr unsigned int k_screen_width = 640u;
+    static constexpr unsigned int k_screen_height = 640u;
 };
