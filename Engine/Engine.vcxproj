@@ -142,6 +142,9 @@
     <ClInclude Include="Color.h" />
     <ClInclude Include="Colors.h" />
     <ClInclude Include="COMInitializer.h" />
+    <ClInclude Include="ConcaHexScene.h" />
+    <ClInclude Include="ConcaHexWireScene.h" />
+    <ClInclude Include="ConcaveHexahedron.h" />
     <ClInclude Include="Cube.h" />
     <ClInclude Include="CubeOrderScene.h" />
     <ClInclude Include="DXErr.h" />
@@ -170,6 +173,9 @@
     <ClCompile Include="ChiliException.cpp" />
     <ClCompile Include="Color.cpp" />
     <ClCompile Include="COMInitializer.cpp" />
+    <ClCompile Include="ConcaHexScene.cpp" />
+    <ClCompile Include="ConcaHexWireScene.cpp" />
+    <ClCompile Include="ConcaveHexahedron.cpp" />
     <ClCompile Include="Cube.cpp" />
     <ClCompile Include="CubeOrderScene.cpp" />
     <ClCompile Include="DXErr.cpp" />
