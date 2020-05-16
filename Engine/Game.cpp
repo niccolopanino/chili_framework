@@ -56,19 +56,20 @@ void Game::update_model()
 
 void Game::compose_frame()
 {
-    auto lines = m_cube.get_lines();
+    auto triangles = m_cube.get_triangles();
     Mat3f rot = Mat3f::rotate_x(m_theta_x)
         * Mat3f::rotate_y(m_theta_y)
         * Mat3f::rotate_z(m_theta_z);
-    for (auto &v : lines.m_vertices) {
+    for (auto &v : triangles.m_vertices) {
         v *= rot;
         v += Vec3f(0.f, 0.f, m_offset_z);
         m_pms.transform(v);
     }
-    for (auto i = lines.m_indices.cbegin(), end = lines.m_indices.cend();
+    for (auto i = triangles.m_indices.cbegin(), end = triangles.m_indices.cend();
         i != end;
-        std::advance(i, 2))
+        std::advance(i, 3))
     {
-        m_gfx.draw_line(lines.m_vertices[*i], lines.m_vertices[*std::next(i)], Colors::White);
+        m_gfx.draw_triangle(triangles.m_vertices[*i], triangles.m_vertices[*std::next(i)],
+            triangles.m_vertices[*std::next(i, 2)], Colors::White);
     }
 }
