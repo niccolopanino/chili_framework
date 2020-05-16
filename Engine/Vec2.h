@@ -10,7 +10,7 @@ public:
     Vec2(const Vec2 &v) : Vec2(v.m_x, v.m_y) { }
 
     template<typename TX>
-    explicit operator Vec2<TX>() const { return Vec2((TX)m_x, (TX)m_y); }
+    explicit operator Vec2<TX>() const { return Vec2<TX>((TX)m_x, (TX)m_y); }
     Vec2 operator-() const { return Vec2(-m_x, -m_y); }
     Vec2 &operator=(const Vec2 &rhs);
     Vec2 operator+(const Vec2 &rhs) const { return Vec2(m_x + rhs.m_x, m_y + rhs.m_y); }
