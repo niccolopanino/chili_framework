@@ -1,4 +1,5 @@
 #include "SolidCubeScene.h"
+#include "Mat3.h"
 
 void SolidCubeScene::update(Keyboard &kbd, Mouse &mouse, float dt)
 {

@@ -21,10 +21,12 @@
 #include "MainWindow.h"
 #include "Game.h"
 #include "SolidCubeScene.h"
+#include "CubeOrderScene.h"
 
 Game::Game(MainWindow &wnd) : m_wnd(wnd), m_gfx(wnd)
 {
     m_scenes.push_back(std::make_unique<SolidCubeScene>());
+    m_scenes.push_back(std::make_unique<CubeOrderScene>());
     m_cur_scene = m_scenes.begin();
 }
 

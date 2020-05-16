@@ -5,10 +5,10 @@
 #include "Colors.h"
 #include "ChiliMath.h"
 
-class SolidCubeScene : public Scene
+class CubeOrderScene : public Scene
 {
 public:
-    SolidCubeScene() = default;
+    CubeOrderScene() = default;
     virtual void update(Keyboard &kbd, Mouse &mouse, float dt) override;
     virtual void draw(Graphics &gfx) const override;
 private:

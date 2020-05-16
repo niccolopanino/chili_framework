@@ -102,6 +102,9 @@
     <ClInclude Include="SolidCubeScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CubeOrderScene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DXErr.cpp">
@@ -153,6 +156,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SolidCubeScene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CubeOrderScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
