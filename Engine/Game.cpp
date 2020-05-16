@@ -56,6 +56,11 @@ void Game::update_model()
 
 void Game::compose_frame()
 {
+    const Color colors[12] = {
+        Colors::White, Colors::Blue, Colors::Cyan, Colors::Gray,
+        Colors::Green, Colors::Magenta, Colors::LightGray, Colors::Red,
+        Colors::Yellow, Colors::White, Colors::Blue, Colors::Cyan
+    };
     auto triangles = m_cube.get_triangles();
     Mat3f rot = Mat3f::rotate_x(m_theta_x)
         * Mat3f::rotate_y(m_theta_y)
@@ -69,7 +74,9 @@ void Game::compose_frame()
         i != end;
         std::advance(i, 3))
     {
-        m_gfx.draw_triangle(triangles.m_vertices[*i], triangles.m_vertices[*std::next(i)],
-            triangles.m_vertices[*std::next(i, 2)], Colors::White);
+        m_gfx.draw_triangle(triangles.m_vertices[*i],
+            triangles.m_vertices[*std::next(i)],
+            triangles.m_vertices[*std::next(i, 2)],
+            colors[std::distance(triangles.m_indices.cbegin(), i) / 3]);
     }
 }
