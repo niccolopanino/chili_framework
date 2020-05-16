@@ -384,8 +384,8 @@ void Graphics::draw_triangle(const Vec2f &v1, const Vec2f &v2, const Vec2f &v3, 
 void Graphics::draw_flat_top_triangle(const Vec2f &v1, const Vec2f &v2, const Vec2f &v3, Color c)
 {
     // calculate slopes in screen space
-    float m1 = (v3.m_x - v1.m_x) / (v3.m_y - v1.m_y);
-    float m2 = (v3.m_x - v2.m_x) / (v3.m_y - v2.m_y);
+    const float m1 = (v3.m_x - v1.m_x) / (v3.m_y - v1.m_y);
+    const float m2 = (v3.m_x - v2.m_x) / (v3.m_y - v2.m_y);
 
     // calculate start and end scanlines
     const int ystart = (int)ceil(v1.m_y - .5f);
@@ -410,8 +410,8 @@ void Graphics::draw_flat_top_triangle(const Vec2f &v1, const Vec2f &v2, const Ve
 void Graphics::draw_flat_bottom_triangle(const Vec2f &v1, const Vec2f &v2, const Vec2f &v3, Color c)
 {
     // calculate slopes in screen space
-    float m1 = (v2.m_x - v1.m_x) / (v2.m_y - v1.m_y);
-    float m2 = (v3.m_x - v1.m_x) / (v3.m_y - v1.m_y);
+    const float m1 = (v2.m_x - v1.m_x) / (v2.m_y - v1.m_y);
+    const float m2 = (v3.m_x - v1.m_x) / (v3.m_y - v1.m_y);
 
     // calculate start and end scanlines
     const int ystart = (int)ceil(v1.m_y - .5f);
