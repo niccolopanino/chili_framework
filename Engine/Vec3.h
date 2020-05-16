@@ -34,6 +34,7 @@ public:
     Vec3 get_normalized() const;
     Vec3 &normalize() { return *this = get_normalized(); }
     static T dot(const Vec3 &v1, const Vec3 &v2);
+    static Vec3 cross(const Vec3 &v1, const Vec3 &v2);
 public:
     T m_z = (T)0;
 };
@@ -94,4 +95,14 @@ template<typename T>
 inline T Vec3<T>::dot(const Vec3 &v1, const Vec3 &v2)
 {
     return v1.m_x * v2.m_x + v1.m_y * v2.m_y + v1.m_z * v2.m_z;
+}
+
+template<typename T>
+inline Vec3<T> Vec3<T>::cross(const Vec3 &v1, const Vec3 &v2)
+{
+    return Vec3(
+        v1.m_y * v2.m_z - v1.m_z * v2.m_y,
+        v1.m_z * v2.m_x - v1.m_x * v2.m_z,
+        v1.m_x * v2.m_y - v1.m_y * v2.m_x
+    );
 }
