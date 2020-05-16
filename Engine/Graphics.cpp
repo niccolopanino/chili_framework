@@ -282,6 +282,16 @@ void Graphics::end_frame()
     }
 }
 
+void Graphics::put_pixel(int x, int y, int r, int g, int b)
+{
+    put_pixel(x, y, { unsigned char(r),unsigned char(g),unsigned char(b) });
+}
+
+void Graphics::put_pixel(int x, int y, Color c)
+{
+    m_sysbuffer.put_pixel(x, y, c);
+}
+
 void Graphics::draw_line(const Vec2f &v1, const Vec2f &v2, Color c)
 {
     draw_line(v1.m_x, v1.m_y, v2.m_x, v2.m_y, c);
@@ -310,8 +320,7 @@ void Graphics::draw_line(float x1, float y1, float x2, float y2, Color c)
         }
         if (int(y2) > last_int_y)
             put_pixel(int(x2), int(y2), c);
-    }
-    else
+    } else
     {
         if (dx < 0.f) {
             std::swap(x1, x2);
@@ -330,14 +339,98 @@ void Graphics::draw_line(float x1, float y1, float x2, float y2, Color c)
     }
 }
 
-void Graphics::put_pixel(int x, int y, int r, int g, int b)
+void Graphics::draw_triangle(const Vec2f &v1, const Vec2f &v2, const Vec2f &v3, Color c)
 {
-    put_pixel(x, y, { unsigned char(r),unsigned char(g),unsigned char(b) });
+    // using pointers so we can swap (for sorting purposes)
+    const Vec2f *pv1 = &v1;
+    const Vec2f *pv2 = &v2;
+    const Vec2f *pv3 = &v3;
+
+    // sort vertices by y
+    if (pv2->m_y < pv1->m_y) std::swap(pv1, pv2);
+    if (pv3->m_y < pv2->m_y) std::swap(pv2, pv3);
+    if (pv2->m_y < pv1->m_y) std::swap(pv1, pv2);
+
+    // natural flat top
+    if (pv1->m_y == pv2->m_y)
+    {
+        // sort top vertices by x
+        if (pv2->m_x < pv1->m_x) std::swap(pv1, pv2);
+        draw_flat_top_triangle(*pv1, *pv2, *pv3, c);
+    }
+    // natural flat bottom
+    else if (pv2->m_y == pv3->m_y)
+    {
+        // sort bottom vertices by x
+        if (pv3->m_x < pv2->m_x) std::swap(pv2, pv3);
+        draw_flat_bottom_triangle(*pv1, *pv2, *pv3, c);
+    }
+    // general triangle
+    else
+    {
+        // find splitting vertex
+        const float alpha_split = (pv2->m_y - pv1->m_y) / (pv3->m_y - pv1->m_y);
+        const Vec2f vi = *pv1 + (*pv3 - *pv1) * alpha_split;
+        if (pv2->m_x < vi.m_x) { // major right
+            draw_flat_bottom_triangle(*pv1, *pv2, vi, c);
+            draw_flat_top_triangle(*pv2, vi, *pv3, c);
+        } else { // major left
+            draw_flat_bottom_triangle(*pv1, vi, *pv2, c);
+            draw_flat_top_triangle(vi, *pv2, *pv3, c);
+        }
+    }
 }
 
-void Graphics::put_pixel(int x, int y, Color c)
+void Graphics::draw_flat_top_triangle(const Vec2f &v1, const Vec2f &v2, const Vec2f &v3, Color c)
 {
-    m_sysbuffer.put_pixel(x, y, c);
+    // calculate slopes in screen space
+    float m1 = (v3.m_x - v1.m_x) / (v3.m_y - v1.m_y);
+    float m2 = (v3.m_x - v2.m_x) / (v3.m_y - v2.m_y);
+
+    // calculate start and end scanlines
+    const int ystart = (int)ceil(v1.m_y - .5f);
+    const int yend = (int)ceil(v3.m_y - .5f);
+
+    for (int y = ystart; y < yend; y++)
+    {
+        // calculate start and end points (x-coords)
+        // add 0.5 to y value because we're calculating based on pixel CENTERS
+        const float px1 = m1 * (float(y) + .5f - v1.m_y) + v1.m_x;
+        const float px2 = m2 * (float(y) + .5f - v2.m_y) + v2.m_x;
+
+        // calculate start and end pixels
+        const int xstart = (int)ceil(px1 - .5f);
+        const int xend = (int)ceil(px2 - .5f); // the pixel AFTER the last pixel drawn
+
+        for (int x = xstart; x < xend; x++)
+            put_pixel(x, y, c);
+    }
+}
+
+void Graphics::draw_flat_bottom_triangle(const Vec2f &v1, const Vec2f &v2, const Vec2f &v3, Color c)
+{
+    // calculate slopes in screen space
+    float m1 = (v2.m_x - v1.m_x) / (v2.m_y - v1.m_y);
+    float m2 = (v3.m_x - v1.m_x) / (v3.m_y - v1.m_y);
+
+    // calculate start and end scanlines
+    const int ystart = (int)ceil(v1.m_y - .5f);
+    const int yend = (int)ceil(v3.m_y - .5f);
+
+    for (int y = ystart; y < yend; y++)
+    {
+        // calculate start and end points (x-coords)
+        // add 0.5 to y value because we're calculating based on pixel CENTERS
+        const float px1 = m1 * (float(y) + .5f - v1.m_y) + v1.m_x;
+        const float px2 = m2 * (float(y) + .5f - v1.m_y) + v1.m_x;
+
+        // calculate start and end pixels
+        const int xstart = (int)ceil(px1 - .5f);
+        const int xend = (int)ceil(px2 - .5f); // the pixel AFTER the last pixel drawn
+
+        for (int x = xstart; x < xend; x++)
+            put_pixel(x, y, c);
+    }
 }
 
 //////////////////////////////////////////////////

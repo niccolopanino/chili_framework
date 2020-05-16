@@ -58,10 +58,14 @@ public:
     Graphics &operator=(const Graphics &) = delete;
     void begin_frame();
     void end_frame();
-    void draw_line(const Vec2f &v1, const Vec2f &v2, Color c);
-    void draw_line(float x1, float y1, float x2, float y2, Color c);
     void put_pixel(int x, int y, int r, int g, int b);
     void put_pixel(int x, int y, Color c);
+    void draw_line(const Vec2f &v1, const Vec2f &v2, Color c);
+    void draw_line(float x1, float y1, float x2, float y2, Color c);
+    void draw_triangle(const Vec2f &v1, const Vec2f &v2, const Vec2f &v3, Color c);
+private:
+    void draw_flat_top_triangle(const Vec2f &v1, const Vec2f &v2, const Vec2f &v3, Color c);
+    void draw_flat_bottom_triangle(const Vec2f &v1, const Vec2f &v2, const Vec2f &v3, Color c);
 private:
     Microsoft::WRL::ComPtr<IDXGISwapChain>              m_swapchain;
     Microsoft::WRL::ComPtr<ID3D11Device>                m_device;
