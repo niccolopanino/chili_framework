@@ -20,10 +20,13 @@
  ******************************************************************************************/
 #include "MainWindow.h"
 #include "Game.h"
-#include "Mat3.h"
+#include "SolidCubeScene.h"
 
-Game::Game(MainWindow &wnd) : m_wnd(wnd), m_gfx(wnd), m_cube(1.f)
-{ }
+Game::Game(MainWindow &wnd) : m_wnd(wnd), m_gfx(wnd)
+{
+    m_scenes.push_back(std::make_unique<SolidCubeScene>());
+    m_cur_scene = m_scenes.begin();
+}
 
 void Game::go()
 {
@@ -36,61 +39,24 @@ void Game::go()
 void Game::update_model()
 {
     const float dt = 1.f / 60.f;
-    if (m_wnd.m_kbd.is_key_pressed('Q'))
-        m_theta_x = wrap_angle(m_theta_x + k_dtheta * dt);
-    if (m_wnd.m_kbd.is_key_pressed('W'))
-        m_theta_y = wrap_angle(m_theta_y + k_dtheta * dt);
-    if (m_wnd.m_kbd.is_key_pressed('E'))
-        m_theta_z = wrap_angle(m_theta_z + k_dtheta * dt);
-    if (m_wnd.m_kbd.is_key_pressed('A'))
-        m_theta_x = wrap_angle(m_theta_x - k_dtheta * dt);
-    if (m_wnd.m_kbd.is_key_pressed('S'))
-        m_theta_y = wrap_angle(m_theta_y - k_dtheta * dt);
-    if (m_wnd.m_kbd.is_key_pressed('D'))
-        m_theta_z = wrap_angle(m_theta_z - k_dtheta * dt);
-    if (m_wnd.m_kbd.is_key_pressed('R'))
-        m_offset_z += 2.f * dt;
-    if (m_wnd.m_kbd.is_key_pressed('F'))
-        m_offset_z -= 2.f * dt;
+    // cycle through scenes when tab is pressed
+    while (!m_wnd.m_kbd.is_key_empty()) {
+        const auto e = m_wnd.m_kbd.read_key();
+        if (e.get_code() == VK_TAB && e.is_press())
+            cycle_scenes();
+    }
+    // update scene
+    (*m_cur_scene)->update(m_wnd.m_kbd, m_wnd.m_mouse, dt);
+}
+
+void Game::cycle_scenes()
+{
+    if (++m_cur_scene == m_scenes.end())
+        m_cur_scene = m_scenes.begin();
 }
 
 void Game::compose_frame()
 {
-    const Color colors[12] = {
-        Colors::White, Colors::Blue, Colors::Cyan, Colors::Gray,
-        Colors::Green, Colors::Magenta, Colors::LightGray, Colors::Red,
-        Colors::Yellow, Colors::White, Colors::Blue, Colors::Cyan
-    };
-    // generate indexed triangle list
-    auto triangles = m_cube.get_triangles();
-    // generate rotation matrix from euler angles
-    Mat3f rot = Mat3f::rotate_x(m_theta_x)
-        * Mat3f::rotate_y(m_theta_y)
-        * Mat3f::rotate_z(m_theta_z);
-    // transform from model space to world / view space
-    for (auto &v : triangles.m_vertices) {
-        v *= rot;
-        v += Vec3f(0.f, 0.f, m_offset_z);
-    }
-    // backface culling test (must be done in world / view space)
-    for (size_t i = 0, end = triangles.m_indices.size() / 3; i < end; i++) {
-        const Vec3f &v1 = triangles.m_vertices[triangles.m_indices[i * 3]];
-        const Vec3f &v2 = triangles.m_vertices[triangles.m_indices[i * 3 + 1]];
-        const Vec3f &v3 = triangles.m_vertices[triangles.m_indices[i * 3 + 2]];
-        triangles.m_cull_flags[i] = Vec3f::dot(Vec3f::cross(v2 - v1, v3 - v1), v1) > 0.f;
-    }
-    // transform to screen space (includes perspective transform)
-    for (auto &v : triangles.m_vertices)
-        m_pms.transform(v);
-    // draw the mf triangles!
-    for (size_t i = 0, end = triangles.m_indices.size() / 3; i < end; i++)
-    {
-        // skip triangles previously determined to be back-facing
-        if (!triangles.m_cull_flags[i]) {
-            m_gfx.draw_triangle(triangles.m_vertices[triangles.m_indices[i * 3]],
-                triangles.m_vertices[triangles.m_indices[i * 3 + 1]],
-                triangles.m_vertices[triangles.m_indices[i * 3 + 2]],
-                colors[i]);
-        }
-    }
+    // draw current scene
+    (*m_cur_scene)->draw(m_gfx);
 }
