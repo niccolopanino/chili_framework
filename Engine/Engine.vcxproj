@@ -168,6 +168,8 @@
     <ClInclude Include="Surface.h" />
     <ClInclude Include="Vec2.h" />
     <ClInclude Include="Vec3.h" />
+    <ClInclude Include="XMutualScene.h" />
+    <ClInclude Include="XQuads.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ChiliException.cpp" />
@@ -191,6 +193,8 @@
     <ClCompile Include="Sound.cpp" />
     <ClCompile Include="SoundEffect.cpp" />
     <ClCompile Include="Surface.cpp" />
+    <ClCompile Include="XMutualScene.cpp" />
+    <ClCompile Include="XQuads.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="FramebufferPS.hlsl">

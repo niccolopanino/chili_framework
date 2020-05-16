@@ -114,6 +114,12 @@
     <ClInclude Include="ConcaHexWireScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="XQuads.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="XMutualScene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DXErr.cpp">
@@ -177,6 +183,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ConcaHexWireScene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="XQuads.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="XMutualScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

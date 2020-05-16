@@ -24,6 +24,7 @@
 #include "CubeOrderScene.h"
 #include "ConcaHexScene.h"
 #include "ConcaHexWireScene.h"
+#include "XMutualScene.h"
 
 Game::Game(MainWindow &wnd) : m_wnd(wnd), m_gfx(wnd)
 {
@@ -31,6 +32,7 @@ Game::Game(MainWindow &wnd) : m_wnd(wnd), m_gfx(wnd)
     m_scenes.push_back(std::make_unique<CubeOrderScene>());
     m_scenes.push_back(std::make_unique<ConcaHexScene>());
     m_scenes.push_back(std::make_unique<ConcaHexWireScene>());
+    m_scenes.push_back(std::make_unique<XMutualScene>());
     m_cur_scene = m_scenes.begin();
 }
 
