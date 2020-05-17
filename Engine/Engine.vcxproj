@@ -148,6 +148,8 @@
     <ClInclude Include="Cube.h" />
     <ClInclude Include="CubeOrderScene.h" />
     <ClInclude Include="DXErr.h" />
+    <ClInclude Include="FoldedCube.h" />
+    <ClInclude Include="FoldedCubeScene.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GDIPlusManager.h" />
     <ClInclude Include="Graphics.h" />
@@ -184,6 +186,8 @@
     <ClCompile Include="Cube.cpp" />
     <ClCompile Include="CubeOrderScene.cpp" />
     <ClCompile Include="DXErr.cpp" />
+    <ClCompile Include="FoldedCube.cpp" />
+    <ClCompile Include="FoldedCubeScene.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GDIPlusManager.cpp" />
     <ClCompile Include="Graphics.cpp" />
