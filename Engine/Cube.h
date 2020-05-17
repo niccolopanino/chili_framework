@@ -3,13 +3,16 @@
 #include <vector>
 #include "IndexedLineList.h"
 #include "IndexedTriangleList.h"
+#include "TexVertex.h"
 
 class Cube
 {
 public:
     Cube(float size);
     IndexedLineList get_lines() const;
-    IndexedTriangleList get_triangles() const;
+    IndexedTriangleList<Vec3f> get_triangles() const;
+    IndexedTriangleList<TexVertex> get_textured_triangles() const;
 private:
     std::vector<Vec3f> m_vertices;
+    std::vector<Vec2f> m_tcs;
 };

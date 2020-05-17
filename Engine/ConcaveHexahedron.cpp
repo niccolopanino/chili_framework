@@ -22,9 +22,9 @@ IndexedLineList ConcaveHexahedron::get_lines() const
     };
 }
 
-IndexedTriangleList ConcaveHexahedron::get_triangles() const
+IndexedTriangleList<Vec3f> ConcaveHexahedron::get_triangles() const
 {
-    return IndexedTriangleList(m_vertices,
+    return IndexedTriangleList<Vec3f>(m_vertices,
         {
             1, 0, 3,   3, 0, 2,
             1, 4, 0,   4, 2, 0,

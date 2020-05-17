@@ -24,13 +24,12 @@ IndexedLineList XQuads::get_lines() const
     };
 }
 
-IndexedTriangleList XQuads::get_triangles() const
+IndexedTriangleList<Vec3f> XQuads::get_triangles() const
 {
-    return {
-        m_vertices,
+    return IndexedTriangleList<Vec3f>(m_vertices,
         {
             0, 4, 3,   4, 7, 3,
             2, 6, 1,   6, 5, 1
         }
-    };
+    );
 }

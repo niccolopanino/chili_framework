@@ -9,7 +9,7 @@ class ConcaveHexahedron
 public:
     ConcaveHexahedron(float size);
     IndexedLineList get_lines() const;
-    IndexedTriangleList get_triangles() const;
+    IndexedTriangleList<Vec3f> get_triangles() const;
 private:
     std::vector<Vec3f> m_vertices;
 };
