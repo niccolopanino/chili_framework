@@ -480,26 +480,22 @@ void Graphics::draw_flat_bottom_triangle(const Vec2f &v1, const Vec2f &v2, const
 void Graphics::draw_textured_flat_top_triangle(const TexVertex &v1, const TexVertex &v2,
     const TexVertex &v3, const Surface &tex)
 {
-    // calculate slopes in screen space
-    const float m1 = (v3.m_pos.m_x - v1.m_pos.m_x) / (v3.m_pos.m_y - v1.m_pos.m_y);
-    const float m2 = (v3.m_pos.m_x - v2.m_pos.m_x) / (v3.m_pos.m_y - v2.m_pos.m_y);
+    // calculate dvertex / dy
+    const float ydelta = v3.m_pos.m_y - v1.m_pos.m_y;
+    const TexVertex dv1 = (v3 - v1) / ydelta;
+    const TexVertex dv2 = (v3 - v2) / ydelta;
 
-    // calculate start and end scanlines
+    // create edge interpolants
+    TexVertex itp_edge1 = v1;
+    TexVertex itp_edge2 = v2;
+
+    // calculate start and end scanlines (the scanline AFTER the last line drawn)
     const int ystart = (int)ceil(v1.m_pos.m_y - .5f);
     const int yend = (int)ceil(v3.m_pos.m_y - .5f);
 
-    // init tex coord edges
-    Vec2f tc_edge_l = v1.m_tc;
-    Vec2f tc_edge_r = v2.m_tc;
-    const Vec2f tc_bottom = v3.m_tc;
-
-    // calculate tex coord edge unit steps
-    const Vec2f tc_edge_step_l = (tc_bottom - tc_edge_l) / (v3.m_pos.m_y - v1.m_pos.m_y);
-    const Vec2f tc_edge_step_r = (tc_bottom - tc_edge_r) / (v3.m_pos.m_y - v2.m_pos.m_y);
-
-    // do tex coord edge prestep
-    tc_edge_l += tc_edge_step_l * (float(ystart) + .5f - v2.m_pos.m_y);
-    tc_edge_r += tc_edge_step_r * (float(ystart) + .5f - v2.m_pos.m_y);
+    // do interpolant prestep
+    itp_edge1 += dv1 * (float(ystart) + .5f - v1.m_pos.m_y);
+    itp_edge2 += dv2 * (float(ystart) + .5f - v1.m_pos.m_y);
 
     // init tex width / heigth and clamp values
     const float tex_width = float(tex.get_width());
@@ -507,30 +503,26 @@ void Graphics::draw_textured_flat_top_triangle(const TexVertex &v1, const TexVer
     const float tex_clamp_x = tex_width - 1.f;
     const float tex_clamp_y = tex_height - 1.f;
 
-    for (int y = ystart; y < yend; y++,
-        tc_edge_l += tc_edge_step_l, tc_edge_r += tc_edge_step_r)
+    for (int y = ystart; y < yend; y++, itp_edge1 += dv1, itp_edge2 += dv2)
     {
-        // calculate start and end points (x-coords)
-        // add 0.5 to y value because we're calculating based on pixel CENTERS
-        const float px1 = m1 * (float(y) + .5f - v1.m_pos.m_y) + v1.m_pos.m_x;
-        const float px2 = m2 * (float(y) + .5f - v2.m_pos.m_y) + v2.m_pos.m_x;
+        // calculate start and end pixels (the pixel AFTER the last pixel drawn)
+        const int xstart = (int)ceil(itp_edge1.m_pos.m_x - .5f);
+        const int xend = (int)ceil(itp_edge2.m_pos.m_x - .5f);
 
-        // calculate start and end pixels
-        const int xstart = (int)ceil(px1 - .5f);
-        const int xend = (int)ceil(px2 - .5f); // the pixel AFTER the last pixel drawn
+        // calculate scanline dtexcoord / dx
+        const Vec2f d_tc_line = (itp_edge2.m_tc - itp_edge1.m_tc)
+            / (itp_edge2.m_pos.m_x - itp_edge1.m_pos.m_x);
 
-        // calculate tex coord scanline unit step
-        const Vec2f tc_scan_step = (tc_edge_r - tc_edge_l) / (px2 - px1);
+        // create scanline tex coord interpolant and prestep
+        Vec2f itp_tc_line = itp_edge1.m_tc
+            + d_tc_line * (float(xstart) + .5f - itp_edge1.m_pos.m_x);
 
-        // do tex coord scanline prestep
-        Vec2f tc = tc_edge_l + tc_scan_step * (float(xstart) + .5f - px1);
-
-        for (int x = xstart; x < xend; x++, tc += tc_scan_step) {
+        for (int x = xstart; x < xend; x++, itp_tc_line += d_tc_line) {
             put_pixel(x, y, tex.get_pixel(
-                int(std::min(tc.m_x * tex_width, tex_clamp_x)),
-                int(std::min(tc.m_y * tex_height, tex_clamp_y))
+                int(std::min(itp_tc_line.m_x * tex_width, tex_clamp_x)),
+                int(std::min(itp_tc_line.m_y * tex_height, tex_clamp_y))
             ));
-            // need std::min because with floating point errors
+            // we need std::min because with floating point errors
             // we could read beyond the texture edge
         }
     }
@@ -539,27 +531,22 @@ void Graphics::draw_textured_flat_top_triangle(const TexVertex &v1, const TexVer
 void Graphics::draw_textured_flat_bottom_triangle(const TexVertex &v1, const TexVertex &v2,
     const TexVertex &v3, const Surface &tex)
 {
-    // calculate slopes in screen space
-    const float m1 = (v2.m_pos.m_x - v1.m_pos.m_x) / (v2.m_pos.m_y - v1.m_pos.m_y);
-    const float m2 = (v3.m_pos.m_x - v1.m_pos.m_x) / (v3.m_pos.m_y - v1.m_pos.m_y);
+    // calculate dvertex / dy
+    const float ydelta = v3.m_pos.m_y - v1.m_pos.m_y;
+    const TexVertex dv1 = (v2 - v1) / ydelta;
+    const TexVertex dv2 = (v3 - v1) / ydelta;
 
-    // calculate start and end scanlines
+    // create edge interpolants
+    TexVertex itp_edge1 = v1;
+    TexVertex itp_edge2 = v1;
+
+    // calculate start and end scanlines (the scanline AFTER the last line drawn)
     const int ystart = (int)ceil(v1.m_pos.m_y - .5f);
     const int yend = (int)ceil(v3.m_pos.m_y - .5f);
 
-    // init tex coord edges
-    Vec2f tc_edge_l = v1.m_tc;
-    Vec2f tc_edge_r = v1.m_tc;
-    const Vec2f tc_bottom_l = v2.m_tc;
-    const Vec2f tc_bottom_r = v3.m_tc;
-
-    // calculate tex coord edge unit steps
-    const Vec2f tc_edge_step_l = (tc_bottom_l - tc_edge_l) / (v2.m_pos.m_y - v1.m_pos.m_y);
-    const Vec2f tc_edge_step_r = (tc_bottom_r - tc_edge_r) / (v3.m_pos.m_y - v1.m_pos.m_y);
-
-    // do tex coord edge prestep
-    tc_edge_l += tc_edge_step_l * (float(ystart) + .5f - v1.m_pos.m_y);
-    tc_edge_r += tc_edge_step_r * (float(ystart) + .5f - v1.m_pos.m_y);
+    // do interpolant prestep
+    itp_edge1 += dv1 * (float(ystart) + .5f - v1.m_pos.m_y);
+    itp_edge2 += dv2 * (float(ystart) + .5f - v1.m_pos.m_y);
 
     // init tex width / heigth and clamp values
     const float tex_width = float(tex.get_width());
@@ -567,30 +554,26 @@ void Graphics::draw_textured_flat_bottom_triangle(const TexVertex &v1, const Tex
     const float tex_clamp_x = tex_width - 1.f;
     const float tex_clamp_y = tex_height - 1.f;
 
-    for (int y = ystart; y < yend; y++,
-        tc_edge_l += tc_edge_step_l, tc_edge_r += tc_edge_step_r)
+    for (int y = ystart; y < yend; y++, itp_edge1 += dv1, itp_edge2 += dv2)
     {
-        // calculate start and end points (x-coords)
-        // add 0.5 to y value because we're calculating based on pixel CENTERS
-        const float px1 = m1 * (float(y) + .5f - v1.m_pos.m_y) + v1.m_pos.m_x;
-        const float px2 = m2 * (float(y) + .5f - v1.m_pos.m_y) + v1.m_pos.m_x;
+        // calculate start and end pixels (the pixel AFTER the last pixel drawn)
+        const int xstart = (int)ceil(itp_edge1.m_pos.m_x - .5f);
+        const int xend = (int)ceil(itp_edge2.m_pos.m_x - .5f);
 
-        // calculate start and end pixels
-        const int xstart = (int)ceil(px1 - .5f);
-        const int xend = (int)ceil(px2 - .5f); // the pixel AFTER the last pixel drawn
+        // calculate scanline dtexcoord / dx
+        const Vec2f d_tc_line = (itp_edge2.m_tc - itp_edge1.m_tc)
+            / (itp_edge2.m_pos.m_x - itp_edge1.m_pos.m_x);
 
-        // calculate tex coord scanline unit step
-        const Vec2f tc_scan_step = (tc_edge_r - tc_edge_l) / (px2 - px1);
+        // create scanline tex coord interpolant and prestep
+        Vec2f itp_tc_line = itp_edge1.m_tc
+            + d_tc_line * (float(xstart) + .5f - itp_edge1.m_pos.m_x);
 
-        // do tex coord scanline prestep
-        Vec2f tc = tc_edge_l + tc_scan_step * (float(xstart) + .5f - px1);
-
-        for (int x = xstart; x < xend; x++, tc += tc_scan_step) {
+        for (int x = xstart; x < xend; x++, itp_tc_line += d_tc_line) {
             put_pixel(x, y, tex.get_pixel(
-                int(std::min(tc.m_x * tex_width, tex_clamp_x)),
-                int(std::min(tc.m_y * tex_height, tex_clamp_y))
+                int(std::min(itp_tc_line.m_x * tex_width, tex_clamp_x)),
+                int(std::min(itp_tc_line.m_y * tex_height, tex_clamp_y))
             ));
-            // need std::min because with floating point errors
+            // we need std::min because with floating point errors
             // we could read beyond the texture edge
         }
     }
