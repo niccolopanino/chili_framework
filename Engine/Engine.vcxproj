@@ -164,6 +164,8 @@
     <ClInclude Include="Rect.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Scene.h" />
+    <ClInclude Include="SkinnedCube.h" />
+    <ClInclude Include="SkinnedCubeScene.h" />
     <ClInclude Include="SolidCubeScene.h" />
     <ClInclude Include="Sound.h" />
     <ClInclude Include="SoundEffect.h" />
@@ -198,6 +200,8 @@
     <ClCompile Include="MainWindow.cpp" />
     <ClCompile Include="Mouse.cpp" />
     <ClCompile Include="PubeScreenTransformer.cpp" />
+    <ClCompile Include="SkinnedCube.cpp" />
+    <ClCompile Include="SkinnedCubeScene.cpp" />
     <ClCompile Include="SolidCubeScene.cpp" />
     <ClCompile Include="Sound.cpp" />
     <ClCompile Include="SoundEffect.cpp" />

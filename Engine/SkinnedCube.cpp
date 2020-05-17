@@ -1,45 +1,49 @@
-#include "WrapFoldedCube.h"
+#include "SkinnedCube.h"
 #include <stdexcept>
 
-WrapFoldedCube::WrapFoldedCube(float size)
+SkinnedCube::SkinnedCube(float size)
 {
     const float side = size / 2.f;
+    const auto convert_tex_coord = [](float u, float v)
+    {
+        return Vec2f((u + 1.f) / 3.f, v / 4.f);
+    };
     m_vertices.emplace_back(-side, -side, -side);
-    m_tcs.emplace_back( 1.f, 0.f);
+    m_tcs.emplace_back(convert_tex_coord( 1.f, 0.f));
     m_vertices.emplace_back( side, -side, -side);
-    m_tcs.emplace_back( 0.f, 0.f);
+    m_tcs.emplace_back(convert_tex_coord( 0.f, 0.f));
     m_vertices.emplace_back(-side,  side, -side);
-    m_tcs.emplace_back( 1.f, 1.f);
+    m_tcs.emplace_back(convert_tex_coord( 1.f, 1.f));
     m_vertices.emplace_back( side,  side, -side);
-    m_tcs.emplace_back( 0.f, 1.f);
+    m_tcs.emplace_back(convert_tex_coord( 0.f, 1.f));
     m_vertices.emplace_back(-side, -side,  side);
-    m_tcs.emplace_back( 1.f, 3.f);
+    m_tcs.emplace_back(convert_tex_coord( 1.f, 3.f));
     m_vertices.emplace_back( side, -side,  side);
-    m_tcs.emplace_back( 0.f, 3.f);
+    m_tcs.emplace_back(convert_tex_coord( 0.f, 3.f));
     m_vertices.emplace_back(-side,  side,  side);
-    m_tcs.emplace_back( 1.f, 2.f);
+    m_tcs.emplace_back(convert_tex_coord( 1.f, 2.f));
     m_vertices.emplace_back( side,  side,  side);
-    m_tcs.emplace_back( 0.f, 2.f);
+    m_tcs.emplace_back(convert_tex_coord( 0.f, 2.f));
     m_vertices.emplace_back(-side, -side, -side);
-    m_tcs.emplace_back( 1.f, 4.f);
+    m_tcs.emplace_back(convert_tex_coord( 1.f, 4.f));
     m_vertices.emplace_back( side, -side, -side);
-    m_tcs.emplace_back( 0.f, 4.f);
+    m_tcs.emplace_back(convert_tex_coord( 0.f, 4.f));
     m_vertices.emplace_back(-side, -side, -side);
-    m_tcs.emplace_back( 2.f, 1.f);
+    m_tcs.emplace_back(convert_tex_coord( 2.f, 1.f));
     m_vertices.emplace_back(-side, -side,  side);
-    m_tcs.emplace_back( 2.f, 2.f);
+    m_tcs.emplace_back(convert_tex_coord( 2.f, 2.f));
     m_vertices.emplace_back( side, -side, -side);
-    m_tcs.emplace_back(-1.f, 1.f);
+    m_tcs.emplace_back(convert_tex_coord(-1.f, 1.f));
     m_vertices.emplace_back( side, -side,  side);
-    m_tcs.emplace_back(-1.f, 2.f);
+    m_tcs.emplace_back(convert_tex_coord(-1.f, 2.f));
 }
 
-IndexedLineList WrapFoldedCube::get_lines() const
+IndexedLineList SkinnedCube::get_lines() const
 {
-    throw std::runtime_error("Incomplete function WrapFoldedCube::get_lines!");
+    throw std::runtime_error("Incomplete function SkinnedCube::get_lines!");
 }
 
-IndexedTriangleList<Vec3f> WrapFoldedCube::get_triangles() const
+IndexedTriangleList<Vec3f> SkinnedCube::get_triangles() const
 {
     return IndexedTriangleList<Vec3f>(m_vertices,
         {
@@ -53,7 +57,7 @@ IndexedTriangleList<Vec3f> WrapFoldedCube::get_triangles() const
     );
 }
 
-IndexedTriangleList<TexVertex> WrapFoldedCube::get_textured_triangles() const
+IndexedTriangleList<TexVertex> SkinnedCube::get_textured_triangles() const
 {
     std::vector<TexVertex> tvertices;
     tvertices.reserve(m_vertices.size());
