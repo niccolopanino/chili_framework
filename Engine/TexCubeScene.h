@@ -6,7 +6,8 @@
 class TexCubeScene : public Scene
 {
 public:
-    TexCubeScene() = default;
+    TexCubeScene() : TexCubeScene(1.f) { }
+    TexCubeScene(float texdim);
     virtual void update(Keyboard &kbd, Mouse &mouse, float dt) override;
     virtual void draw(Graphics &gfx) const override;
 private:

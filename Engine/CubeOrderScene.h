@@ -8,7 +8,7 @@
 class CubeOrderScene : public Scene
 {
 public:
-    CubeOrderScene() = default;
+    CubeOrderScene() : Scene("Dual Cube Nasty Draw Order") { }
     virtual void update(Keyboard &kbd, Mouse &mouse, float dt) override;
     virtual void draw(Graphics &gfx) const override;
 private:

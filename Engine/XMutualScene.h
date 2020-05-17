@@ -6,7 +6,7 @@
 class XMutualScene : public Scene
 {
 public:
-    XMutualScene() = default;
+    XMutualScene() : Scene("Weird X Shape Self Mutual Intersecting Planes Bullshit") { }
     virtual void update(Keyboard & kbd, Mouse & mouse, float dt) override;
     virtual void draw(Graphics & gfx) const override;
 private:

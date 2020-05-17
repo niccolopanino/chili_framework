@@ -20,6 +20,7 @@
  ******************************************************************************************/
 #include "MainWindow.h"
 #include "Game.h"
+#include <sstream>
 #include "SolidCubeScene.h"
 #include "CubeOrderScene.h"
 #include "ConcaHexScene.h"
@@ -36,8 +37,11 @@ Game::Game(MainWindow &wnd) : m_wnd(wnd), m_gfx(wnd)
     m_scenes.push_back(std::make_unique<ConcaHexWireScene>());
     m_scenes.push_back(std::make_unique<XMutualScene>());
     m_scenes.push_back(std::make_unique<TexCubeScene>());
-    m_scenes.push_back(std::make_unique<TexWrapCubeScene>());
+    m_scenes.push_back(std::make_unique<TexCubeScene>(2.f));
+    m_scenes.push_back(std::make_unique<TexWrapCubeScene>(2.f));
+    m_scenes.push_back(std::make_unique<TexWrapCubeScene>(6.f));
     m_cur_scene = m_scenes.begin();
+    output_scene_name();
 }
 
 void Game::go()
@@ -56,6 +60,8 @@ void Game::update_model()
         const auto e = m_wnd.m_kbd.read_key();
         if (e.get_code() == VK_TAB && e.is_press())
             cycle_scenes();
+        else if (e.get_code() == VK_ESCAPE && e.is_press())
+            m_wnd.kill();
     }
     // update scene
     (*m_cur_scene)->update(m_wnd.m_kbd, m_wnd.m_mouse, dt);
@@ -65,6 +71,17 @@ void Game::cycle_scenes()
 {
     if (++m_cur_scene == m_scenes.end())
         m_cur_scene = m_scenes.begin();
+    output_scene_name();
+}
+
+void Game::output_scene_name() const
+{
+    std::stringstream ssm;
+    const std::string stars((*m_cur_scene)->get_name().size() + 4, '*');
+    ssm << stars << std::endl
+        << "* " << (*m_cur_scene)->get_name() << " *" << std::endl
+        << stars << std::endl;
+    OutputDebugStringA(ssm.str().c_str());
 }
 
 void Game::compose_frame()

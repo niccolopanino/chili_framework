@@ -8,7 +8,7 @@
 class ConcaHexScene : public Scene
 {
 public:
-    ConcaHexScene() = default;
+    ConcaHexScene() : Scene("Concave Hexahedron Nasty Draw Order") { }
     virtual void update(Keyboard & kbd, Mouse & mouse, float dt) override;
     virtual void draw(Graphics & gfx) const override;
 private:

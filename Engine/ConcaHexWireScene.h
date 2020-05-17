@@ -8,7 +8,7 @@
 class ConcaHexWireScene : public Scene
 {
 public:
-    ConcaHexWireScene() = default;
+    ConcaHexWireScene() : Scene("Concave Hexahedron Filled Wireframe") { }
     virtual void update(Keyboard &kbd, Mouse &mouse, float dt) override;
     virtual void draw(Graphics &gfx) const override;
 private:

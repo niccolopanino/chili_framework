@@ -1,6 +1,11 @@
 #include "TexCubeScene.h"
 #include "Mat3.h"
 
+TexCubeScene::TexCubeScene(float texdim) :
+    m_cube(1.f, texdim),
+    Scene("Textured Cube Butthole of Sauron Clamped Dim: " + std::to_string(texdim))
+{ }
+
 void TexCubeScene::update(Keyboard &kbd, Mouse &mouse, float dt)
 {
     if (kbd.is_key_pressed('Q'))
