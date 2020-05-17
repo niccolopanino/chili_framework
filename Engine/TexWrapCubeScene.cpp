@@ -2,8 +2,14 @@
 #include "Mat3.h"
 
 TexWrapCubeScene::TexWrapCubeScene(float texdim) :
+    TexWrapCubeScene(L"resources/img/sauron-bhole-100x100.png", texdim)
+{ }
+
+TexWrapCubeScene::TexWrapCubeScene(const std::wstring &texname, float texdim) :
+    m_sb_tex(Surface::from_file(texname)),
     m_cube(1.f, texdim),
-    Scene("Textured Cube Butthole of Sauron Wrapping Dim: " + std::to_string(texdim))
+    Scene("Textured Cube " + std::string(texname.begin(), texname.end())
+        + " Wrapping Dim: " + std::to_string(texdim))
 { }
 
 void TexWrapCubeScene::update(Keyboard &kbd, Mouse &mouse, float dt)

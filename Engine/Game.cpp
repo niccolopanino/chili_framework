@@ -43,6 +43,7 @@ Game::Game(MainWindow &wnd) : m_wnd(wnd), m_gfx(wnd)
     m_scenes.push_back(std::make_unique<TexCubeScene>(2.f));
     m_scenes.push_back(std::make_unique<TexWrapCubeScene>(2.f));
     m_scenes.push_back(std::make_unique<TexWrapCubeScene>(6.f));
+    m_scenes.push_back(std::make_unique<TexWrapCubeScene>(L"resources/img/wood.jpg", 2.f));
     m_scenes.push_back(std::make_unique<FoldedCubeScene>());
     m_scenes.push_back(std::make_unique<WrapFoldedCubeScene>());
     m_scenes.push_back(std::make_unique<SkinnedCubeScene>(L"resources/img/dice_skin.png"));
