@@ -59,7 +59,12 @@ void Game::update_model()
     while (!m_wnd.m_kbd.is_key_empty()) {
         const auto e = m_wnd.m_kbd.read_key();
         if (e.get_code() == VK_TAB && e.is_press())
-            cycle_scenes();
+        {
+            if (m_wnd.m_kbd.is_key_pressed(VK_SHIFT))
+                reverse_cycle_scenes();
+            else
+                cycle_scenes();
+        }
         else if (e.get_code() == VK_ESCAPE && e.is_press())
             m_wnd.kill();
     }
@@ -71,6 +76,15 @@ void Game::cycle_scenes()
 {
     if (++m_cur_scene == m_scenes.end())
         m_cur_scene = m_scenes.begin();
+    output_scene_name();
+}
+
+void Game::reverse_cycle_scenes()
+{
+    if (m_cur_scene == m_scenes.begin())
+        m_cur_scene = m_scenes.end() - 1;
+    else
+        --m_cur_scene;
     output_scene_name();
 }
 

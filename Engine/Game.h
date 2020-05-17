@@ -37,6 +37,7 @@ private:
     /********************************/
     /*  User Functions              */
     void cycle_scenes();
+    void reverse_cycle_scenes();
     void output_scene_name() const;
     /********************************/
 private:
