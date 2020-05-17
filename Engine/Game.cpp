@@ -63,7 +63,7 @@ void Game::go()
 
 void Game::update_model()
 {
-    const float dt = 1.f / 60.f;
+    const float dt = m_ft.mark();
     // cycle through scenes when tab is pressed
     while (!m_wnd.m_kbd.is_key_empty()) {
         const auto e = m_wnd.m_kbd.read_key();

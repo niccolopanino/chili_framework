@@ -23,6 +23,7 @@
 #include <memory>
 #include <vector>
 #include "Scene.h"
+#include "FrameTimer.h"
 
 class Game
 {
@@ -45,6 +46,7 @@ private:
     Graphics m_gfx;
     /********************************/
     /*  User Variables              */
+    FrameTimer m_ft;
     std::vector<std::unique_ptr<Scene>> m_scenes;
     std::vector<std::unique_ptr<Scene>>::iterator m_cur_scene;
     /********************************/
