@@ -477,17 +477,14 @@ void Graphics::draw_flat_bottom_triangle(const Vec2f &v1, const Vec2f &v2, const
     }
 }
 
-void Graphics::draw_textured_flat_top_triangle(const TexVertex &v1, const TexVertex &v2,
-    const TexVertex &v3, const Surface &tex)
+void Graphics::draw_textured_flat_triangle(
+    const TexVertex &v1, const TexVertex &v2, const TexVertex &v3,
+    const Surface &tex,
+    const TexVertex &dv1, const TexVertex &dv2,
+    TexVertex &itp_edge2)
 {
-    // calculate dvertex / dy
-    const float ydelta = v3.m_pos.m_y - v1.m_pos.m_y;
-    const TexVertex dv1 = (v3 - v1) / ydelta;
-    const TexVertex dv2 = (v3 - v2) / ydelta;
-
-    // create edge interpolants
+    // create edge interpolant for left edge (always v1)
     TexVertex itp_edge1 = v1;
-    TexVertex itp_edge2 = v2;
 
     // calculate start and end scanlines (the scanline AFTER the last line drawn)
     const int ystart = (int)ceil(v1.m_pos.m_y - .5f);
@@ -528,6 +525,21 @@ void Graphics::draw_textured_flat_top_triangle(const TexVertex &v1, const TexVer
     }
 }
 
+void Graphics::draw_textured_flat_top_triangle(const TexVertex &v1, const TexVertex &v2,
+    const TexVertex &v3, const Surface &tex)
+{
+    // calculate dvertex / dy
+    const float ydelta = v3.m_pos.m_y - v1.m_pos.m_y;
+    const TexVertex dv1 = (v3 - v1) / ydelta;
+    const TexVertex dv2 = (v3 - v2) / ydelta;
+
+    // create right edge interpolant
+    TexVertex itp_edge2 = v2;
+
+    // call the flat triangle render routine
+    draw_textured_flat_triangle(v1, v2, v3, tex, dv1, dv2, itp_edge2);
+}
+
 void Graphics::draw_textured_flat_bottom_triangle(const TexVertex &v1, const TexVertex &v2,
     const TexVertex &v3, const Surface &tex)
 {
@@ -537,46 +549,10 @@ void Graphics::draw_textured_flat_bottom_triangle(const TexVertex &v1, const Tex
     const TexVertex dv2 = (v3 - v1) / ydelta;
 
     // create edge interpolants
-    TexVertex itp_edge1 = v1;
     TexVertex itp_edge2 = v1;
 
-    // calculate start and end scanlines (the scanline AFTER the last line drawn)
-    const int ystart = (int)ceil(v1.m_pos.m_y - .5f);
-    const int yend = (int)ceil(v3.m_pos.m_y - .5f);
-
-    // do interpolant prestep
-    itp_edge1 += dv1 * (float(ystart) + .5f - v1.m_pos.m_y);
-    itp_edge2 += dv2 * (float(ystart) + .5f - v1.m_pos.m_y);
-
-    // init tex width / heigth and clamp values
-    const float tex_width = float(tex.get_width());
-    const float tex_height = float(tex.get_height());
-    const float tex_clamp_x = tex_width - 1.f;
-    const float tex_clamp_y = tex_height - 1.f;
-
-    for (int y = ystart; y < yend; y++, itp_edge1 += dv1, itp_edge2 += dv2)
-    {
-        // calculate start and end pixels (the pixel AFTER the last pixel drawn)
-        const int xstart = (int)ceil(itp_edge1.m_pos.m_x - .5f);
-        const int xend = (int)ceil(itp_edge2.m_pos.m_x - .5f);
-
-        // calculate scanline dtexcoord / dx
-        const Vec2f d_tc_line = (itp_edge2.m_tc - itp_edge1.m_tc)
-            / (itp_edge2.m_pos.m_x - itp_edge1.m_pos.m_x);
-
-        // create scanline tex coord interpolant and prestep
-        Vec2f itp_tc_line = itp_edge1.m_tc
-            + d_tc_line * (float(xstart) + .5f - itp_edge1.m_pos.m_x);
-
-        for (int x = xstart; x < xend; x++, itp_tc_line += d_tc_line) {
-            put_pixel(x, y, tex.get_pixel(
-                int(std::min(itp_tc_line.m_x * tex_width, tex_clamp_x)),
-                int(std::min(itp_tc_line.m_y * tex_height, tex_clamp_y))
-            ));
-            // we need std::min because with floating point errors
-            // we could read beyond the texture edge
-        }
-    }
+    // call the flat triangle render routine
+    draw_textured_flat_triangle(v1, v2, v3, tex, dv1, dv2, itp_edge2);
 }
 
 //////////////////////////////////////////////////
