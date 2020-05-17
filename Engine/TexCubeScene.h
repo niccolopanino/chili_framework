@@ -12,7 +12,7 @@ public:
     virtual void draw(Graphics &gfx) const override;
 private:
     PubeScreenTransformer m_pms;
-    Cube m_cube = Cube(1.f);
+    Cube m_cube;
     Surface m_sb_tex = Surface::from_file(L"resources/img/sauron-bhole-100x100.png");
     static constexpr float k_dtheta = PI;
     float m_offset_z = 2.f;
