@@ -1,22 +1,22 @@
 #include "Cube.h"
 
-Cube::Cube(float size)
+Cube::Cube(float size, float texdim)
 {
     const float side = size / 2.f;
     m_vertices.emplace_back(-side, -side, -side);
-    m_tcs.emplace_back(0.f, 1.f);
+    m_tcs.emplace_back(0.f, texdim);
     m_vertices.emplace_back( side, -side, -side);
-    m_tcs.emplace_back(1.f, 1.f);
+    m_tcs.emplace_back(texdim, texdim);
     m_vertices.emplace_back(-side,  side, -side);
     m_tcs.emplace_back(0.f, 0.f);
     m_vertices.emplace_back( side,  side, -side);
-    m_tcs.emplace_back(1.f, 0.f);
+    m_tcs.emplace_back(texdim, 0.f);
     m_vertices.emplace_back(-side, -side,  side);
-    m_tcs.emplace_back(1.f, 1.f);
+    m_tcs.emplace_back(texdim, texdim);
     m_vertices.emplace_back( side, -side,  side);
-    m_tcs.emplace_back(0.f, 1.f);
+    m_tcs.emplace_back(0.f, texdim);
     m_vertices.emplace_back(-side,  side,  side);
-    m_tcs.emplace_back(1.f, 0.f);
+    m_tcs.emplace_back(texdim, 0.f);
     m_vertices.emplace_back( side,  side,  side);
     m_tcs.emplace_back(0.f, 0.f);
 }

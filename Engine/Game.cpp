@@ -26,6 +26,7 @@
 #include "ConcaHexWireScene.h"
 #include "XMutualScene.h"
 #include "TexCubeScene.h"
+#include "TexWrapCubeScene.h"
 
 Game::Game(MainWindow &wnd) : m_wnd(wnd), m_gfx(wnd)
 {
@@ -35,6 +36,7 @@ Game::Game(MainWindow &wnd) : m_wnd(wnd), m_gfx(wnd)
     m_scenes.push_back(std::make_unique<ConcaHexWireScene>());
     m_scenes.push_back(std::make_unique<XMutualScene>());
     m_scenes.push_back(std::make_unique<TexCubeScene>());
+    m_scenes.push_back(std::make_unique<TexWrapCubeScene>());
     m_cur_scene = m_scenes.begin();
 }
 

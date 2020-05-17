@@ -8,7 +8,7 @@
 class Cube
 {
 public:
-    Cube(float size);
+    Cube(float size, float texdim = 1.f);
     IndexedLineList get_lines() const;
     IndexedTriangleList<Vec3f> get_triangles() const;
     IndexedTriangleList<TexVertex> get_textured_triangles() const;

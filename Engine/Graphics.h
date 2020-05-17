@@ -66,6 +66,8 @@ public:
     void draw_triangle(const Vec2f &v1, const Vec2f &v2, const Vec2f &v3, Color c);
     void draw_textured_triangle(const TexVertex &v1, const TexVertex &v2, const TexVertex &v3,
         const Surface &tex);
+    void draw_texture_wrapped_triangle(const TexVertex &v1, const TexVertex &v2,
+        const TexVertex &v3, const Surface &tex);
 private:
     void draw_flat_top_triangle(const Vec2f &v1, const Vec2f &v2, const Vec2f &v3, Color c);
     void draw_flat_bottom_triangle(const Vec2f &v1, const Vec2f &v2, const Vec2f &v3, Color c);
@@ -75,6 +77,13 @@ private:
     void draw_textured_flat_top_triangle(const TexVertex &v1, const TexVertex &v2,
         const TexVertex &v3, const Surface &tex);
     void draw_textured_flat_bottom_triangle(const TexVertex &v1, const TexVertex &v2,
+        const TexVertex &v3, const Surface &tex);
+    void draw_texture_wrapped_flat_triangle(const TexVertex &v1, const TexVertex &v2,
+        const TexVertex &v3, const Surface &tex, const TexVertex &dv1, const TexVertex &dv2,
+        TexVertex &itp_edge2);
+    void draw_texture_wrapped_flat_top_triangle(const TexVertex &v1, const TexVertex &v2,
+        const TexVertex &v3, const Surface &tex);
+    void draw_texture_wrapped_flat_bottom_triangle(const TexVertex &v1, const TexVertex &v2,
         const TexVertex &v3, const Surface &tex);
 private:
     Microsoft::WRL::ComPtr<IDXGISwapChain>              m_swapchain;

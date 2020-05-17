@@ -168,6 +168,7 @@
     <ClInclude Include="Surface.h" />
     <ClInclude Include="TexCubeScene.h" />
     <ClInclude Include="TexVertex.h" />
+    <ClInclude Include="TexWrapCubeScene.h" />
     <ClInclude Include="Vec2.h" />
     <ClInclude Include="Vec3.h" />
     <ClInclude Include="XMutualScene.h" />
@@ -197,6 +198,7 @@
     <ClCompile Include="Surface.cpp" />
     <ClCompile Include="TexCubeScene.cpp" />
     <ClCompile Include="TexVertex.cpp" />
+    <ClCompile Include="TexWrapCubeScene.cpp" />
     <ClCompile Include="XMutualScene.cpp" />
     <ClCompile Include="XQuads.cpp" />
   </ItemGroup>
