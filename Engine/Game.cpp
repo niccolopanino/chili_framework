@@ -29,6 +29,7 @@
 #include "TexCubeScene.h"
 #include "TexWrapCubeScene.h"
 #include "FoldedCubeScene.h"
+#include "WrapFoldedCubeScene.h"
 
 Game::Game(MainWindow &wnd) : m_wnd(wnd), m_gfx(wnd)
 {
@@ -42,6 +43,7 @@ Game::Game(MainWindow &wnd) : m_wnd(wnd), m_gfx(wnd)
     m_scenes.push_back(std::make_unique<TexWrapCubeScene>(2.f));
     m_scenes.push_back(std::make_unique<TexWrapCubeScene>(6.f));
     m_scenes.push_back(std::make_unique<FoldedCubeScene>());
+    m_scenes.push_back(std::make_unique<WrapFoldedCubeScene>());
     m_cur_scene = m_scenes.begin();
     output_scene_name();
 }

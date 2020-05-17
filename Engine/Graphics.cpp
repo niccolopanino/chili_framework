@@ -636,10 +636,11 @@ void Graphics::draw_texture_wrapped_flat_triangle(
             + d_tc_line * (float(xstart) + .5f - itp_edge1.m_pos.m_x);
 
         for (int x = xstart; x < xend; x++, itp_tc_line += d_tc_line) {
-            put_pixel(x, y, tex.get_pixel(
-                int(std::fmod(itp_tc_line.m_x * tex_width, tex_clamp_x)),
-                int(std::fmod(itp_tc_line.m_y * tex_height, tex_clamp_y))
-            ));
+            float u = std::fmod(itp_tc_line.m_x * tex_width, tex_clamp_x);
+            u = (u < 0.f) ? u + tex_clamp_x : u;
+            float v = std::fmod(itp_tc_line.m_y * tex_height, tex_clamp_y);
+            v = (v < 0.f) ? v + tex_clamp_y : v;
+            put_pixel(x, y, tex.get_pixel(unsigned int(u), unsigned int(v)));
             // we need std::min because with floating point errors
             // we could read beyond the texture edge
         }
