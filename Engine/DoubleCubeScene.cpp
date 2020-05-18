@@ -39,6 +39,7 @@ void DoubleCubeScene::update(Keyboard &kbd, Mouse &mouse, float dt)
 
 void DoubleCubeScene::draw()
 {
+    m_pipeline.begin_frame();
     // draw fixed cube
     {
         // generate rotation matrix from euler angles, translation from offset

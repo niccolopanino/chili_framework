@@ -32,6 +32,7 @@ void CubeSkinScene::update(Keyboard &kbd, Mouse &mouse, float dt)
 
 void CubeSkinScene::draw()
 {
+    m_pipeline.begin_frame();
     // generate rotation matrix from euler angles, translation from offset
     const Mat3f rot = Mat3f::rotate_x(m_theta_x)
         * Mat3f::rotate_y(m_theta_y)

@@ -4,6 +4,7 @@
 #include "Triangle.h"
 #include "IndexedTriangleList.h"
 #include "PubeScreenTransformer.h"
+#include "ZBuffer.h"
 #include "Mat3.h"
 #include "Vec3.h"
 #include "ChiliMath.h"
@@ -18,10 +19,11 @@ public:
     // vertex type used for geometry and throughout pipeline
     typedef typename E::Vertex Vertex;
 public:
-    Pipeline(Graphics &gfx) : m_gfx(gfx) { }
+    Pipeline(Graphics &gfx);
     void draw(IndexedTriangleList<Vertex> &tri_list);
     void bind_rotation(const Mat3f &rot);
     void bind_translation(const Vec3f &trans);
+    void begin_frame();
 private:
     // vertex processing function
     // transforms vertices and then passes vertex & index lists to triangle assembler
@@ -53,7 +55,7 @@ private:
     void draw_flat_bottom_triangle(const Vertex &itp0, const Vertex &itp1, const Vertex &itp2);
     // does post processing common to both flat top and flat bottom triangles
     // scan over triangle in screen space, interpolate attributes,
-    // invoke pixel shader and write pixel to screen
+    // depth cull, invoke pixel shader and write pixel to screen
     void draw_flat_triangle(const Vertex &itp0, const Vertex &itp1, const Vertex &itp2,
         const Vertex &dv0, const Vertex &dv1, Vertex itp_edge1);
 public:
@@ -61,9 +63,15 @@ public:
 private:
     Graphics &m_gfx;
     PubeScreenTransformer m_pms;
+    ZBuffer m_zb;
     Mat3f m_rot = Mat3f::identity();
     Vec3f m_trans;
 };
+
+template<typename E>
+inline Pipeline<E>::Pipeline(Graphics &gfx) :
+    m_gfx(gfx), m_zb(Graphics::k_screen_width, Graphics::k_screen_height)
+{ }
 
 template<typename E>
 inline void Pipeline<E>::draw(IndexedTriangleList<Vertex> &tri_list)
@@ -81,6 +89,12 @@ template<typename E>
 void Pipeline<E>::bind_translation(const Vec3f &trans)
 {
     m_trans = trans;
+}
+
+template<typename E>
+inline void Pipeline<E>::begin_frame()
+{
+    m_zb.clear();
 }
 
 template<typename E>
@@ -252,13 +266,17 @@ void Pipeline<E>::draw_flat_triangle(const Vertex &itp0, const Vertex &itp1, con
         for (int x = xstart; x < xend; x++, iline += diline) {
             // recover interpolated z from interpolated 1/z
             const float z = 1.f / iline.m_pos.m_z;
-            // recover interpolated attributes
-            // (wasted effort in multiplying pos (x / y / z) here, but
-            // not a huge deal, not worth the code complication to fix)
-            const auto attr = iline * z;
-            // invoke pixel shader with interpolated vertex attributes
-            /// and use result to set the pixel color on the screen
-            m_gfx.put_pixel(x, y, m_effect.m_ps(attr));
+            // do z rejection / update of z buffer
+            // skip shading step if z rejected (early z)
+            if (m_zb.test_and_set(x, y, z)) {
+                // recover interpolated attributes
+                // (wasted effort in multiplying pos (x / y / z) here, but
+                // not a huge deal, not worth the code complication to fix)
+                const auto attr = iline * z;
+                // invoke pixel shader with interpolated vertex attributes
+                /// and use result to set the pixel color on the screen
+                m_gfx.put_pixel(x, y, m_effect.m_ps(attr));
+            }
         }
     }
 }

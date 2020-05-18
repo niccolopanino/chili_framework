@@ -172,6 +172,7 @@
     <ClInclude Include="Vec2.h" />
     <ClInclude Include="Vec3.h" />
     <ClInclude Include="VertexColorEffect.h" />
+    <ClInclude Include="ZBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ChiliException.cpp" />
@@ -197,6 +198,7 @@
     <ClCompile Include="Surface.cpp" />
     <ClCompile Include="TextureEffect.cpp" />
     <ClCompile Include="VertexColorEffect.cpp" />
+    <ClCompile Include="ZBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="FramebufferPS.hlsl">
