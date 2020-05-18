@@ -22,7 +22,7 @@ public:
     constexpr unsigned char get_a() const { return get_x(); }
     constexpr unsigned char get_r() const { return (m_dword >> 16u) & 0xFFu; }
     constexpr unsigned char get_g() const { return (m_dword >> 8u) & 0xFFu; }
-    constexpr unsigned char get_b() const { return (m_dword >> 8u) & 0xFFu; }
+    constexpr unsigned char get_b() const { return m_dword & 0xFFu; }
     void set_x(unsigned char x);
     void set_a(unsigned char a);
     void set_r(unsigned char r);
