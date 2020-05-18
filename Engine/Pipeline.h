@@ -128,9 +128,9 @@ template<typename E>
 void Pipeline<E>::post_process_triangle_vertices(Triangle<Vertex> &triangle)
 {
     // perspective divide and screen transform for all 3 vertices
-    m_pms.transform(triangle.v0.m_pos);
-    m_pms.transform(triangle.v1.m_pos);
-    m_pms.transform(triangle.v2.m_pos);
+    m_pms.transform(triangle.v0);
+    m_pms.transform(triangle.v1);
+    m_pms.transform(triangle.v2);
     // draw the triangle
     draw_triangle(triangle);
 }
@@ -250,8 +250,15 @@ void Pipeline<E>::draw_flat_triangle(const Vertex &itp0, const Vertex &itp1, con
         iline += diline * (float(xstart) + .5f - itp_edge0.m_pos.m_x);
 
         for (int x = xstart; x < xend; x++, iline += diline) {
-            // invoke pixel shader and write resulting color value
-            m_gfx.put_pixel(x, y, m_effect.m_ps(iline));
+            // recover interpolated z from interpolated 1/z
+            const float z = 1.f / iline.m_pos.m_z;
+            // recover interpolated attributes
+            // (wasted effort in multiplying pos (x / y / z) here, but
+            // not a huge deal, not worth the code complication to fix)
+            const auto attr = iline * z;
+            // invoke pixel shader with interpolated vertex attributes
+            /// and use result to set the pixel color on the screen
+            m_gfx.put_pixel(x, y, m_effect.m_ps(attr));
         }
     }
 }
