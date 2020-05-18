@@ -27,7 +27,6 @@
 #include "Surface.h"
 #include "Colors.h"
 #include "Vec2.h"
-#include "TexVertex.h"
 
 #define CHILI_GFX_EXCEPTION(hr, note) Graphics::Exception(hr, note, _CRT_WIDE(__FILE__), __LINE__)
 
@@ -63,28 +62,6 @@ public:
     void put_pixel(int x, int y, Color c);
     void draw_line(const Vec2f &v1, const Vec2f &v2, Color c);
     void draw_line(float x1, float y1, float x2, float y2, Color c);
-    void draw_triangle(const Vec2f &v1, const Vec2f &v2, const Vec2f &v3, Color c);
-    void draw_textured_triangle(const TexVertex &v1, const TexVertex &v2, const TexVertex &v3,
-        const Surface &tex);
-    void draw_texture_wrapped_triangle(const TexVertex &v1, const TexVertex &v2,
-        const TexVertex &v3, const Surface &tex);
-private:
-    void draw_flat_top_triangle(const Vec2f &v1, const Vec2f &v2, const Vec2f &v3, Color c);
-    void draw_flat_bottom_triangle(const Vec2f &v1, const Vec2f &v2, const Vec2f &v3, Color c);
-    void draw_textured_flat_triangle(const TexVertex &v1, const TexVertex &v2,
-        const TexVertex &v3, const Surface &tex, const TexVertex &dv1, const TexVertex &dv2,
-        TexVertex &itp_edge2);
-    void draw_textured_flat_top_triangle(const TexVertex &v1, const TexVertex &v2,
-        const TexVertex &v3, const Surface &tex);
-    void draw_textured_flat_bottom_triangle(const TexVertex &v1, const TexVertex &v2,
-        const TexVertex &v3, const Surface &tex);
-    void draw_texture_wrapped_flat_triangle(const TexVertex &v1, const TexVertex &v2,
-        const TexVertex &v3, const Surface &tex, const TexVertex &dv1, const TexVertex &dv2,
-        TexVertex &itp_edge2);
-    void draw_texture_wrapped_flat_top_triangle(const TexVertex &v1, const TexVertex &v2,
-        const TexVertex &v3, const Surface &tex);
-    void draw_texture_wrapped_flat_bottom_triangle(const TexVertex &v1, const TexVertex &v2,
-        const TexVertex &v3, const Surface &tex);
 private:
     Microsoft::WRL::ComPtr<IDXGISwapChain>              m_swapchain;
     Microsoft::WRL::ComPtr<ID3D11Device>                m_device;

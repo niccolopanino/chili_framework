@@ -33,7 +33,6 @@ public:
     T len() const { return sqrt(len_sq()); }
     Vec3 get_normalized() const;
     Vec3 &normalize() { return *this = get_normalized(); }
-    Vec3 interpolate(const Vec3 &dst, T alpha) const { return *this + (dst - *this) * alpha; }
     static T dot(const Vec3 &v1, const Vec3 &v2);
     static Vec3 cross(const Vec3 &v1, const Vec3 &v2);
 public:
