@@ -1,11 +1,13 @@
 #include "CubeSkinScene.h"
+#include "Cube.h"
 #include "Mat3.h"
+#include "Vec3.h"
 
 CubeSkinScene::CubeSkinScene(Graphics &gfx, const std::wstring &filename) :
     m_it_list(Cube::get_skinned<Vertex>()), m_pipeline(gfx),
     Scene("Textured Cube skinned using texture: " + std::string(filename.begin(), filename.end()))
 {
-    m_pipeline.bind_texture(filename);
+    m_pipeline.m_effect.m_ps.bind_texture(filename);
 }
 
 void CubeSkinScene::update(Keyboard &kbd, Mouse &mouse, float dt)

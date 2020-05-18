@@ -108,6 +108,9 @@
     <ClInclude Include="Pipeline.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TextureEffect.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DXErr.cpp">
@@ -161,7 +164,7 @@
     <ClCompile Include="CubeSkinScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Pipeline.cpp">
+    <ClCompile Include="TextureEffect.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
