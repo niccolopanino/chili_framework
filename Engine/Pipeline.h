@@ -91,7 +91,7 @@ void Pipeline<E>::process_vertices(const std::vector<Vertex> &vertices,
     std::vector<Vertex> out_vertices;
     // transform vertices using matrix + vector
     for (const auto &v : vertices)
-        out_vertices.emplace_back(v.m_pos * m_rot + m_trans, v.m_tc);
+        out_vertices.emplace_back(v.m_pos * m_rot + m_trans, v);
     // assemble triangles from stream of indices and vertices
     assemble_triangles(out_vertices, indices);
 }

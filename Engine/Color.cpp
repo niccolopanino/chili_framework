@@ -1,5 +1,9 @@
 #include "Color.h"
 
+Color::Color(const Vec3f &cf) :
+    Color(unsigned char(cf.m_x), unsigned char(cf.m_y), unsigned char(cf.m_z))
+{ }
+
 Color &Color::operator=(Color color)
 {
     m_dword = color.m_dword;

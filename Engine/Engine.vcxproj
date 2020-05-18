@@ -144,6 +144,7 @@
     <ClInclude Include="COMInitializer.h" />
     <ClInclude Include="Cube.h" />
     <ClInclude Include="CubeSkinScene.h" />
+    <ClInclude Include="CubeVertexColorScene.h" />
     <ClInclude Include="DXErr.h" />
     <ClInclude Include="FrameTimer.h" />
     <ClInclude Include="Game.h" />
@@ -167,12 +168,14 @@
     <ClInclude Include="Triangle.h" />
     <ClInclude Include="Vec2.h" />
     <ClInclude Include="Vec3.h" />
+    <ClInclude Include="VertexColorEffect.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ChiliException.cpp" />
     <ClCompile Include="Color.cpp" />
     <ClCompile Include="COMInitializer.cpp" />
     <ClCompile Include="CubeSkinScene.cpp" />
+    <ClCompile Include="CubeVertexColorScene.cpp" />
     <ClCompile Include="DXErr.cpp" />
     <ClCompile Include="FrameTimer.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -187,6 +190,7 @@
     <ClCompile Include="SoundEffect.cpp" />
     <ClCompile Include="Surface.cpp" />
     <ClCompile Include="TextureEffect.cpp" />
+    <ClCompile Include="VertexColorEffect.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="FramebufferPS.hlsl">

@@ -1,16 +1,24 @@
-#include "CubeSkinScene.h"
+#include "CubeVertexColorScene.h"
 #include "Cube.h"
 #include "Mat3.h"
 #include "Vec3.h"
+#include "Colors.h"
 
-CubeSkinScene::CubeSkinScene(Graphics &gfx, const std::wstring &filename) :
-    m_it_list(Cube::get_skinned<Vertex>()), m_pipeline(gfx),
-    Scene("Textured cube skinned using texture: " + std::string(filename.begin(), filename.end()))
+CubeVertexColorScene::CubeVertexColorScene(Graphics &gfx) :
+    m_it_list(Cube::get_plain<Vertex>()), m_pipeline(gfx),
+    Scene("Colored cube vertex gradient scene")
 {
-    m_pipeline.m_effect.m_ps.bind_texture(filename);
+    m_it_list.m_vertices[0].m_color = Vec3f(Colors::Red);
+    m_it_list.m_vertices[1].m_color = Vec3f(Colors::Green);
+    m_it_list.m_vertices[2].m_color = Vec3f(Colors::Blue);
+    m_it_list.m_vertices[3].m_color = Vec3f(Colors::Yellow);
+    m_it_list.m_vertices[4].m_color = Vec3f(Colors::Cyan);
+    m_it_list.m_vertices[5].m_color = Vec3f(Colors::Magenta);
+    m_it_list.m_vertices[6].m_color = Vec3f(Colors::White);
+    m_it_list.m_vertices[7].m_color = Vec3f(Colors::Black);
 }
 
-void CubeSkinScene::update(Keyboard &kbd, Mouse &mouse, float dt)
+void CubeVertexColorScene::update(Keyboard & kbd, Mouse & mouse, float dt)
 {
     if (kbd.is_key_pressed('Q'))
         m_theta_x = wrap_angle(m_theta_x + k_dtheta * dt);
@@ -30,7 +38,7 @@ void CubeSkinScene::update(Keyboard &kbd, Mouse &mouse, float dt)
         m_offset_z -= 2.f * dt;
 }
 
-void CubeSkinScene::draw()
+void CubeVertexColorScene::draw()
 {
     // generate rotation matrix from euler angles, translation from offset
     const Mat3f rot = Mat3f::rotate_x(m_theta_x)

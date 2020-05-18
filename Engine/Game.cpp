@@ -21,11 +21,13 @@
 #include "MainWindow.h"
 #include "Game.h"
 #include "CubeSkinScene.h"
+#include "CubeVertexColorScene.h"
 #include <sstream>
 
 Game::Game(MainWindow &wnd) : m_wnd(wnd), m_gfx(wnd)
 {
     m_scenes.push_back(std::make_unique<CubeSkinScene>(m_gfx, L"resources/img/office_skin.jpg"));
+    m_scenes.push_back(std::make_unique<CubeVertexColorScene>(m_gfx));
     m_cur_scene = m_scenes.begin();
     output_scene_name();
 }

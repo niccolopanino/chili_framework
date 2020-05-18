@@ -1,4 +1,5 @@
 #pragma once
+#include "Vec3.h"
 
 class Color
 {
@@ -15,14 +16,19 @@ public:
         m_dword((r << 16u) | (g << 8u) | b)
     { }
     constexpr Color(Color col, unsigned char x) : Color((x << 24u) | col.m_dword) { }
-    Color &operator =(Color color);
+    explicit Color(const Vec3f &cf);
+    Color &operator=(Color color);
     bool operator==(const Color &rhs) const;
     bool operator!=(const Color &rhs) const;
+    explicit operator Vec3f() const
+    {
+        return Vec3f(float(get_r()), float(get_g()), float(get_b()));
+    }
     constexpr unsigned char get_x() const { return m_dword >> 24u; }
     constexpr unsigned char get_a() const { return get_x(); }
     constexpr unsigned char get_r() const { return (m_dword >> 16u) & 0xFFu; }
     constexpr unsigned char get_g() const { return (m_dword >> 8u) & 0xFFu; }
-    constexpr unsigned char get_b() const { return (m_dword >> 8u) & 0xFFu; }
+    constexpr unsigned char get_b() const { return m_dword & 0xFFu; }
     void set_x(unsigned char x);
     void set_a(unsigned char a);
     void set_r(unsigned char r);
