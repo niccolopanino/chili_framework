@@ -9,6 +9,8 @@ public:
     template<typename V>
     static IndexedTriangleList<V> get_plain(float size = 1.f);
     template<typename V>
+    static IndexedTriangleList<V> get_plain_independent_faces(float size = 1.f);
+    template<typename V>
     static IndexedTriangleList<V> get_skinned(float size = 1.f);
 };
 
@@ -46,6 +48,60 @@ inline IndexedTriangleList<V> Cube::get_plain(float size)
             2, 4, 6,
             0, 1, 4,
             1, 5, 4
+        }
+    );
+}
+
+template<typename V>
+inline IndexedTriangleList<V> Cube::get_plain_independent_faces(float size)
+{
+    const float side = size / 2.f;
+
+    std::vector<Vec3f> positions;
+    positions.emplace_back(-side, -side, -side);
+    positions.emplace_back(side, -side, -side);
+    positions.emplace_back(-side, side, -side);
+    positions.emplace_back(side, side, -side);
+    positions.emplace_back(-side, -side, side);
+    positions.emplace_back(side, -side, side);
+    positions.emplace_back(-side, side, side);
+    positions.emplace_back(side, side, side);
+    positions.emplace_back(-side, -side, -side);
+    positions.emplace_back(-side, side, -side);
+    positions.emplace_back(-side, -side, side);
+    positions.emplace_back(-side, side, side);
+    positions.emplace_back(side, -side, -side);
+    positions.emplace_back(side, side, -side);
+    positions.emplace_back(side, -side, side);
+    positions.emplace_back(side, side, side);
+    positions.emplace_back(-side, -side, -side);
+    positions.emplace_back(side, -side, -side);
+    positions.emplace_back(-side, -side, side);
+    positions.emplace_back(side, -side, side);
+    positions.emplace_back(-side, side, -side);
+    positions.emplace_back(side, side, -side);
+    positions.emplace_back(-side, side, side);
+    positions.emplace_back(side, side, side);
+
+    std::vector<V> vertices(positions.size());
+    for (size_t i = 0; i < positions.size(); i++) {
+        vertices[i].m_pos = positions[i];
+    }
+
+    return IndexedTriangleList<V>(vertices,
+        {
+            0, 2, 1,
+            2, 3, 1,
+            4, 5, 7,
+            4, 7, 6,
+            8, 10, 9,
+            10, 11, 9,
+            12, 13, 15,
+            12, 15, 14,
+            16, 17, 18,
+            18, 17, 19,
+            20, 23, 21,
+            20, 22, 23
         }
     );
 }
