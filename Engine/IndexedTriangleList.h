@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <stdexcept>
 #include "tiny_obj_loader.h"
+#include "Miniball.h"
 #include "Vec3.h"
 
 template<typename T>
@@ -21,6 +22,8 @@ public:
         assert(m_indices.size() % 3 == 0);
     }
     static IndexedTriangleList<T> load(const std::string &filename);
+    void adjust_to_true_center();
+    float get_radius() const;
 public:
     std::vector<T> m_vertices;
     std::vector<size_t> m_indices;
@@ -87,4 +90,33 @@ inline IndexedTriangleList<T> IndexedTriangleList<T>::load(const std::string &fi
     }
 
     return itl;
+}
+
+template<typename T>
+inline void IndexedTriangleList<T>::adjust_to_true_center()
+{
+    // used to enable miniball to access vertex pos info
+    struct VertexAccessor
+    {
+        typedef std::vector<T>::const_iterator Pit;
+        typedef const float *Cit;
+        Cit operator()(Pit it) const { return &it->m_pos.m_x; }
+    };
+
+    // solve the minimum bounding sphere
+    Miniball::Miniball<VertexAccessor> mb(3, m_vertices.begin(), m_vertices.end());
+    // result is a pointer to float[3] (what a shitty fuckin interface)
+    const auto pc = mb.center();
+    const Vec3f center(*pc, *std::next(pc), *std::next(pc, 2));
+    // adjust all vertices so that center of minimal shere is at (0, 0)
+    for (auto &v : m_vertices)
+        v.m_pos -= center;
+}
+
+template<typename T>
+inline float IndexedTriangleList<T>::get_radius() const
+{
+    return std::max_element(m_vertices.begin(), m_vertices.end(),
+        [](const T &v0, const T &v1) { return v0.m_pos.len_sq() < v1.m_pos.len_sq(); }
+    )->m_pos.len();
 }

@@ -45,7 +45,6 @@ THE SOFTWARE.
 
 namespace tinyobj
 {
-
     // https://en.wikipedia.org/wiki/Wavefront_.obj_file says ...
     //
     //  -blendu on | off                       # set horizontal texture blending
@@ -354,7 +353,6 @@ namespace tinyobj
     void LoadMtl(std::map<std::string, int> *material_map,
         std::vector<material_t> *materials, std::istream *inStream,
         std::string *warning);
-
 }  // namespace tinyobj
 
 #endif  // TINY_OBJ_LOADER_H_
@@ -373,9 +371,7 @@ namespace tinyobj
 
 namespace tinyobj
 {
-
     MaterialReader::~MaterialReader() { }
-
 
     struct vertex_index
     {
@@ -1981,7 +1977,6 @@ namespace tinyobj
                         }
                         callback.group_cb(user_data, &names_out.at(0),
                             static_cast<int>(names_out.size()));
-
                     } else {
                         callback.group_cb(user_data, NULL, 0);
                     }

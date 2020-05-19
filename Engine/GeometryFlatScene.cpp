@@ -5,7 +5,10 @@
 
 GeometryFlatScene::GeometryFlatScene(Graphics &gfx, IndexedTriangleList<Vertex> itl) :
     m_it_list(std::move(itl)), m_pipeline(gfx), Scene("Flat geometry scene free mesh")
-{ }
+{
+    m_it_list.adjust_to_true_center();
+    m_offset_z = m_it_list.get_radius() * 1.6f;
+}
 
 void GeometryFlatScene::update(Keyboard & kbd, Mouse & mouse, float dt)
 {
