@@ -39,8 +39,8 @@ void CubeSkinScene::draw()
         * Mat3f::rotate_z(m_theta_z);
     const Vec3f trans = Vec3f(0.f, 0.f, m_offset_z);
     // set pipeline transform
-    m_pipeline.bind_rotation(rot);
-    m_pipeline.bind_translation(trans);
+    m_pipeline.m_effect.m_vs.bind_rotation(rot);
+    m_pipeline.m_effect.m_vs.bind_translation(trans);
     // render triangles
     m_pipeline.draw(m_it_list);
 }

@@ -1,6 +1,8 @@
 #pragma once
 #include "Vec3.h"
 #include "Colors.h"
+#include "DefaultVertexShader.h"
+
 class SolidEffect
 {
 public:
@@ -34,5 +36,8 @@ public:
         Color operator()(const I &input) const { return input.m_color; }
     };
 public:
+    typedef DefaultVertexShader<Vertex> VertexShader;
+public:
+    VertexShader m_vs;
     PixelShader m_ps;
 };
