@@ -111,7 +111,9 @@ inline IndexedTriangleList<V> Cube::get_plain_independent_faces(float size)
 template<typename V>
 inline IndexedTriangleList<V> Cube::get_plain_independent_faces_normals(float size)
 {
+    // first generate cube vertex positions (independent faces)
     auto cube = get_plain_independent_faces<V>(size);
+    // then for each vertex, add the normal (determined by inspection of cube)
     cube.m_vertices[0].m_n = { 0.f, 0.f, -1.f };
     cube.m_vertices[1].m_n = { 0.f, 0.f, -1.f };
     cube.m_vertices[2].m_n = { 0.f, 0.f, -1.f };

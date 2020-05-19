@@ -34,7 +34,9 @@ public:
     T len() const { return sqrt(len_sq()); }
     Vec3 get_normalized() const;
     Vec3 &normalize() { return *this = get_normalized(); }
+    // clamp to [0.0; 1.0]
     Vec3 get_saturated() const;
+    // clamp to [0.0; 1.0]
     Vec3 &saturate() { return *this = get_saturated(); }
     static T dot(const Vec3 &v1, const Vec3 &v2);
     static Vec3 cross(const Vec3 &v1, const Vec3 &v2);

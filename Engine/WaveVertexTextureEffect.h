@@ -85,8 +85,13 @@ public:
     private:
         Mat3f m_rot = Mat3f::identity();
         Vec3f m_trans;
+        // direction of travel of light rays
         Vec3f m_dir = Vec3f(0.f, 0.f, 1.f);
+        // this is the intensity if direct light from source
+        // white light so only need one channel to represent it
         float m_diff = 1.f;
+        // this is the intensity of indirect light that bounces off other obj in scene
+        // white light so only need one channel to represent it
         float m_amb = .15f;
     };
     // texture clamped pixel shader
@@ -112,9 +117,12 @@ public:
 template<typename I>
 inline Color WaveVertexTextureEffect::PixelShader::operator()(const I &input) const
 {
+    // lookup color in texture
     const Vec3f color = Vec3f(m_tex->get_pixel(
         (unsigned int)std::min(input.m_tc.m_x * m_tex_width + .5f, m_tex_clamp_x),
         (unsigned int)std::min(input.m_tc.m_y * m_tex_height + .5f, m_tex_clamp_y)
     ));
+    // use texture color as material to determine ratio / magnitude
+    // of the different color components diffuse reflected from triangle at this pt
     return Color(color * input.m_l);
 }

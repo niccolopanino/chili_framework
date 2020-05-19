@@ -70,21 +70,28 @@ inline IndexedTriangleList<T> IndexedTriangleList<T>::load(const std::string &fi
     }
 
     // extract index data
+    // obj file can contain multiple meshes, we assume just 1
     const auto &mesh = shapes[0].mesh;
+    // mesh contains a std::vector of num_face_vertices (uchar)
+    // and a flat std::vector of indices. if all faces are triangles
+    // then for any face f, the first index of that face is [f * 3n]
     itl.m_indices.reserve(mesh.indices.size());
     for (size_t f = 0; f < mesh.num_face_vertices.size(); f++)
     {
+        // make sure there are no non-triangle faces
         if (mesh.num_face_vertices[f] != 3u) {
             std::stringstream ssr;
             ssr << "LoadObj error face #" << f << " has "
                 << mesh.num_face_vertices[f] << " vertices";
             throw std::runtime_error(ssr.str().c_str());
         }
+        // load set of 3 indices for each face into OUR index std::vector
         for (size_t vn = 0; vn < 3u; vn++) {
             const auto idx = mesh.indices[f * 3u + vn];
             itl.m_indices.push_back(size_t(idx.vertex_index));
         }
         // reverse winding if file marked as CCW
+        // swapping any two indices reverse the winding dir of triangle
         if (is_ccw)
             std::swap(itl.m_indices.back(), *std::prev(itl.m_indices.end(), 2));
     }
@@ -98,13 +105,18 @@ inline void IndexedTriangleList<T>::adjust_to_true_center()
     // used to enable miniball to access vertex pos info
     struct VertexAccessor
     {
+        // iterator type for iterating over vertices
         typedef std::vector<T>::const_iterator Pit;
+        // it type for iterating over components of vertex
+        // (pointer is used to iterate over members of class here)
         typedef const float *Cit;
+        // functor that miniball uses to get element iter based on vertex iter
         Cit operator()(Pit it) const { return &it->m_pos.m_x; }
     };
 
     // solve the minimum bounding sphere
     Miniball::Miniball<VertexAccessor> mb(3, m_vertices.begin(), m_vertices.end());
+    // get center of min sphere
     // result is a pointer to float[3] (what a shitty fuckin interface)
     const auto pc = mb.center();
     const Vec3f center(*pc, *std::next(pc), *std::next(pc, 2));
@@ -116,6 +128,7 @@ inline void IndexedTriangleList<T>::adjust_to_true_center()
 template<typename T>
 inline float IndexedTriangleList<T>::get_radius() const
 {
+    // find element with max distance from (0, 0); that is our radius
     return std::max_element(m_vertices.begin(), m_vertices.end(),
         [](const T &v0, const T &v1) { return v0.m_pos.len_sq() < v1.m_pos.len_sq(); }
     )->m_pos.len();

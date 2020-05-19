@@ -66,8 +66,13 @@ public:
         Mat3f m_rot = Mat3f::identity();
         Vec3f m_trans;
         Vec3f m_dir = Vec3f(0.f, 0.f, 1.f);
+        // this is the intensity if direct light from source
+        // color light so need values per color component
         Vec3f m_diff = Vec3f(1.f, 1.f, 1.f);
+        // this is intensity of indirect light that bounces off other obj in scene
+        // color light so need values per color component
         Vec3f m_amb = Vec3f(.1f, .1f, .1f);
+        // color of material (how much light of each color is reflected)
         Vec3f m_color = Vec3f(.8f, .85f, 1.f);
     };
     // invoked for each pixel of a triangle
