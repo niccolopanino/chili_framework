@@ -1,6 +1,7 @@
 #pragma once
 #include "Vec2.h"
 #include "ChiliMath.h"
+#include <algorithm>
 
 template<typename T>
 class Vec3 : public Vec2<T>
@@ -33,6 +34,8 @@ public:
     T len() const { return sqrt(len_sq()); }
     Vec3 get_normalized() const;
     Vec3 &normalize() { return *this = get_normalized(); }
+    Vec3 get_saturated() const;
+    Vec3 &saturate() { return *this = get_saturated(); }
     static T dot(const Vec3 &v1, const Vec3 &v2);
     static Vec3 cross(const Vec3 &v1, const Vec3 &v2);
 public:
@@ -89,6 +92,15 @@ inline Vec3<T> Vec3<T>::get_normalized() const
     if (length != (T)0)
         return *this * ((T)1 / length);
     return *this;
+}
+
+template<typename T>
+inline Vec3<T> Vec3<T>::get_saturated() const
+{
+    const T xtmp = std::min(1.f, std::max(0.f, m_x));
+    const T ytmp = std::min(1.f, std::max(0.f, m_y));
+    const T ztmp = std::min(1.f, std::max(0.f, m_z));
+    return Vec3(xtmp, ytmp, ztmp);
 }
 
 template<typename T>

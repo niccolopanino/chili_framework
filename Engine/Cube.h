@@ -11,6 +11,8 @@ public:
     template<typename V>
     static IndexedTriangleList<V> get_plain_independent_faces(float size = 1.f);
     template<typename V>
+    static IndexedTriangleList<V> get_plain_independent_faces_normals(float size = 1.f);
+    template<typename V>
     static IndexedTriangleList<V> get_skinned(float size = 1.f);
 };
 
@@ -104,6 +106,37 @@ inline IndexedTriangleList<V> Cube::get_plain_independent_faces(float size)
             20, 22, 23
         }
     );
+}
+
+template<typename V>
+inline IndexedTriangleList<V> Cube::get_plain_independent_faces_normals(float size)
+{
+    auto cube = get_plain_independent_faces<V>(size);
+    cube.m_vertices[0].m_n = { 0.f, 0.f, -1.f };
+    cube.m_vertices[1].m_n = { 0.f, 0.f, -1.f };
+    cube.m_vertices[2].m_n = { 0.f, 0.f, -1.f };
+    cube.m_vertices[3].m_n = { 0.f, 0.f, -1.f };
+    cube.m_vertices[4].m_n = { 0.f, 0.f, 1.f };
+    cube.m_vertices[5].m_n = { 0.f, 0.f, 1.f };
+    cube.m_vertices[6].m_n = { 0.f, 0.f, 1.f };
+    cube.m_vertices[7].m_n = { 0.f, 0.f, 1.f };
+    cube.m_vertices[8].m_n = { -1.f, 0.f, 0.f };
+    cube.m_vertices[9].m_n = { -1.f, 0.f, 0.f };
+    cube.m_vertices[10].m_n = { -1.f, 0.f, 0.f };
+    cube.m_vertices[11].m_n = { -1.f, 0.f, 0.f };
+    cube.m_vertices[12].m_n = { 1.f, 0.f, 0.f };
+    cube.m_vertices[13].m_n = { 1.f, 0.f, 0.f };
+    cube.m_vertices[14].m_n = { 1.f, 0.f, 0.f };
+    cube.m_vertices[15].m_n = { 1.f, 0.f, 0.f };
+    cube.m_vertices[16].m_n = { 0.f, -1.f, 0.f };
+    cube.m_vertices[17].m_n = { 0.f, -1.f, 0.f };
+    cube.m_vertices[18].m_n = { 0.f, -1.f, 0.f };
+    cube.m_vertices[19].m_n = { 0.f, -1.f, 0.f };
+    cube.m_vertices[20].m_n = { 0.f, 1.f, 0.f };
+    cube.m_vertices[21].m_n = { 0.f, 1.f, 0.f };
+    cube.m_vertices[22].m_n = { 0.f, 1.f, 0.f };
+    cube.m_vertices[23].m_n = { 0.f, 1.f, 0.f };
+    return cube;
 }
 
 template<typename V>
