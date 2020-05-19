@@ -162,6 +162,12 @@
     <ClInclude Include="CubeFlatIndependentScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GeometryFlatEffect.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeometryFlatScene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DXErr.cpp">
@@ -258,6 +264,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CubeFlatIndependentScene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeometryFlatEffect.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeometryFlatScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
