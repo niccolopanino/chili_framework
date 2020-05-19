@@ -24,5 +24,9 @@ private:
     float m_theta_x = 0.f;
     float m_theta_y = 0.f;
     float m_theta_z = 0.f;
+    float m_phi_x = 0.f;
+    float m_phi_y = 0.f;
+    float m_phi_z = 0.f;
     float m_time = 0.f;
+    Vec3f m_light_dir = Vec3f(.2f, -.5f, 1.f);
 };

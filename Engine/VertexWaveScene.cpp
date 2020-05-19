@@ -24,6 +24,18 @@ void VertexWaveScene::update(Keyboard & kbd, Mouse & mouse, float dt)
         m_theta_y = wrap_angle(m_theta_y - k_dtheta * dt);
     if (kbd.is_key_pressed('D'))
         m_theta_z = wrap_angle(m_theta_z - k_dtheta * dt);
+    if (kbd.is_key_pressed('U'))
+        m_phi_x = wrap_angle(m_phi_x + k_dtheta * dt);
+    if (kbd.is_key_pressed('I'))
+        m_phi_y = wrap_angle(m_phi_y + k_dtheta * dt);
+    if (kbd.is_key_pressed('O'))
+        m_phi_z = wrap_angle(m_phi_z + k_dtheta * dt);
+    if (kbd.is_key_pressed('J'))
+        m_phi_x = wrap_angle(m_phi_x - k_dtheta * dt);
+    if (kbd.is_key_pressed('K'))
+        m_phi_y = wrap_angle(m_phi_y - k_dtheta * dt);
+    if (kbd.is_key_pressed('L'))
+        m_phi_z = wrap_angle(m_phi_z - k_dtheta * dt);
     if (kbd.is_key_pressed('R'))
         m_offset_z += 2.f * dt;
     if (kbd.is_key_pressed('F'))
@@ -38,11 +50,15 @@ void VertexWaveScene::draw()
     const Mat3f rot = Mat3f::rotate_x(m_theta_x)
         * Mat3f::rotate_y(m_theta_y)
         * Mat3f::rotate_z(m_theta_z);
+    const Mat3f rot_phi = Mat3f::rotate_x(m_phi_x)
+        * Mat3f::rotate_y(m_phi_y)
+        * Mat3f::rotate_z(m_phi_z);
     const Vec3f trans = Vec3f(0.f, 0.f, m_offset_z);
     // set pipeline transform
     m_pipeline.m_effect.m_vs.bind_rotation(rot);
     m_pipeline.m_effect.m_vs.bind_translation(trans);
     m_pipeline.m_effect.m_vs.set_time(m_time);
+    m_pipeline.m_effect.m_gs.set_light_direction(m_light_dir * rot_phi);
     // render triangles
     m_pipeline.draw(m_it_list);
 }
