@@ -44,6 +44,8 @@ Game::Game(MainWindow &wnd) : m_wnd(wnd), m_gfx(wnd)
     m_scenes.push_back(std::make_unique<CubeFlatIndependentScene>(m_gfx));
     m_scenes.push_back(std::make_unique<GeometryFlatScene>(m_gfx,
         Cube::get_plain<GeometryFlatScene::Vertex>()));
+    m_scenes.push_back(std::make_unique<GeometryFlatScene>(m_gfx,
+        IndexedTriangleList<GeometryFlatScene::Vertex>::load("resources/models/suzanne.obj")));
     m_cur_scene = m_scenes.begin();
     output_scene_name();
 }

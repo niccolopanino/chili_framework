@@ -177,6 +177,7 @@
     <ClInclude Include="SoundEffect.h" />
     <ClInclude Include="Surface.h" />
     <ClInclude Include="TextureEffect.h" />
+    <ClInclude Include="tiny_obj_loader.h" />
     <ClInclude Include="Triangle.h" />
     <ClInclude Include="Vec2.h" />
     <ClInclude Include="Vec3.h" />
@@ -216,6 +217,7 @@
     <ClCompile Include="SoundEffect.cpp" />
     <ClCompile Include="Surface.cpp" />
     <ClCompile Include="TextureEffect.cpp" />
+    <ClCompile Include="tiny_obj_loader.cpp" />
     <ClCompile Include="VertexColorEffect.cpp" />
     <ClCompile Include="VertexFlatEffect.cpp" />
     <ClCompile Include="VertexPositionColorEffect.cpp" />
