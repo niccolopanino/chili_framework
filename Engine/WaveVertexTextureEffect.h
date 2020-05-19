@@ -4,6 +4,7 @@
 #include "Mat3.h"
 #include "Surface.h"
 #include "Colors.h"
+#include "DefaultGeometryShader.h"
 #include <string>
 #include <memory>
 
@@ -47,6 +48,8 @@ public:
         float m_freq_scroll = 5.f;
         float m_amplitude = .05f;
     };
+    // default geometry shader passes vertices through and outputs triangle
+    typedef DefaultGeometryShader<VertexShader::Output> GeometryShader;
     // texture clamped pixel shader
     class PixelShader
     {
@@ -63,6 +66,7 @@ public:
     };
 public:
     VertexShader m_vs;
+    GeometryShader m_gs;
     PixelShader m_ps;
 };
 

@@ -2,6 +2,7 @@
 #include "Vec3.h"
 #include "Mat3.h"
 #include "Colors.h"
+#include "DefaultGeometryShader.h"
 
 // color gradient effect between vertices determined by vertex position
 class VertexPositionColorEffect
@@ -56,6 +57,8 @@ public:
         Mat3f m_rot;
         Vec3f m_trans;
     };
+    // default geometry shader passes vertices through and outputs triangle
+    typedef DefaultGeometryShader<VertexShader::Output> GeometryShader;
     // converts float color into packed byte color
     class PixelShader
     {
@@ -65,5 +68,6 @@ public:
     };
 public:
     VertexShader m_vs;
+    GeometryShader m_gs;
     PixelShader m_ps;
 };

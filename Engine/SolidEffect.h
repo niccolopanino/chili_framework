@@ -2,6 +2,7 @@
 #include "Vec3.h"
 #include "Colors.h"
 #include "DefaultVertexShader.h"
+#include "DefaultGeometryShader.h"
 
 class SolidEffect
 {
@@ -26,6 +27,11 @@ public:
         Vec3f m_pos;
         Color m_color;
     };
+    // default vertex shader rotates and translates vertices
+    // does not touch attributes
+    typedef DefaultVertexShader<Vertex> VertexShader;
+    // default geometry shader passes vertices through and outputs triangle
+    typedef DefaultGeometryShader<VertexShader::Output> GeometryShader;
     // invoked for each pixel of a triangle
     // takes an input of attributes that are the result of interpolating vertex attributes
     // and outputs a color
@@ -36,8 +42,7 @@ public:
         Color operator()(const I &input) const { return input.m_color; }
     };
 public:
-    typedef DefaultVertexShader<Vertex> VertexShader;
-public:
     VertexShader m_vs;
+    GeometryShader m_gs;
     PixelShader m_ps;
 };

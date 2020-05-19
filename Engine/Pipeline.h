@@ -19,9 +19,11 @@ public:
     // vertex type used for geometry and throughout pipeline
     typedef typename E::Vertex Vertex;
     typedef typename E::VertexShader::Output VSOut;
+    typedef typename E::GeometryShader::Output GSOut;
 public:
     Pipeline(Graphics &gfx);
     void draw(IndexedTriangleList<Vertex> &tri_list);
+    // need to reset the z-buffer and triangle index after each frame
     void begin_frame();
 private:
     // vertex processing function
@@ -35,12 +37,12 @@ private:
     void assemble_triangles(const std::vector<VSOut> &vertices,
         const std::vector<size_t> &indices);
     // triangles processing function
-    // takes 3 vertices to generate triangle
+    // passes 3 vertices to geometry shader to generate triangle
     // sends generated triangle to post-processing
     void process_triangle(const VSOut &v0, const VSOut &v1, const VSOut &v2);
     // vertex post-processing function
     // perform perspective and viewport transformations
-    void post_process_triangle_vertices(Triangle<VSOut> &triangle);
+    void post_process_triangle_vertices(Triangle<GSOut> &triangle);
     // === triangle rasterization functions ===
     // itp0, itp1, etc. stand for interpolants
     // (values which are interpolated across a triangle in screen space)
@@ -48,16 +50,16 @@ private:
     // entry point for triangle rasterization
     // sorts vertices, determines case, splits to flat triangles,
     // dispatches to flat triangle functions
-    void draw_triangle(const Triangle<VSOut> &triangle);
+    void draw_triangle(const Triangle<GSOut> &triangle);
     // does flat *TOP* triangle-specific calculations and calls draw_flat_triangle
-    void draw_flat_top_triangle(const VSOut &itp0, const VSOut &itp1, const VSOut &itp2);
+    void draw_flat_top_triangle(const GSOut &itp0, const GSOut &itp1, const GSOut &itp2);
     // does flat *BOTTOM* triangle-specific calculations and calls draw_flat_triangle
-    void draw_flat_bottom_triangle(const VSOut &itp0, const VSOut &itp1, const VSOut &itp2);
+    void draw_flat_bottom_triangle(const GSOut &itp0, const GSOut &itp1, const GSOut &itp2);
     // does post processing common to both flat top and flat bottom triangles
     // scan over triangle in screen space, interpolate attributes,
     // depth cull, invoke pixel shader and write pixel to screen
-    void draw_flat_triangle(const VSOut &itp0, const VSOut &itp1, const VSOut &itp2,
-        const VSOut &dv0, const VSOut &dv1, VSOut itp_edge1);
+    void draw_flat_triangle(const GSOut &itp0, const GSOut &itp1, const GSOut &itp2,
+        const GSOut &dv0, const GSOut &dv1, GSOut itp_edge1);
 public:
     E m_effect;
 private:
@@ -66,6 +68,7 @@ private:
     ZBuffer m_zb;
     Mat3f m_rot = Mat3f::identity();
     Vec3f m_trans;
+    unsigned int m_tri_idx;
 };
 
 template<typename E>
@@ -83,6 +86,8 @@ template<typename E>
 inline void Pipeline<E>::begin_frame()
 {
     m_zb.clear();
+    m_tri_idx = 0u;
+
 }
 
 template<typename E>
@@ -122,11 +127,11 @@ void Pipeline<E>::process_triangle(const VSOut &v0, const VSOut &v1, const VSOut
 {
     // generate triangle from 3 vertices using geometry shader
     // and send to post-processing
-    post_process_triangle_vertices(Triangle<VSOut>{v0, v1, v2});
+    post_process_triangle_vertices(m_effect.m_gs(v0, v1, v2, m_tri_idx));
 }
 
 template<typename E>
-void Pipeline<E>::post_process_triangle_vertices(Triangle<VSOut> &triangle)
+void Pipeline<E>::post_process_triangle_vertices(Triangle<GSOut> &triangle)
 {
     // perspective divide and screen transform for all 3 vertices
     m_pms.transform(triangle.v0);
@@ -137,12 +142,12 @@ void Pipeline<E>::post_process_triangle_vertices(Triangle<VSOut> &triangle)
 }
 
 template<typename E>
-void Pipeline<E>::draw_triangle(const Triangle<VSOut> &triangle)
+void Pipeline<E>::draw_triangle(const Triangle<GSOut> &triangle)
 {
     // using pointers so we can swap (for sorting purposes)
-    const VSOut *pv0 = &triangle.v0;
-    const VSOut *pv1 = &triangle.v1;
-    const VSOut *pv2 = &triangle.v2;
+    const GSOut *pv0 = &triangle.v0;
+    const GSOut *pv1 = &triangle.v1;
+    const GSOut *pv2 = &triangle.v2;
 
     // sorting vertices by y
     if (pv1->m_pos.m_y < pv0->m_pos.m_y) std::swap(pv0, pv1);
@@ -187,7 +192,7 @@ void Pipeline<E>::draw_triangle(const Triangle<VSOut> &triangle)
 }
 
 template<typename E>
-void Pipeline<E>::draw_flat_top_triangle(const VSOut &itp0, const VSOut &itp1, const VSOut &itp2)
+void Pipeline<E>::draw_flat_top_triangle(const GSOut &itp0, const GSOut &itp1, const GSOut &itp2)
 {
     // calculate dvertex / dy change in interpolant for every 1 change in y
     const float ydelta = itp2.m_pos.m_y - itp0.m_pos.m_y;
@@ -202,7 +207,7 @@ void Pipeline<E>::draw_flat_top_triangle(const VSOut &itp0, const VSOut &itp1, c
 }
 
 template<typename E>
-void Pipeline<E>::draw_flat_bottom_triangle(const VSOut &itp0, const VSOut &itp1, const VSOut &itp2)
+void Pipeline<E>::draw_flat_bottom_triangle(const GSOut &itp0, const GSOut &itp1, const GSOut &itp2)
 {
     // calculate dvertex / dy change in interpolant for every 1 change in y
     const float ydelta = itp2.m_pos.m_y - itp0.m_pos.m_y;
@@ -217,8 +222,8 @@ void Pipeline<E>::draw_flat_bottom_triangle(const VSOut &itp0, const VSOut &itp1
 }
 
 template<typename E>
-void Pipeline<E>::draw_flat_triangle(const VSOut &itp0, const VSOut &itp1, const VSOut &itp2,
-    const VSOut &dv0, const VSOut &dv1, VSOut itp_edge1)
+void Pipeline<E>::draw_flat_triangle(const GSOut &itp0, const GSOut &itp1, const GSOut &itp2,
+    const GSOut &dv0, const GSOut &dv1, GSOut itp_edge1)
 {
     // create edge interpolant for left edge (always v0)
     auto itp_edge0 = itp0;

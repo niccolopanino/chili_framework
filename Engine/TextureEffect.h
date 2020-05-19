@@ -4,6 +4,7 @@
 #include "Surface.h"
 #include "Colors.h"
 #include "DefaultVertexShader.h"
+#include "DefaultGeometryShader.h"
 #include <algorithm>
 #include <string>
 #include <memory>
@@ -32,6 +33,11 @@ public:
         Vec3f m_pos;
         Vec2f m_tc;
     };
+    // default vertex shader rotates and translates vertices
+    // does not touch attributes
+    typedef DefaultVertexShader<Vertex> VertexShader;
+    // default geometry shader passes vertices through and outputs triangle
+    typedef DefaultGeometryShader<VertexShader::Output> GeometryShader;
     // invoked for each pixel of a triangle
     // takes an input of attributes that are the result of interpolating vertex attributes
     // and outputs a color
@@ -49,9 +55,8 @@ public:
         float m_tex_clamp_y = 0.f;
     };
 public:
-    typedef DefaultVertexShader<Vertex> VertexShader;
-public:
     VertexShader m_vs;
+    GeometryShader m_gs;
     PixelShader m_ps;
 };
 
