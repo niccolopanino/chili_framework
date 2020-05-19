@@ -3,6 +3,7 @@
 #include "Vec3.h"
 #include "Surface.h"
 #include "Colors.h"
+#include "DefaultVertexShader.h"
 #include <algorithm>
 #include <string>
 
@@ -47,6 +48,9 @@ public:
         float m_tex_clamp_y = 0.f;
     };
 public:
+    typedef DefaultVertexShader<Vertex> VertexShader;
+public:
+    VertexShader m_vs;
     PixelShader m_ps;
 };
 

@@ -47,8 +47,8 @@ void DoubleCubeScene::draw()
             * Mat3f::rotate_y(-m_theta_y)
             * Mat3f::rotate_z(-m_theta_z);
         // set pipeline transform
-        m_pipeline.bind_rotation(rot);
-        m_pipeline.bind_translation(Vec3f(0.f, 0.f, 2.f));
+        m_pipeline.m_effect.m_vs.bind_rotation(rot);
+        m_pipeline.m_effect.m_vs.bind_translation(Vec3f(0.f, 0.f, 2.f));
         // render triangles
         m_pipeline.draw(m_it_list);
     }
@@ -59,8 +59,8 @@ void DoubleCubeScene::draw()
             * Mat3f::rotate_y(m_theta_y)
             * Mat3f::rotate_z(m_theta_z);
         // set pipeline transform
-        m_pipeline.bind_rotation(rot);
-        m_pipeline.bind_translation(Vec3f(0.f, 0.f, m_offset_z));
+        m_pipeline.m_effect.m_vs.bind_rotation(rot);
+        m_pipeline.m_effect.m_vs.bind_translation(Vec3f(0.f, 0.f, m_offset_z));
         // render triangles
         m_pipeline.draw(m_it_list);
     }

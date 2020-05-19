@@ -1,6 +1,7 @@
 #pragma once
 #include "Vec3.h"
 #include "Colors.h"
+#include "DefaultVertexShader.h"
 
 // color gradient effect between vertices
 class VertexColorEffect
@@ -36,5 +37,8 @@ public:
         Color operator()(const I &input) const { return Color(input.m_color); }
     };
 public:
+    typedef DefaultVertexShader<Vertex> VertexShader;
+public:
+    VertexShader m_vs;
     PixelShader m_ps;
 };
