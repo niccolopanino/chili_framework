@@ -60,7 +60,7 @@ inline IndexedTriangleList<T> IndexedTriangleList<T>::load(const std::string &fi
 
     // extract vertex data
     itl.m_vertices.reserve(attrib.vertices.size() / 3u);
-    for (int i = 0; i < attrib.vertices.size(); i += 3) {
+    for (size_t i = 0; i < attrib.vertices.size(); i += 3) {
         itl.m_vertices.emplace_back(
             Vec3f(attrib.vertices[i], attrib.vertices[i + 1], attrib.vertices[i + 2])
         );

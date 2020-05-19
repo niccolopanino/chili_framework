@@ -63,7 +63,7 @@ public:
         void set_light_direction(const Vec3f &dl);
         void set_mat_color(Color c) { m_color = Vec3f(c); }
     private:
-        Mat3f m_rot;
+        Mat3f m_rot = Mat3f::identity();
         Vec3f m_trans;
         Vec3f m_dir = Vec3f(0.f, 0.f, 1.f);
         Vec3f m_diff = Vec3f(1.f, 1.f, 1.f);
