@@ -246,3 +246,6 @@ ModelManifest.xml
 
 # Precompiled Shader Header Files
 *.shh
+
+# don't ignore .obj 3d model files
+!Engine/resources/models/*.obj
