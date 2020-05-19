@@ -68,7 +68,7 @@ private:
     ZBuffer m_zb;
     Mat3f m_rot = Mat3f::identity();
     Vec3f m_trans;
-    unsigned int m_tri_idx;
+    unsigned int m_tri_idx = 0u;
 };
 
 template<typename E>
@@ -87,7 +87,6 @@ inline void Pipeline<E>::begin_frame()
 {
     m_zb.clear();
     m_tri_idx = 0u;
-
 }
 
 template<typename E>
@@ -107,7 +106,7 @@ void Pipeline<E>::assemble_triangles(const std::vector<VSOut> &vertices,
     const std::vector<size_t> &indices)
 {
     // assemble triangles in the stream and process
-    for (size_t i = 0, end = indices.size() / 3; i < end; i++) {
+    for (size_t i = 0, end = indices.size() / 3; i < end; i++, m_tri_idx++) {
         // determine triangle vertices via indexing
         const auto &v0 = vertices[indices[i * 3]];
         const auto &v1 = vertices[indices[i * 3 + 1]];

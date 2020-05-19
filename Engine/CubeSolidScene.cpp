@@ -6,7 +6,7 @@
 
 CubeSolidScene::CubeSolidScene(Graphics &gfx) :
     m_it_list(Cube::get_plain_independent_faces<Vertex>()), m_pipeline(gfx),
-    Scene("Colored cube solid scene")
+    Scene("Colored cube solid independent faces scene")
 {
     const Color colors[] = {
         Colors::Red, Colors::Green, Colors::Blue,

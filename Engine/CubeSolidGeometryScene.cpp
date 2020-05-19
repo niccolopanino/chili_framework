@@ -1,14 +1,18 @@
-#include "CubeVertexPositionColorScene.h"
+#include "CubeSolidGeometryScene.h"
 #include "Cube.h"
 #include "Mat3.h"
 #include "Vec3.h"
 
-CubeVertexPositionColorScene::CubeVertexPositionColorScene(Graphics &gfx) :
+CubeSolidGeometryScene::CubeSolidGeometryScene(Graphics &gfx) :
     m_it_list(Cube::get_plain<Vertex>()), m_pipeline(gfx),
-    Scene("Colored cube position color scene")
-{ }
+    Scene("Colored cube geometry solid face scene")
+{
+    m_pipeline.m_effect.m_gs.bind_colors(
+        { Colors::Red, Colors::Green, Colors::Blue, Colors::Cyan, Colors::Magenta, Colors::Yellow }
+    );
+}
 
-void CubeVertexPositionColorScene::update(Keyboard & kbd, Mouse & mouse, float dt)
+void CubeSolidGeometryScene::update(Keyboard & kbd, Mouse & mouse, float dt)
 {
     if (kbd.is_key_pressed('Q'))
         m_theta_x = wrap_angle(m_theta_x + k_dtheta * dt);
@@ -28,7 +32,7 @@ void CubeVertexPositionColorScene::update(Keyboard & kbd, Mouse & mouse, float d
         m_offset_z -= 2.f * dt;
 }
 
-void CubeVertexPositionColorScene::draw()
+void CubeSolidGeometryScene::draw()
 {
     m_pipeline.begin_frame();
     // generate rotation matrix from euler angles, translation from offset

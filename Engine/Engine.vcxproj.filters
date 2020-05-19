@@ -150,6 +150,12 @@
     <ClInclude Include="DefaultGeometryShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SolidGeometryEffect.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CubeSolidGeometryScene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DXErr.cpp">
@@ -234,6 +240,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CubeVertexPositionColorScene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SolidGeometryEffect.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CubeSolidGeometryScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

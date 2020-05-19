@@ -6,7 +6,7 @@
 
 DoubleCubeScene::DoubleCubeScene(Graphics &gfx) :
     m_it_list(Cube::get_plain_independent_faces<Vertex>()), m_pipeline(gfx),
-    Scene("Two intersecting cubes scene")
+    Scene("Double cube interpenetration test scene")
 {
     const Color colors[] = {
         Colors::Red, Colors::Green, Colors::Blue,

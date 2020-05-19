@@ -1,14 +1,13 @@
 #pragma once
 #include "Vec3.h"
-#include "Mat3.h"
+#include "Triangle.h"
 #include "Colors.h"
-#include "DefaultGeometryShader.h"
+#include "DefaultVertexShader.h"
+#include <vector>
 
-// color gradient effect between vertices determined by vertex position
-class VertexPositionColorEffect
+class SolidGeometryEffect
 {
 public:
-    // the vertex type that will be input into the pipeline
     class Vertex
     {
     public:
@@ -26,8 +25,12 @@ public:
     public:
         Vec3f m_pos;
     };
-    // uses x, y, z position components to determine color
-    class VertexShader
+    // default vertex shader rotates and translates vertices
+    // does not touch attributes
+    typedef DefaultVertexShader<Vertex> VertexShader;
+    // gs colors vertices using their index from a table
+    // every two triangles are colored from the same entry
+    class GeometryShader
     {
     public:
         class Output
@@ -36,35 +39,38 @@ public:
             Output() = default;
             Output(const Vec3f &pos) : m_pos(pos) { }
             Output(const Vec3f &pos, const Output &src) : m_pos(pos), m_color(src.m_color) { }
-            Output(const Vec3f &pos, const Vec3f &color) : m_pos(pos), m_color(color) { }
-            Output operator+(const Output &rhs) const;
+            Output(const Vec3f &pos, const Color &color) : m_pos(pos), m_color(color) { }
+            Output operator+(const Output &rhs) const { return Output(m_pos + rhs.m_pos, m_color); }
             Output &operator+=(const Output &rhs) { return *this = *this + rhs; }
-            Output operator-(const Output &rhs) const;
+            Output operator-(const Output &rhs) const { return Output(m_pos - rhs.m_pos, m_color); }
             Output &operator-=(const Output &rhs) { return *this = *this - rhs; }
-            Output operator*(float rhs) const { return Output(m_pos * rhs, m_color * rhs); }
+            Output operator*(float rhs) const { return Output(m_pos * rhs, m_color); }
             Output &operator*=(float rhs) { return *this = *this * rhs; }
-            Output operator/(float rhs) const { return Output(m_pos / rhs, m_color / rhs); }
+            Output operator/(float rhs) const { return Output(m_pos / rhs, m_color); }
             Output &operator/=(float rhs) { return *this = *this / rhs; }
         public:
             Vec3f m_pos;
-            Vec3f m_color;
+            Color m_color;
         };
     public:
-        void bind_rotation(const Mat3f &rot) { m_rot = rot; }
-        void bind_translation(const Vec3f &trans) { m_trans = trans; }
-        Output operator()(const Vertex &input) const;
+        Triangle<Output> operator()(
+            const VertexShader::Output &input0,
+            const VertexShader::Output &input1,
+            const VertexShader::Output &input2,
+            unsigned int tri_idx) const;
+        void bind_colors(std::vector<Color> colors) { m_tri_colors = std::move(colors); }
     private:
-        Mat3f m_rot = Mat3f::identity();
-        Vec3f m_trans;
+        std::vector<Color> m_tri_colors;
     };
-    // default geometry shader passes vertices through and outputs triangle
-    typedef DefaultGeometryShader<VertexShader::Output> GeometryShader;
-    // converts float color into packed byte color
+    //invoked for each pixel of a triangle
+    // takes an input of attributes that are the
+    // result of interpolating vertex attributes
+    // and outputs a color
     class PixelShader
     {
     public:
         template<typename I>
-        Color operator()(const I &input) const { return Color(input.m_color); }
+        Color operator()(const I &input) const { return input.m_color; }
     };
 public:
     VertexShader m_vs;
