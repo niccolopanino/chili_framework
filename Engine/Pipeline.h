@@ -122,7 +122,7 @@ void Pipeline<E>::process_triangle(const VSOut &v0, const VSOut &v1, const VSOut
 {
     // generate triangle from 3 vertices using geometry shader
     // and send to post-processing
-    post_process_triangle_vertices(Triangle<Vertex>{v0, v1, v2});
+    post_process_triangle_vertices(Triangle<VSOut>{v0, v1, v2});
 }
 
 template<typename E>

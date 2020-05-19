@@ -1,5 +1,6 @@
 #pragma once
 #include "Vec3.h"
+#include <cstring>
 
 template<typename T>
 class Mat3
@@ -28,7 +29,7 @@ typedef Mat3<int>       Mat3i;
 template<typename T>
 inline Mat3<T> &Mat3<T>::operator=(const Mat3 &rhs)
 {
-    memcpy(m_elements, rhs.m_elements, sizeof(m_elements));
+    std::memcpy(m_elements, rhs.m_elements, sizeof(m_elements));
     return *this;
 }
 

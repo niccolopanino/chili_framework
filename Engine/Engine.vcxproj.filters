@@ -141,6 +141,12 @@
     <ClInclude Include="VertexWaveScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="VertexPositionColorEffect.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CubeVertexPositionColorScene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DXErr.cpp">
@@ -219,6 +225,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="VertexWaveScene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VertexPositionColorEffect.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CubeVertexPositionColorScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
