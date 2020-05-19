@@ -57,7 +57,7 @@ public:
             const VertexShader::Output &input0,
             const VertexShader::Output &input1,
             const VertexShader::Output &input2,
-            unsigned int tri_idx) const;
+            size_t tri_idx) const;
         void bind_colors(std::vector<Color> colors) { m_tri_colors = std::move(colors); }
     private:
         std::vector<Color> m_tri_colors;

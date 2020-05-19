@@ -23,7 +23,7 @@ public:
 public:
     Pipeline(Graphics &gfx);
     void draw(IndexedTriangleList<Vertex> &tri_list);
-    // need to reset the z-buffer and triangle index after each frame
+    // need to reset the z-buffer after each frame
     void begin_frame();
 private:
     // vertex processing function
@@ -39,7 +39,7 @@ private:
     // triangles processing function
     // passes 3 vertices to geometry shader to generate triangle
     // sends generated triangle to post-processing
-    void process_triangle(const VSOut &v0, const VSOut &v1, const VSOut &v2);
+    void process_triangle(const VSOut &v0, const VSOut &v1, const VSOut &v2, size_t tri_idx);
     // vertex post-processing function
     // perform perspective and viewport transformations
     void post_process_triangle_vertices(Triangle<GSOut> &triangle);
@@ -68,7 +68,6 @@ private:
     ZBuffer m_zb;
     Mat3f m_rot = Mat3f::identity();
     Vec3f m_trans;
-    unsigned int m_tri_idx = 0u;
 };
 
 template<typename E>
@@ -86,7 +85,6 @@ template<typename E>
 inline void Pipeline<E>::begin_frame()
 {
     m_zb.clear();
-    m_tri_idx = 0u;
 }
 
 template<typename E>
@@ -106,7 +104,7 @@ void Pipeline<E>::assemble_triangles(const std::vector<VSOut> &vertices,
     const std::vector<size_t> &indices)
 {
     // assemble triangles in the stream and process
-    for (size_t i = 0, end = indices.size() / 3; i < end; i++, m_tri_idx++) {
+    for (size_t i = 0, end = indices.size() / 3; i < end; i++) {
         // determine triangle vertices via indexing
         const auto &v0 = vertices[indices[i * 3]];
         const auto &v1 = vertices[indices[i * 3 + 1]];
@@ -116,17 +114,18 @@ void Pipeline<E>::assemble_triangles(const std::vector<VSOut> &vertices,
             v0.m_pos) <= 0.f)
         {
             // process 3 vertices into a triangle
-            process_triangle(v0, v1, v2);
+            process_triangle(v0, v1, v2, i);
         }
     }
 }
 
 template<typename E>
-void Pipeline<E>::process_triangle(const VSOut &v0, const VSOut &v1, const VSOut &v2)
+void Pipeline<E>::process_triangle(const VSOut &v0, const VSOut &v1, const VSOut &v2,
+    size_t tri_idx)
 {
     // generate triangle from 3 vertices using geometry shader
     // and send to post-processing
-    post_process_triangle_vertices(m_effect.m_gs(v0, v1, v2, m_tri_idx));
+    post_process_triangle_vertices(m_effect.m_gs(v0, v1, v2, tri_idx));
 }
 
 template<typename E>
