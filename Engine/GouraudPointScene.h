@@ -3,6 +3,7 @@
 #include "Pipeline.h"
 #include "GouraudPointEffect.h"
 #include "SolidEffect.h"
+#include "ZBuffer.h"
 #include "IndexedTriangleList.h"
 #include "Sphere.h"
 #include "ChiliMath.h"
@@ -23,6 +24,7 @@ public:
 private:
     IndexedTriangleList<Vertex> m_it_list;
     IndexedTriangleList<SolidEffect::Vertex> m_light_indicator;
+    std::shared_ptr<ZBuffer> m_zb;
     Pipeline m_pipeline;
     LightIndicatorPipeline m_light_pipeline;
     static constexpr float k_dtheta = PI;

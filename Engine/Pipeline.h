@@ -10,6 +10,7 @@
 #include "ChiliMath.h"
 #include <algorithm>
 #include <vector>
+#include <memory>
 
 // triangle drawing pipeline with programmable pixel shading stage
 template<typename E>
@@ -22,6 +23,7 @@ public:
     typedef typename E::GeometryShader::Output GSOut;
 public:
     Pipeline(Graphics &gfx);
+    Pipeline(Graphics &gfx, std::shared_ptr<ZBuffer> zb);
     void draw(IndexedTriangleList<Vertex> &tri_list);
     // need to reset the z-buffer after each frame
     void begin_frame();
@@ -65,15 +67,23 @@ public:
 private:
     Graphics &m_gfx;
     PubeScreenTransformer m_pms;
-    ZBuffer m_zb;
+    std::shared_ptr<ZBuffer> m_zb;
     Mat3f m_rot = Mat3f::identity();
     Vec3f m_trans;
 };
 
 template<typename E>
 inline Pipeline<E>::Pipeline(Graphics &gfx) :
-    m_gfx(gfx), m_zb(Graphics::k_screen_width, Graphics::k_screen_height)
+    Pipeline(gfx, std::make_shared<ZBuffer>(Graphics::k_screen_width, Graphics::k_screen_height))
 { }
+
+template<typename E>
+inline Pipeline<E>::Pipeline(Graphics & gfx, std::shared_ptr<ZBuffer> zb) :
+    m_gfx(gfx), m_zb(std::move(zb))
+{
+    assert(m_zb->get_width() == Graphics::k_screen_width
+        && m_zb->get_height() == Graphics::k_screen_height);
+}
 
 template<typename E>
 inline void Pipeline<E>::draw(IndexedTriangleList<Vertex> &tri_list)
@@ -84,7 +94,7 @@ inline void Pipeline<E>::draw(IndexedTriangleList<Vertex> &tri_list)
 template<typename E>
 inline void Pipeline<E>::begin_frame()
 {
-    m_zb.clear();
+    m_zb->clear();
 }
 
 template<typename E>
@@ -258,7 +268,7 @@ void Pipeline<E>::draw_flat_triangle(const GSOut &itp0, const GSOut &itp1, const
             const float z = 1.f / iline.m_pos.m_z;
             // do z rejection / update of z buffer
             // skip shading step if z rejected (early z)
-            if (m_zb.test_and_set(x, y, z)) {
+            if (m_zb->test_and_set(x, y, z)) {
                 // recover interpolated attributes
                 // (wasted effort in multiplying pos (x / y / z) here, but
                 // not a huge deal, not worth the code complication to fix)

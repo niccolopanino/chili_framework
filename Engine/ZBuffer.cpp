@@ -42,3 +42,13 @@ bool ZBuffer::test_and_set(int x, int y, float depth)
     }
     return false;
 }
+
+int ZBuffer::get_width() const
+{
+    return m_width;
+}
+
+int ZBuffer::get_height() const
+{
+    return m_height;
+}

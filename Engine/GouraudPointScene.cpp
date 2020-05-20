@@ -3,8 +3,9 @@
 #include "Mat3.h"
 
 GouraudPointScene::GouraudPointScene(Graphics &gfx, IndexedTriangleList<Vertex> itl) :
-    m_it_list(std::move(itl)), m_pipeline(gfx),
-    m_light_indicator(Sphere::get_plain<SolidEffect::Vertex>(.05f)), m_light_pipeline(gfx),
+    m_zb(std::make_shared<ZBuffer>(Graphics::k_screen_width, Graphics::k_screen_height)),
+    m_it_list(std::move(itl)), m_pipeline(gfx, m_zb),
+    m_light_indicator(Sphere::get_plain<SolidEffect::Vertex>(.05f)), m_light_pipeline(gfx, m_zb),
     Scene("Gouraud shader point light scene free mesh")
 {
     m_it_list.adjust_to_true_center();
@@ -60,7 +61,8 @@ void GouraudPointScene::draw()
     // render triangles
     m_pipeline.draw(m_it_list);
 
-    m_light_pipeline.begin_frame();
+    // draw light indicator with different pipeline
+    // don't call begin_frame on this pipeline because we wanna keep zbuffer contents
     m_light_pipeline.m_effect.m_vs.bind_translation(Vec3f(m_lpos_x, m_lpos_y, m_lpos_z));
     m_light_pipeline.m_effect.m_vs.bind_rotation(Mat3f::identity());
     m_light_pipeline.draw(m_light_indicator);
