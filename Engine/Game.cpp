@@ -35,6 +35,7 @@
 #include "GouraudScene.h"
 #include "GouraudPointScene.h"
 #include "PhongPointScene.h"
+#include "SpecularPointScene.h"
 #include <sstream>
 
 Game::Game(MainWindow &wnd) : m_wnd(wnd), m_gfx(wnd)
@@ -69,6 +70,9 @@ Game::Game(MainWindow &wnd) : m_wnd(wnd), m_gfx(wnd)
         m_gfx,
         IndexedTriangleList<PhongPointScene::Vertex>::load_normals("resources/models/suzanne.obj")
     ));
+    m_scenes.push_back(std::make_unique<SpecularPointScene>(m_gfx,
+        IndexedTriangleList<SpecularPointScene::Vertex>
+        ::load_normals("resources/models/suzanne.obj")));
     m_cur_scene = m_scenes.begin();
     output_scene_name();
 }

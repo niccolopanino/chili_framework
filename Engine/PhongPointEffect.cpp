@@ -1,6 +1,4 @@
 #include "PhongPointEffect.h"
-#include "ChiliMath.h"
-#include <algorithm>
 
 PhongPointEffect::Vertex PhongPointEffect::Vertex::operator+(const Vertex &rhs) const
 {

@@ -195,6 +195,12 @@
     <ClInclude Include="PhongPointScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SpecularPointEffect.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SpecularPointScene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DXErr.cpp">
@@ -318,6 +324,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PhongPointScene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SpecularPointEffect.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SpecularPointScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

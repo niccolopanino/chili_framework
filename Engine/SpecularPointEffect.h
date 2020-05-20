@@ -4,10 +4,10 @@
 #include "Colors.h"
 #include "DefaultGeometryShader.h"
 #include "ChiliMath.h"
+#include <cmath>
 #include <algorithm>
 
-// per pixel lighting
-class PhongPointEffect
+class SpecularPointEffect
 {
 public:
     // the vertex type that will be input into the pipeline
@@ -59,7 +59,7 @@ public:
         void bind_translation(const Vec3f &trans) { m_trans = trans; }
         Output operator()(const Vertex &input) const;
     private:
-        Mat3f m_rot = Mat3f::identity();
+        Mat3f m_rot;
         Vec3f m_trans;
     };
     // default geometry shader passes vertices through and outputs triangle
@@ -84,6 +84,8 @@ public:
         float m_lin_att = 1.f;
         float m_quad_att = 2.619f;
         float m_const_att = .382f;
+        float m_spec_pow = 30.f;
+        float m_spec_in = .6f;
     };
 public:
     VertexShader m_vs;
@@ -92,8 +94,10 @@ public:
 };
 
 template<typename I>
-inline Color PhongPointEffect::PixelShader::operator()(const I &input) const
+inline Color SpecularPointEffect::PixelShader::operator()(const I &input) const
 {
+    // re-normalize interpolated surface normal
+    const auto n = input.m_n.get_normalized();
     // vertex to light data
     const auto v_to_l = m_lpos - input.m_world_pos;
     const auto dist = v_to_l.len();
@@ -101,7 +105,15 @@ inline Color PhongPointEffect::PixelShader::operator()(const I &input) const
     // calculate attenuation
     const auto att = 1.f / (m_const_att + m_lin_att * dist + m_quad_att * sq(dist));
     // calculate intensity based on angle of incidence and attenutation
-    const auto d = m_diff * att * std::max(0.f, Vec3f::dot(input.m_n.get_normalized(), dir));
+    const auto d = m_diff * att * std::max(0.f, Vec3f::dot(n, dir));
+    // reflected light vector
+    const auto r = n * Vec3f::dot(v_to_l, n) * 2.f - v_to_l;
+    // calculate specular intesity based on angle between viewing vector
+    // and reflection vector, narrow with power function
+    const auto s = m_diff * m_spec_in * std::pow(
+        std::max(0.f, Vec3f::dot(-r.get_normalized(), input.m_world_pos.get_normalized())),
+        m_spec_pow
+    );
     // add diffuse, ambient, filter by material color, saturate and scale
     return Color((m_mat_color * (d + m_amb)).saturate() * 255.f);
 }
