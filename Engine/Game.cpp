@@ -20,6 +20,7 @@
  ******************************************************************************************/
 #include "MainWindow.h"
 #include "Game.h"
+#include "Plane.h"
 #include "Cube.h"
 #include "Sphere.h"
 #include "CubeSkinScene.h"
@@ -43,8 +44,10 @@ Game::Game(MainWindow &wnd) : m_wnd(wnd), m_gfx(wnd)
     m_scenes.push_back(std::make_unique<CubeVertexPositionColorScene>(m_gfx));
     m_scenes.push_back(std::make_unique<CubeSkinScene>(m_gfx, L"resources/img/office_skin.jpg"));
     m_scenes.push_back(std::make_unique<DoubleCubeScene>(m_gfx));
-    m_scenes.push_back(std::make_unique<VertexWaveScene>(m_gfx));
     m_scenes.push_back(std::make_unique<CubeFlatIndependentScene>(m_gfx));
+    m_scenes.push_back(std::make_unique<GouraudPointScene>(m_gfx,
+        Plane::get_normals<GouraudPointScene::Vertex>(4)));
+    m_scenes.push_back(std::make_unique<VertexWaveScene>(m_gfx));
     m_scenes.push_back(std::make_unique<GeometryFlatScene>(m_gfx,
         Cube::get_plain<GeometryFlatScene::Vertex>()));
     m_scenes.push_back(std::make_unique<GeometryFlatScene>(m_gfx,
