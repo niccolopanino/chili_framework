@@ -32,6 +32,7 @@
 #include "CubeFlatIndependentScene.h"
 #include "GeometryFlatScene.h"
 #include "GouraudScene.h"
+#include "GouraudPointScene.h"
 #include <sstream>
 
 Game::Game(MainWindow &wnd) : m_wnd(wnd), m_gfx(wnd)
@@ -54,6 +55,10 @@ Game::Game(MainWindow &wnd) : m_wnd(wnd), m_gfx(wnd)
         IndexedTriangleList<GeometryFlatScene::Vertex>::load("resources/models/bunny.obj")));
     m_scenes.push_back(std::make_unique<GouraudScene>(m_gfx,
         IndexedTriangleList<GouraudScene::Vertex>::load_normals("resources/models/suzanne.obj")));
+    m_scenes.push_back(std::make_unique<GouraudPointScene>(
+        m_gfx,
+        IndexedTriangleList<GouraudPointScene::Vertex>::load_normals("resources/models/suzanne.obj")
+    ));
     m_cur_scene = m_scenes.begin();
     output_scene_name();
 }
