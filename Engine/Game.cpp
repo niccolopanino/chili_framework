@@ -52,6 +52,8 @@ Game::Game(MainWindow &wnd) : m_wnd(wnd), m_gfx(wnd)
         Sphere::get_plain_normals<GouraudScene::Vertex>()));
     m_scenes.push_back(std::make_unique<GeometryFlatScene>(m_gfx,
         IndexedTriangleList<GeometryFlatScene::Vertex>::load("resources/models/bunny.obj")));
+    m_scenes.push_back(std::make_unique<GouraudScene>(m_gfx,
+        IndexedTriangleList<GouraudScene::Vertex>::load_normals("resources/models/suzanne.obj")));
     m_cur_scene = m_scenes.begin();
     output_scene_name();
 }
