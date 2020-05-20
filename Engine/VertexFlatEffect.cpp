@@ -2,16 +2,6 @@
 #include <algorithm>
 #include <cassert>
 
-VertexFlatEffect::Vertex VertexFlatEffect::Vertex::operator+(const Vertex &rhs) const
-{
-    return Vertex(m_pos + rhs.m_pos, m_n + rhs.m_n);
-}
-
-VertexFlatEffect::Vertex VertexFlatEffect::Vertex::operator-(const Vertex &rhs) const
-{
-    return Vertex(m_pos - rhs.m_pos, m_n - rhs.m_n);
-}
-
 VertexFlatEffect::VertexShader::Output
 VertexFlatEffect::VertexShader::operator()(const Vertex &input) const
 {

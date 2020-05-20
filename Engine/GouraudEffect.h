@@ -4,9 +4,11 @@
 #include "Colors.h"
 #include "DefaultGeometryShader.h"
 
-class VertexFlatEffect
+// flat shading with vertex normals
+class GouraudEffect
 {
 public:
+    // the vertex type that will be input into the pipeline
     class Vertex
     {
     public:
@@ -14,19 +16,20 @@ public:
         Vertex(const Vec3f &pos) : m_pos(pos) { }
         Vertex(const Vec3f &pos, const Vertex &src) : m_pos(pos), m_n(src.m_n) { }
         Vertex(const Vec3f &pos, const Vec3f &n) : m_pos(pos), m_n(n) { }
-        Vertex operator+(const Vertex &rhs) const { return Vertex(m_pos + rhs.m_pos, m_n); }
+        Vertex operator+(const Vertex &rhs) const;
         Vertex &operator+=(const Vertex &rhs) { return *this = *this + rhs; }
-        Vertex operator-(const Vertex &rhs) const { return Vertex(m_pos - rhs.m_pos, m_n); }
+        Vertex operator-(const Vertex &rhs) const;
         Vertex &operator-=(const Vertex &rhs) { return *this = *this - rhs; }
-        Vertex operator*(float rhs) const { return Vertex(m_pos * rhs, m_n); }
+        Vertex operator*(float rhs) const { return Vertex(m_pos * rhs, m_n * rhs); }
         Vertex &operator*=(float rhs) { return *this = *this * rhs; }
-        Vertex operator/(float rhs) const { return Vertex(m_pos / rhs, m_n); }
+        Vertex operator/(float rhs) const { return Vertex(m_pos / rhs, m_n / rhs); }
         Vertex &operator/=(float rhs) { return *this = *this / rhs; }
     public:
         Vec3f m_pos;
         Vec3f m_n;
     };
     // calculate color based on normal to light angle
+    // no interpolation of color attribute
     class VertexShader
     {
     public:
@@ -36,22 +39,22 @@ public:
             Output() = default;
             Output(const Vec3f &pos) : m_pos(pos) { }
             Output(const Vec3f &pos, const Output &src) : m_pos(pos), m_color(src.m_color) { }
-            Output(const Vec3f &pos, const Color &color) : m_pos(pos), m_color(color) { }
-            Output operator+(const Output &rhs) const { return Output(m_pos + rhs.m_pos, m_color); }
+            Output(const Vec3f &pos, const Vec3f &color) : m_pos(pos), m_color(color) { }
+            Output operator+(const Output &rhs) const;
             Output &operator+=(const Output &rhs) { return *this = *this + rhs; }
-            Output operator-(const Output &rhs) const { return Output(m_pos - rhs.m_pos, m_color); }
+            Output operator-(const Output &rhs) const;
             Output &operator-=(const Output &rhs) { return *this = *this - rhs; }
-            Output operator*(float rhs) const { return Output(m_pos * rhs, m_color); }
-            Output operator*=(float rhs) { return *this = *this * rhs; }
-            Output operator/(float rhs) const { return Output(m_pos / rhs, m_color); }
-            Output operator/=(float rhs) { return *this = *this / rhs; }
+            Output operator*(float rhs) const { return Output(m_pos * rhs, m_color * rhs); }
+            Output &operator*=(float rhs) { return *this = *this * rhs; }
+            Output operator/(float rhs) const { return Output(m_pos / rhs, m_color / rhs); }
+            Output &operator/=(float rhs) { return *this = *this / rhs; }
         public:
             Vec3f m_pos;
-            Color m_color;
+            Vec3f m_color;
         };
     public:
-        void bind_rotation(const Mat3f &rot) { m_rot = rot; }
-        void bind_translation(const Vec3f &trans) { m_trans = trans; }
+        void bind_rotation(const Mat3f rot) { m_rot = rot; }
+        void bind_translation(const Vec3f trans) { m_trans = trans; }
         Output operator()(const Vertex &input) const;
         void set_diffuse_light(const Vec3f &c) { m_diff = c; }
         void set_ambient_light(const Vec3f &c) { m_amb = c; }
@@ -67,7 +70,7 @@ public:
     };
     // default geometry shader passes vertices through and outputs triangle
     typedef DefaultGeometryShader<VertexShader::Output> GeometryShader;
-    // inkoed for each pixel of a triangle
+    //invoked for each pixel of a triangle
     // takes an input of attributes that are the
     // result of interpolating vertex attributes
     // and outputs a color
@@ -75,7 +78,7 @@ public:
     {
     public:
         template<typename I>
-        Color operator()(const I &input) const { return input.m_color; }
+        Color operator()(const I &input) const { return Color(input.m_color); }
     };
 public:
     VertexShader m_vs;

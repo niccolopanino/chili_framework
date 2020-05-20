@@ -31,6 +31,7 @@
 #include "CubeSolidGeometryScene.h"
 #include "CubeFlatIndependentScene.h"
 #include "GeometryFlatScene.h"
+#include "GouraudScene.h"
 #include <sstream>
 
 Game::Game(MainWindow &wnd) : m_wnd(wnd), m_gfx(wnd)
@@ -47,6 +48,8 @@ Game::Game(MainWindow &wnd) : m_wnd(wnd), m_gfx(wnd)
         Cube::get_plain<GeometryFlatScene::Vertex>()));
     m_scenes.push_back(std::make_unique<GeometryFlatScene>(m_gfx,
         Sphere::get_plain<GeometryFlatScene::Vertex>()));
+    m_scenes.push_back(std::make_unique<GouraudScene>(m_gfx,
+        Sphere::get_plain_normals<GouraudScene::Vertex>()));
     m_scenes.push_back(std::make_unique<GeometryFlatScene>(m_gfx,
         IndexedTriangleList<GeometryFlatScene::Vertex>::load("resources/models/bunny.obj")));
     m_cur_scene = m_scenes.begin();
