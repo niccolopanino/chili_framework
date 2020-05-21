@@ -23,53 +23,53 @@
 #include "Plane.h"
 #include "Cube.h"
 #include "Sphere.h"
-#include "CubeSkinScene.h"
-#include "CubeVertexColorScene.h"
-#include "CubeSolidScene.h"
-#include "DoubleCubeScene.h"
-#include "VertexWaveScene.h"
-#include "CubeVertexPositionColorScene.h"
-#include "CubeSolidGeometryScene.h"
-#include "CubeFlatIndependentScene.h"
-#include "GeometryFlatScene.h"
-#include "GouraudScene.h"
-#include "GouraudPointScene.h"
-#include "PhongPointScene.h"
+//#include "CubeSkinScene.h"
+//#include "CubeVertexColorScene.h"
+//#include "CubeSolidScene.h"
+//#include "DoubleCubeScene.h"
+//#include "VertexWaveScene.h"
+//#include "CubeVertexPositionColorScene.h"
+//#include "CubeSolidGeometryScene.h"
+//#include "CubeFlatIndependentScene.h"
+//#include "GeometryFlatScene.h"
+//#include "GouraudScene.h"
+//#include "GouraudPointScene.h"
+//#include "PhongPointScene.h"
 #include "SpecularPointScene.h"
 #include <sstream>
 
 Game::Game(MainWindow &wnd) : m_wnd(wnd), m_gfx(wnd)
 {
-    m_scenes.push_back(std::make_unique<CubeSolidScene>(m_gfx));
-    m_scenes.push_back(std::make_unique<CubeSolidGeometryScene>(m_gfx));
-    m_scenes.push_back(std::make_unique<CubeVertexColorScene>(m_gfx));
-    m_scenes.push_back(std::make_unique<CubeVertexPositionColorScene>(m_gfx));
-    m_scenes.push_back(std::make_unique<CubeSkinScene>(m_gfx, L"resources/img/office_skin.jpg"));
-    m_scenes.push_back(std::make_unique<DoubleCubeScene>(m_gfx));
-    m_scenes.push_back(std::make_unique<CubeFlatIndependentScene>(m_gfx));
-    m_scenes.push_back(std::make_unique<GouraudPointScene>(m_gfx,
-        Plane::get_normals<GouraudPointScene::Vertex>(4)));
-    m_scenes.push_back(std::make_unique<PhongPointScene>(m_gfx,
-        Plane::get_normals<PhongPointScene::Vertex>(1)));
-    m_scenes.push_back(std::make_unique<VertexWaveScene>(m_gfx));
-    m_scenes.push_back(std::make_unique<GeometryFlatScene>(m_gfx,
-        Cube::get_plain<GeometryFlatScene::Vertex>()));
-    m_scenes.push_back(std::make_unique<GeometryFlatScene>(m_gfx,
-        Sphere::get_plain<GeometryFlatScene::Vertex>()));
-    m_scenes.push_back(std::make_unique<GouraudScene>(m_gfx,
-        Sphere::get_plain_normals<GouraudScene::Vertex>()));
-    m_scenes.push_back(std::make_unique<GeometryFlatScene>(m_gfx,
-        IndexedTriangleList<GeometryFlatScene::Vertex>::load("resources/models/bunny.obj")));
-    m_scenes.push_back(std::make_unique<GouraudScene>(m_gfx,
-        IndexedTriangleList<GouraudScene::Vertex>::load_normals("resources/models/suzanne.obj")));
-    m_scenes.push_back(std::make_unique<GouraudPointScene>(
-        m_gfx,
-        IndexedTriangleList<GouraudPointScene::Vertex>::load_normals("resources/models/suzanne.obj")
-    ));
-    m_scenes.push_back(std::make_unique<PhongPointScene>(
-        m_gfx,
-        IndexedTriangleList<PhongPointScene::Vertex>::load_normals("resources/models/suzanne.obj")
-    ));
+    //m_scenes.push_back(std::make_unique<CubeSolidScene>(m_gfx));
+    //m_scenes.push_back(std::make_unique<CubeSolidGeometryScene>(m_gfx));
+    //m_scenes.push_back(std::make_unique<CubeVertexColorScene>(m_gfx));
+    //m_scenes.push_back(std::make_unique<CubeVertexPositionColorScene>(m_gfx));
+    //m_scenes.push_back(std::make_unique<CubeSkinScene>(m_gfx, L"resources/img/office_skin.jpg"));
+    //m_scenes.push_back(std::make_unique<DoubleCubeScene>(m_gfx));
+    //m_scenes.push_back(std::make_unique<CubeFlatIndependentScene>(m_gfx));
+    //m_scenes.push_back(std::make_unique<GouraudPointScene>(m_gfx,
+    //    Plane::get_normals<GouraudPointScene::Vertex>(4)));
+    //m_scenes.push_back(std::make_unique<PhongPointScene>(m_gfx,
+    //    Plane::get_normals<PhongPointScene::Vertex>(1)));
+    //m_scenes.push_back(std::make_unique<VertexWaveScene>(m_gfx));
+    //m_scenes.push_back(std::make_unique<GeometryFlatScene>(m_gfx,
+    //    Cube::get_plain<GeometryFlatScene::Vertex>()));
+    //m_scenes.push_back(std::make_unique<GeometryFlatScene>(m_gfx,
+    //    Sphere::get_plain<GeometryFlatScene::Vertex>()));
+    //m_scenes.push_back(std::make_unique<GouraudScene>(m_gfx,
+    //    Sphere::get_plain_normals<GouraudScene::Vertex>()));
+    //m_scenes.push_back(std::make_unique<GeometryFlatScene>(m_gfx,
+    //    IndexedTriangleList<GeometryFlatScene::Vertex>::load("resources/models/bunny.obj")));
+    //m_scenes.push_back(std::make_unique<GouraudScene>(m_gfx,
+    //    IndexedTriangleList<GouraudScene::Vertex>::load_normals("resources/models/suzanne.obj")));
+    //m_scenes.push_back(std::make_unique<GouraudPointScene>(
+    //    m_gfx,
+    //    IndexedTriangleList<GouraudPointScene::Vertex>::load_normals("resources/models/suzanne.obj")
+    //));
+    //m_scenes.push_back(std::make_unique<PhongPointScene>(
+    //    m_gfx,
+    //    IndexedTriangleList<PhongPointScene::Vertex>::load_normals("resources/models/suzanne.obj")
+    //));
     m_scenes.push_back(std::make_unique<SpecularPointScene>(m_gfx,
         IndexedTriangleList<SpecularPointScene::Vertex>
         ::load_normals("resources/models/suzanne.obj")));
