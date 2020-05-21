@@ -42,6 +42,9 @@ private:
     // passes 3 vertices to geometry shader to generate triangle
     // sends generated triangle to post-processing
     void process_triangle(const VSOut &v0, const VSOut &v1, const VSOut &v2, size_t tri_idx);
+    // further triangles processing
+    // perform checks and tests to clip / cull triangles outside the frustum
+    void clip_cull_triangle(Triangle<GSOut> &t);
     // vertex post-processing function
     // perform perspective and viewport transformations
     void post_process_triangle_vertices(Triangle<GSOut> &triangle);
@@ -135,8 +138,104 @@ void Pipeline<E>::process_triangle(const VSOut &v0, const VSOut &v1, const VSOut
     size_t tri_idx)
 {
     // generate triangle from 3 vertices using geometry shader
-    // and send to post-processing
-    post_process_triangle_vertices(m_effect.m_gs(v0, v1, v2, tri_idx));
+    // and send to clipper
+    clip_cull_triangle(m_effect.m_gs(v0, v1, v2, tri_idx));
+}
+
+template<typename E>
+void Pipeline<E>::clip_cull_triangle(Triangle<GSOut> &t)
+{
+    // cull tests
+    if (t.v0.m_pos.m_x > t.v0.m_pos.m_w
+        && t.v1.m_pos.m_x > t.v1.m_pos.m_w
+        && t.v2.m_pos.m_x > t.v2.m_pos.m_w)
+    {
+        return;
+    }
+    if (t.v0.m_pos.m_x < -t.v0.m_pos.m_w
+        && t.v1.m_pos.m_x < -t.v1.m_pos.m_w
+        && t.v2.m_pos.m_x < -t.v2.m_pos.m_w)
+    {
+        return;
+    }
+
+    if (t.v0.m_pos.m_y > t.v0.m_pos.m_w
+        && t.v1.m_pos.m_y > t.v1.m_pos.m_w
+        && t.v2.m_pos.m_y > t.v2.m_pos.m_w)
+    {
+        return;
+    }
+    if (t.v0.m_pos.m_y < -t.v0.m_pos.m_w
+        && t.v1.m_pos.m_y < -t.v1.m_pos.m_w
+        && t.v2.m_pos.m_y < -t.v2.m_pos.m_w)
+    {
+        return;
+    }
+
+    if (t.v0.m_pos.m_z > t.v0.m_pos.m_w
+        && t.v1.m_pos.m_z > t.v1.m_pos.m_w
+        && t.v2.m_pos.m_z > t.v2.m_pos.m_w)
+    {
+        return;
+    }
+    if (t.v0.m_pos.m_z < 0.f
+        && t.v1.m_pos.m_z < 0.f
+        && t.v2.m_pos.m_z < 0.f)
+    {
+        return;
+    }
+
+    // clipping routines
+    const auto clip1 = [this](GSOut &v0, GSOut &v1, GSOut &v2)
+    {
+        // calculate alpha values for getting adjusted vertices
+        const float alpha_a = (-v0.m_pos.m_z) / (v1.m_pos.m_z - v0.m_pos.m_z);
+        const float alpha_b = (-v0.m_pos.m_z) / (v2.m_pos.m_z - v0.m_pos.m_z);
+        // interpolate to get v0a and v0b
+        const GSOut v0a = interpolate(v0, v1, alpha_a);
+        const GSOut v0b = interpolate(v0, v2, alpha_b);
+        // post-process triangles
+        post_process_triangle_vertices(Triangle<GSOut>{ v0a, v1, v2 });
+        post_process_triangle_vertices(Triangle<GSOut>{ v0b, v0a, v2 });
+    };
+    const auto clip2 = [this](GSOut &v0, GSOut &v1, GSOut &v2)
+    {
+        // calculate alpha values for getting adjusted vertices
+        const float alpha0 = (-v0.m_pos.m_z) / (v2.m_pos.m_z - v0.m_pos.m_z);
+        const float alpha1 = (-v1.m_pos.m_z) / (v2.m_pos.m_z - v1.m_pos.m_z);
+        // interpolate to get v0a and v0b
+        v0 = interpolate(v0, v2, alpha0);
+        v1 = interpolate(v1, v2, alpha1);
+        // post-process triangle
+        post_process_triangle_vertices(Triangle<GSOut>{ v0, v1, v2 });
+    };
+
+    // near clipping tests
+    if (t.v0.m_pos.m_z < 0.f)
+    {
+        if (t.v1.m_pos.m_z < 0.f)
+            clip2(t.v0, t.v1, t.v2);
+        else if (t.v2.m_pos.m_z < 0.f)
+            clip2(t.v0, t.v2, t.v1);
+        else
+            clip1(t.v0, t.v1, t.v2);
+    }
+    else if (t.v1.m_pos.m_z < 0.f)
+    {
+        if (t.v2.m_pos.m_z < 0.f)
+            clip2(t.v1, t.v2, t.v0);
+        else
+            clip1(t.v1, t.v0, t.v2);
+    }
+    else if (t.v2.m_pos.m_z < 0.f)
+    {
+        clip1(t.v2, t.v0, t.v1);
+    }
+    else
+    {
+        // no near clipping necessary
+        post_process_triangle_vertices(t);
+    }
 }
 
 template<typename E>
@@ -238,8 +337,8 @@ void Pipeline<E>::draw_flat_triangle(const GSOut &itp0, const GSOut &itp1, const
     auto itp_edge0 = itp0;
 
     // calculate start and end scanlines (the scanline AFTER the last line drawn)
-    const int ystart = (int)ceil(itp0.m_pos.m_y - .5f);
-    const int yend = (int)ceil(itp2.m_pos.m_y - .5f);
+    const int ystart = std::max((int)ceil(itp0.m_pos.m_y - .5f), 0);
+    const int yend = std::min((int)ceil(itp2.m_pos.m_y - .5f), (int)Graphics::k_screen_height - 1);
 
     // do interpolant prestep
     itp_edge0 += dv0 * (float(ystart) + .5f - itp0.m_pos.m_y);
@@ -248,8 +347,9 @@ void Pipeline<E>::draw_flat_triangle(const GSOut &itp0, const GSOut &itp1, const
     for (int y = ystart; y < yend; y++, itp_edge0 += dv0, itp_edge1 += dv1)
     {
         // calculate start and end pixels (the pixel AFTER the last pixel drawn)
-        const int xstart = (int)ceil(itp_edge0.m_pos.m_x - .5f);
-        const int xend = (int)ceil(itp_edge1.m_pos.m_x - .5f);
+        const int xstart = std::max((int)ceil(itp_edge0.m_pos.m_x - .5f), 0);
+        const int xend = std::min((int)ceil(itp_edge1.m_pos.m_x - .5f),
+            (int)Graphics::k_screen_width - 1);
 
         // create scanline interpolant startpoint
         // (some waster for interpolating x / y / z,

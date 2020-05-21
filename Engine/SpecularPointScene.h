@@ -35,4 +35,5 @@ private:
     float m_lpos_x = 0.f;
     float m_lpos_y = 0.f;
     float m_lpos_z = .6f;
+    float m_phi = 0.f;
 };
