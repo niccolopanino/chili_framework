@@ -113,6 +113,7 @@ template<typename E>
 void Pipeline<E>::assemble_triangles(const std::vector<VSOut> &vertices,
     const std::vector<size_t> &indices)
 {
+    const auto eyepos = Vec4f(0.f, 0.f, 0.f, 1.f) * m_effect.m_vs.get_proj();
     // assemble triangles in the stream and process
     for (size_t i = 0, end = indices.size() / 3; i < end; i++) {
         // determine triangle vertices via indexing
@@ -121,7 +122,7 @@ void Pipeline<E>::assemble_triangles(const std::vector<VSOut> &vertices,
         const auto &v2 = vertices[indices[i * 3 + 2]];
         // cull backfacing triangles with cross product shenanigans
         if (Vec3f::dot(Vec3f::cross((v1.m_pos - v0.m_pos), (v2.m_pos - v0.m_pos)),
-            v0.m_pos) <= 0.f)
+            Vec3f(v0.m_pos - eyepos)) <= 0.f)
         {
             // process 3 vertices into a triangle
             process_triangle(v0, v1, v2, i);
