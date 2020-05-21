@@ -19,15 +19,15 @@ public:
     Mat operator/(T rhs) const;
     Mat &operator/=(T rhs) { return *this = *this / rhs; }
 
-    static Mat identity();
-    static Mat scale(T factor);
-    static Mat rotate_2d(T theta);
-    static Mat rotate_x(T theta);
-    static Mat rotate_y(T theta);
-    static Mat rotate_z(T theta);
-    static Mat translate(T x, T y, T z);
+    constexpr static Mat identity();
+    constexpr static Mat scale(T factor);
+    constexpr static Mat rotate_2d(T theta);
+    constexpr static Mat rotate_x(T theta);
+    constexpr static Mat rotate_y(T theta);
+    constexpr static Mat rotate_z(T theta);
+    constexpr static Mat translate(T x, T y, T z);
     template<typename V>
-    static Mat translate(const V &tl) { return translate(tl.m_x, tl.m_y, tl.m_z); }
+    constexpr static Mat translate(const V &tl) { return translate(tl.m_x, tl.m_y, tl.m_z); }
 public:
     // [row][col]
     T m_elements[S][S];
@@ -141,7 +141,7 @@ inline Mat<T, S> Mat<T, S>::operator/(T rhs) const
 //------------------------------------------------------------------------------
 
 template<typename T, size_t S>
-inline Mat<T, S> Mat<T, S>::identity()
+constexpr inline Mat<T, S> Mat<T, S>::identity()
 {
     if constexpr (S == 2)
     {
@@ -174,7 +174,7 @@ inline Mat<T, S> Mat<T, S>::identity()
 }
 
 template<typename T, size_t S>
-inline Mat<T, S> Mat<T, S>::scale(T factor)
+constexpr inline Mat<T, S> Mat<T, S>::scale(T factor)
 {
     if constexpr (S == 2)
     {
@@ -207,7 +207,7 @@ inline Mat<T, S> Mat<T, S>::scale(T factor)
 }
 
 template<typename T, size_t S>
-inline Mat<T, S> Mat<T, S>::rotate_2d(T theta)
+constexpr inline Mat<T, S> Mat<T, S>::rotate_2d(T theta)
 {
     if constexpr (S == 2)
     {
@@ -225,7 +225,7 @@ inline Mat<T, S> Mat<T, S>::rotate_2d(T theta)
 }
 
 template<typename T, size_t S>
-inline Mat<T, S> Mat<T, S>::rotate_x(T theta)
+constexpr inline Mat<T, S> Mat<T, S>::rotate_x(T theta)
 {
     const T c = cos(theta);
     const T s = sin(theta);
@@ -253,7 +253,7 @@ inline Mat<T, S> Mat<T, S>::rotate_x(T theta)
 }
 
 template<typename T, size_t S>
-inline Mat<T, S> Mat<T, S>::rotate_y(T theta)
+constexpr inline Mat<T, S> Mat<T, S>::rotate_y(T theta)
 {
     const T c = cos(theta);
     const T s = sin(theta);
@@ -281,7 +281,7 @@ inline Mat<T, S> Mat<T, S>::rotate_y(T theta)
 }
 
 template<typename T, size_t S>
-inline Mat<T, S> Mat<T, S>::rotate_z(T theta)
+constexpr inline Mat<T, S> Mat<T, S>::rotate_z(T theta)
 {
     const T c = cos(theta);
     const T s = sin(theta);
@@ -309,7 +309,7 @@ inline Mat<T, S> Mat<T, S>::rotate_z(T theta)
 }
 
 template<typename T, size_t S>
-inline Mat<T, S> Mat<T, S>::translate(T x, T y, T z)
+constexpr inline Mat<T, S> Mat<T, S>::translate(T x, T y, T z)
 {
     if constexpr (S == 4)
     {
