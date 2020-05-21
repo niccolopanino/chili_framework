@@ -1,5 +1,6 @@
 #pragma once
 #include "Vec3.h"
+#include "Vec4.h"
 #include <cmath>
 
 //------------------------------------------------------------------------------
@@ -51,7 +52,7 @@ typedef Mat<int, 4> Mat4i;
 //------------------------------------------------------------------------------
 
 template<typename T>
-Vec3<T> operator*(const Vec3<T> &v, const Mat<T, 3> &m)
+inline Vec3<T> operator*(const Vec3<T> &v, const Mat<T, 3> &m)
 {
     return Vec3<T>(
         v.m_x * m.m_elements[0][0] + v.m_y * m.m_elements[1][0] + v.m_z * m.m_elements[2][0],
@@ -61,7 +62,28 @@ Vec3<T> operator*(const Vec3<T> &v, const Mat<T, 3> &m)
 }
 
 template<typename T>
-Vec3<T> &operator*=(Vec3<T> &v, const  Mat<T, 3> &m)
+inline Vec3<T> &operator*=(Vec3<T> &v, const  Mat<T, 3> &m)
+{
+    return v = v * m;
+}
+
+template<typename T>
+inline Vec4<T> operator*(const Vec4<T> &v, const Mat<T, 4> &m)
+{
+    return Vec4<T>(
+        v.m_x * m.m_elements[0][0] + v.m_y * m.m_elements[1][0]
+        + v.m_z * m.m_elements[2][0] + v.m_w * m.m_elements[3][0],
+        v.m_x * m.m_elements[0][1] + v.m_y * m.m_elements[1][1]
+        + v.m_z * m.m_elements[2][1] + v.m_w * m.m_elements[3][1],
+        v.m_x * m.m_elements[0][2] + v.m_y * m.m_elements[1][2]
+        + v.m_z * m.m_elements[2][2] + v.m_w * m.m_elements[3][2],
+        v.m_x * m.m_elements[0][3] + v.m_y * m.m_elements[1][3]
+        + v.m_z * m.m_elements[2][3] + v.m_w * m.m_elements[3][3]
+    );
+}
+
+template<typename T>
+inline Vec4<T> &operator*=(Vec4<T> &v, const Mat<T, 4> &m)
 {
     return v = v * m;
 }

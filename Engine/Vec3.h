@@ -3,11 +3,15 @@
 #include "ChiliMath.h"
 #include <algorithm>
 
+//------------------------------------------------------------------------------
+//---- 3 element vector class template -----------------------------------------
+//------------------------------------------------------------------------------
+
 template<typename T>
 class Vec3 : public Vec2<T>
 {
 public:
-    Vec3() { }
+    Vec3() = default;
     Vec3(T x, T y, T z) : Vec2(x, y), m_z(z) { }
     Vec3(const Vec3 &v) : Vec3(v.m_x, v.m_y, v.m_z) { }
 
@@ -44,9 +48,17 @@ public:
     T m_z = (T)0;
 };
 
+//------------------------------------------------------------------------------
+//---- some vector typedefs ----------------------------------------------------
+//------------------------------------------------------------------------------
+
 typedef Vec3<float>     Vec3f;
 typedef Vec3<double>    Vec3d;
 typedef Vec3<int>       Vec3i;
+
+//------------------------------------------------------------------------------
+//---- definitions for vector operators ----------------------------------------
+//------------------------------------------------------------------------------
 
 template<typename T>
 inline Vec3<T> &Vec3<T>::operator=(const Vec3 &rhs)
@@ -87,6 +99,10 @@ inline bool Vec3<T>::operator==(const Vec3 &rhs) const
     return m_x == rhs.m_x && m_y == rhs.m_y && m_z == rhs.m_z;
 }
 
+//------------------------------------------------------------------------------
+//---- definitions for vector methods / functions ------------------------------
+//------------------------------------------------------------------------------
+
 template<typename T>
 inline Vec3<T> Vec3<T>::get_normalized() const
 {
@@ -120,3 +136,5 @@ inline Vec3<T> Vec3<T>::cross(const Vec3 &v1, const Vec3 &v2)
         v1.m_x * v2.m_y - v1.m_y * v2.m_x
     );
 }
+
+//------------------------------------------------------------------------------
