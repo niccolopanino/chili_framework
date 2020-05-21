@@ -117,7 +117,7 @@ inline Mat<T, S> Mat<T, S>::operator*(const Mat &rhs) const
     for (size_t i = 0; i < S; i++) {
         for (size_t j = 0; j < S; j++) {
             T sum = (T)0;
-            for (size_t k = 0; k < 3; k++)
+            for (size_t k = 0; k < S; k++)
                 sum += m_elements[i][k] * rhs.m_elements[k][j];
             out.m_elements[i][j] = sum;
         }
