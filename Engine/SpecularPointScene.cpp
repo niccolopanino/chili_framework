@@ -50,7 +50,7 @@ void SpecularPointScene::draw()
 {
     m_pipeline.begin_frame();
     // set pipeline transform
-    const Mat4f proj = Mat4f::project(2.f, 2.f, 1.f, 10.f);
+    const Mat4f proj = Mat4f::project(2.66666f, 2.f, 1.f, 10.f);
     m_pipeline.m_effect.m_vs.bind_world(
         Mat4f::rotate_x(m_theta_x)
         * Mat4f::rotate_y(m_theta_y)

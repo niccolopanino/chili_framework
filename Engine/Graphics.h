@@ -79,5 +79,5 @@ private:
     Surface                                             m_sysbuffer;
 public:
     static constexpr unsigned int k_screen_width = 640u;
-    static constexpr unsigned int k_screen_height = 640u;
+    static constexpr unsigned int k_screen_height = 480u;
 };
