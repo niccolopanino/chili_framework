@@ -1,6 +1,6 @@
 #include "GouraudPointScene.h"
 #include "Vec3.h"
-#include "Mat3.h"
+#include "Mat.h"
 
 GouraudPointScene::GouraudPointScene(Graphics &gfx, IndexedTriangleList<Vertex> itl) :
     m_zb(std::make_shared<ZBuffer>(Graphics::k_screen_width, Graphics::k_screen_height)),

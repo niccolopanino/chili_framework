@@ -1,6 +1,6 @@
 #pragma once
 #include "Vec3.h"
-#include "Mat3.h"
+#include "Mat.h"
 #include "Triangle.h"
 #include "Colors.h"
 #include "DefaultVertexShader.h"

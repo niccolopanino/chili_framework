@@ -1,6 +1,6 @@
 #include "CubeVertexPositionColorScene.h"
 #include "Cube.h"
-#include "Mat3.h"
+#include "Mat.h"
 #include "Vec3.h"
 
 CubeVertexPositionColorScene::CubeVertexPositionColorScene(Graphics &gfx) :

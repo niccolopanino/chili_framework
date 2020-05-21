@@ -1,6 +1,6 @@
 #include "VertexWaveScene.h"
 #include "Plane.h"
-#include "Mat3.h"
+#include "Mat.h"
 #include "Vec3.h"
 
 VertexWaveScene::VertexWaveScene(Graphics &gfx) :

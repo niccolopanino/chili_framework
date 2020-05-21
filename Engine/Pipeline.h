@@ -5,7 +5,7 @@
 #include "IndexedTriangleList.h"
 #include "PubeScreenTransformer.h"
 #include "ZBuffer.h"
-#include "Mat3.h"
+#include "Mat.h"
 #include "Vec3.h"
 #include "ChiliMath.h"
 #include <algorithm>

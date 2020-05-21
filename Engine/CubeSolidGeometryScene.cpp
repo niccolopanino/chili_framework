@@ -1,6 +1,6 @@
 #include "CubeSolidGeometryScene.h"
 #include "Cube.h"
-#include "Mat3.h"
+#include "Mat.h"
 #include "Vec3.h"
 
 CubeSolidGeometryScene::CubeSolidGeometryScene(Graphics &gfx) :

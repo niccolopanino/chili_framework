@@ -1,6 +1,6 @@
 #include "CubeFlatIndependentScene.h"
 #include "Cube.h"
-#include "Mat3.h"
+#include "Mat.h"
 
 CubeFlatIndependentScene::CubeFlatIndependentScene(Graphics &gfx) :
     m_it_list(Cube::get_plain_independent_faces_normals<Vertex>()), m_pipeline(gfx),

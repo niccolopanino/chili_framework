@@ -1,5 +1,5 @@
 #include "GouraudScene.h"
-#include "Mat3.h"
+#include "Mat.h"
 
 GouraudScene::GouraudScene(Graphics &gfx, IndexedTriangleList<Vertex> itl) :
     m_it_list(std::move(itl)), m_pipeline(gfx), Scene("Gouraud shader scene free mesh")

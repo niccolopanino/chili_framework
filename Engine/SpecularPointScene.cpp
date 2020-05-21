@@ -1,4 +1,5 @@
 #include "SpecularPointScene.h"
+#include "Mat.h"
 #include "Sphere.h"
 
 SpecularPointScene::SpecularPointScene(Graphics &gfx, IndexedTriangleList<Vertex> itl) :
