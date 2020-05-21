@@ -56,5 +56,5 @@ int ZBuffer::get_height() const
 
 auto ZBuffer::get_min_max() const
 {
-    return std::minmax_element(m_buffer, m_buffer + m_width * m_height);
+    return std::minmax_element(m_buffer, m_buffer + (size_t)m_width * m_height);
 }
