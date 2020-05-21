@@ -1,5 +1,6 @@
 #pragma once
 #include "Vec3.h"
+#include "Vec4.h"
 #include "Mat.h"
 #include "Colors.h"
 #include "DefaultGeometryShader.h"
@@ -50,17 +51,15 @@ public:
             Output operator/(float rhs) const;
             Output &operator/=(float rhs) { return *this = *this / rhs; }
         public:
-            Vec3f m_pos;
+            Vec4f m_pos;
             Vec3f m_n;
             Vec3f m_world_pos;
         };
     public:
-        void bind_rotation(const Mat3f &rot) { m_rot = rot; }
-        void bind_translation(const Vec3f &trans) { m_trans = trans; }
+        void bind_transformation(const Mat4f &transform) { m_transform = transform; }
         Output operator()(const Vertex &input) const;
     private:
-        Mat3f m_rot;
-        Vec3f m_trans;
+        Mat4f m_transform = Mat4f::identity();
     };
     // default geometry shader passes vertices through and outputs triangle
     typedef DefaultGeometryShader<VertexShader::Output> GeometryShader;

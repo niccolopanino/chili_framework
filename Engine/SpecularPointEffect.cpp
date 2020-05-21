@@ -47,6 +47,6 @@ SpecularPointEffect::VertexShader::Output::operator/(float rhs) const
 SpecularPointEffect::VertexShader::Output
 SpecularPointEffect::VertexShader::operator()(const Vertex &input) const
 {
-    const auto pos = input.m_pos * m_rot + m_trans;
-    return Output(pos, input.m_n * m_rot, pos);
+    const auto pos = Vec4f(input.m_pos) * m_transform;
+    return Output(pos, Vec4f(input.m_n, 0.f) * m_transform, pos);
 }

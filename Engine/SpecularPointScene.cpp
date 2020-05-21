@@ -49,14 +49,13 @@ void SpecularPointScene::update(Keyboard & kbd, Mouse & mouse, float dt)
 void SpecularPointScene::draw()
 {
     m_pipeline.begin_frame();
-    // generate rotation matrix from euler angles, translation from offset
-    const Mat3f rot = Mat3f::rotate_x(m_theta_x)
-        * Mat3f::rotate_y(m_theta_y)
-        * Mat3f::rotate_z(m_theta_z);
-    const Vec3f trans = Vec3f(0.f, 0.f, m_offset_z);
     // set pipeline transform
-    m_pipeline.m_effect.m_vs.bind_rotation(rot);
-    m_pipeline.m_effect.m_vs.bind_translation(trans);
+    m_pipeline.m_effect.m_vs.bind_transformation(
+        Mat4f::rotate_x(m_theta_x)
+        * Mat4f::rotate_y(m_theta_y)
+        * Mat4f::rotate_z(m_theta_z)
+        * Mat4f::translate(0.f, 0.f, m_offset_z)
+    );
     m_pipeline.m_effect.m_ps.set_light_position(Vec3f(m_lpos_x, m_lpos_y, m_lpos_z));
     // render triangles
     m_pipeline.draw(m_it_list);
