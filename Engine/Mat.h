@@ -29,6 +29,7 @@ public:
     template<typename V>
     constexpr static Mat translate(const V &tl) { return translate(tl.m_x, tl.m_y, tl.m_z); }
     constexpr static Mat project(T w, T h, T n, T f);
+    constexpr static Mat project_hfov(T fov, T ar, T n, T f);
 public:
     // [row][col]
     T m_elements[S][S];
@@ -342,6 +343,23 @@ constexpr inline Mat<T, S> Mat<T, S>::project(T w, T h, T n, T f)
     else
     {
         static_assert("bad matrix dimensions");
+    }
+}
+
+template<typename T, size_t S>
+constexpr inline Mat<T, S> Mat<T, S>::project_hfov(T fov, T ar, T n, T f)
+{
+    if constexpr (S == 4)
+    {
+        const auto fov_rad = fov * (T)PI / (T)180;
+        const auto w = (T)1 / std::tan(fov_rad / (T)2);
+        const auto h = w * ar;
+        return {
+            w, (T)0, (T)0, (T)0,
+            (T)0, h, (T)0, (T)0,
+            (T)0, (T)0, f / (f - n), (T)1,
+            (T)0, (T)0, -n * f / (f - n), (T)0
+        };
     }
 }
 
