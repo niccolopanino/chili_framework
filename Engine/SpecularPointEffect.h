@@ -39,9 +39,9 @@ public:
         {
         public:
             Output() = default;
-            Output(const Vec3f &pos) : m_pos(pos) { }
-            Output(const Vec3f &pos, const Output &src);
-            Output(const Vec3f &pos, const Vec3f &n, const Vec3f &world_pos);
+            Output(const Vec4f &pos) : m_pos(pos) { }
+            Output(const Vec4f &pos, const Output &src);
+            Output(const Vec4f &pos, const Vec3f &n, const Vec3f &world_pos);
             Output operator+(const Output &rhs) const;
             Output &operator+=(const Output &rhs) { return *this = *this + rhs; }
             Output operator-(const Output &rhs) const;
@@ -56,10 +56,14 @@ public:
             Vec3f m_world_pos;
         };
     public:
-        void bind_transformation(const Mat4f &transform) { m_transform = transform; }
+        void bind_world(const Mat4f &world);
+        void bind_projection(const Mat4f &proj);
+        const Mat4f &get_proj() const { return m_proj; }
         Output operator()(const Vertex &input) const;
     private:
-        Mat4f m_transform = Mat4f::identity();
+        Mat4f m_world = Mat4f::identity();
+        Mat4f m_proj = Mat4f::identity();
+        Mat4f m_world_proj = Mat4f::identity();
     };
     // default geometry shader passes vertices through and outputs triangle
     typedef DefaultGeometryShader<VertexShader::Output> GeometryShader;

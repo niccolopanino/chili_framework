@@ -3,7 +3,7 @@
 #include "Graphics.h"
 #include "Triangle.h"
 #include "IndexedTriangleList.h"
-#include "PubeScreenTransformer.h"
+#include "NDCScreenTransformer.h"
 #include "ZBuffer.h"
 #include "Mat.h"
 #include "Vec3.h"
@@ -66,7 +66,7 @@ public:
     E m_effect;
 private:
     Graphics &m_gfx;
-    PubeScreenTransformer m_pms;
+    NDCScreenTransformer m_pms;
     std::shared_ptr<ZBuffer> m_zb;
     Mat3f m_rot = Mat3f::identity();
     Vec3f m_trans;
@@ -264,15 +264,15 @@ void Pipeline<E>::draw_flat_triangle(const GSOut &itp0, const GSOut &itp1, const
         iline += diline * (float(xstart) + .5f - itp_edge0.m_pos.m_x);
 
         for (int x = xstart; x < xend; x++, iline += diline) {
-            // recover interpolated z from interpolated 1/z
-            const float z = 1.f / iline.m_pos.m_z;
             // do z rejection / update of z buffer
             // skip shading step if z rejected (early z)
-            if (m_zb->test_and_set(x, y, z)) {
+            if (m_zb->test_and_set(x, y, iline.m_pos.m_z)) {
+                // recover interpolated w from interpolated 1/w
+                const float w = 1.f / iline.m_pos.m_w;
                 // recover interpolated attributes
                 // (wasted effort in multiplying pos (x / y / z) here, but
                 // not a huge deal, not worth the code complication to fix)
-                const auto attr = iline * z;
+                const auto attr = iline * w;
                 // invoke pixel shader with interpolated vertex attributes
                 /// and use result to set the pixel color on the screen
                 m_gfx.put_pixel(x, y, m_effect.m_ps(attr));

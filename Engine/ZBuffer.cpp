@@ -1,6 +1,7 @@
 #include "ZBuffer.h"
 #include <limits>
 #include <cassert>
+#include <algorithm>
 
 ZBuffer::ZBuffer(int width, int height) :
     m_width(width), m_height(height), m_buffer(new float[(size_t)width * height])
@@ -51,4 +52,9 @@ int ZBuffer::get_width() const
 int ZBuffer::get_height() const
 {
     return m_height;
+}
+
+auto ZBuffer::get_min_max() const
+{
+    return std::minmax_element(m_buffer, m_buffer + m_width * m_height);
 }

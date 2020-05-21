@@ -1,21 +1,18 @@
 #include "SolidEffect.h"
 
-SolidEffect::Vertex SolidEffect::Vertex::operator+(const Vertex &rhs) const
+void SolidEffect::VertexShader::bind_world(const Mat4f &world)
 {
-    return Vertex(m_pos + rhs.m_pos, m_color);
+    m_world = world;
+    m_world_proj = m_world * m_proj;
 }
 
-SolidEffect::Vertex SolidEffect::Vertex::operator-(const Vertex &rhs) const
+void SolidEffect::VertexShader::bind_projection(const Mat4f &proj)
 {
-    return Vertex(m_pos - rhs.m_pos, m_color);
+    m_proj = proj;
+    m_world_proj = m_world * m_proj;
 }
 
-SolidEffect::Vertex SolidEffect::Vertex::operator*(float rhs) const
+SolidEffect::VertexShader::Output SolidEffect::VertexShader::operator()(const Vertex &input) const
 {
-    return Vertex(m_pos * rhs, m_color);
-}
-
-SolidEffect::Vertex SolidEffect::Vertex::operator/(float rhs) const
-{
-    return Vertex(m_pos / rhs, m_color);
+    return Output(Vec4f(input.m_pos) * m_world_proj, input.m_color);
 }

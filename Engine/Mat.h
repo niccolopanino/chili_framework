@@ -28,6 +28,7 @@ public:
     constexpr static Mat translate(T x, T y, T z);
     template<typename V>
     constexpr static Mat translate(const V &tl) { return translate(tl.m_x, tl.m_y, tl.m_z); }
+    constexpr static Mat project(T w, T h, T n, T f);
 public:
     // [row][col]
     T m_elements[S][S];
@@ -318,6 +319,24 @@ constexpr inline Mat<T, S> Mat<T, S>::translate(T x, T y, T z)
             (T)0, (T)1, (T)0, (T)0,
             (T)0, (T)0, (T)1, (T)0,
             x, y, z, (T)1
+        };
+    }
+    else
+    {
+        static_assert("bad matrix dimensions");
+    }
+}
+
+template<typename T, size_t S>
+constexpr inline Mat<T, S> Mat<T, S>::project(T w, T h, T n, T f)
+{
+    if constexpr (S == 4)
+    {
+        return {
+            (T)2 * n / w, (T)0, (T)0, (T)0,
+            (T)0, (T)2 * n / h, (T)0, (T)0,
+            (T)0, (T)0, f / (f - n), (T)1,
+            (T)0, (T)0, -n * f / (f - n), (T)0
         };
     }
     else

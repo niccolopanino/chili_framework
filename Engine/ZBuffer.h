@@ -13,6 +13,7 @@ public:
     bool test_and_set(int x, int y, float depth);
     int get_width() const;
     int get_height() const;
+    auto get_min_max() const;
 private:
     int m_width;
     int m_height;
