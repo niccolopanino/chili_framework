@@ -44,21 +44,22 @@ SpecularPointEffect::VertexShader::Output::operator/(float rhs) const
     return Output(m_pos / rhs, m_n / rhs, m_world_pos / rhs);
 }
 
-void SpecularPointEffect::VertexShader::bind_world(const Mat4f &world)
+void SpecularPointEffect::VertexShader::bind_world_view(const Mat4f &world_view)
 {
-    m_world = world;
-    m_world_proj = m_world * m_proj;
+    m_world_view = world_view;
+    m_world_view_proj = m_world_view * m_proj;
 }
 
 void SpecularPointEffect::VertexShader::bind_projection(const Mat4f &proj)
 {
     m_proj = proj;
-    m_world_proj = m_world * m_proj;
+    m_world_view_proj = m_world_view * m_proj;
 }
 
 SpecularPointEffect::VertexShader::Output
 SpecularPointEffect::VertexShader::operator()(const Vertex &input) const
 {
     const auto pos = Vec4f(input.m_pos);
-    return Output(pos * m_world_proj, Vec4f(input.m_n, 0.f) * m_world, pos * m_world);
+    return Output(pos * m_world_view_proj,
+        Vec4f(input.m_n, 0.f) * m_world_view, pos * m_world_view);
 }

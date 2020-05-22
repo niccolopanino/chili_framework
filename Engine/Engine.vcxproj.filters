@@ -249,6 +249,9 @@
     <ClInclude Include="Resource.h">
       <Filter>Header Files\System / Application</Filter>
     </ClInclude>
+    <ClInclude Include="MouseTracker.h">
+      <Filter>Header Files\System / Application</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp">
@@ -379,6 +382,9 @@
     </ClCompile>
     <ClCompile Include="Color.cpp">
       <Filter>Source Files\Math / Geometry / Color</Filter>
+    </ClCompile>
+    <ClCompile Include="MouseTracker.cpp">
+      <Filter>Source Files\System / Application</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

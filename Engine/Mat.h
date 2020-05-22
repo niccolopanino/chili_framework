@@ -19,6 +19,9 @@ public:
     Mat operator/(T rhs) const;
     Mat &operator/=(T rhs) { return *this = *this / rhs; }
 
+    Mat get_transposed() const;
+    Mat transpose() { *this = get_transposed(); }
+
     constexpr static Mat identity();
     constexpr static Mat scale(T factor);
     constexpr static Mat rotate_2d(T theta);
@@ -134,6 +137,21 @@ inline Mat<T, S> Mat<T, S>::operator/(T rhs) const
     for (size_t i = 0; i < S; i++) {
         for (size_t j = 0; j < S; j++)
             out.m_elements[i][j] = m_elements[i][j] / rhs;
+    }
+    return out;
+}
+
+//------------------------------------------------------------------------------
+//---- definitions for matrix functions ----------------------------------------
+//------------------------------------------------------------------------------
+
+template<typename T, size_t S>
+inline Mat<T, S> Mat<T, S>::get_transposed() const
+{
+    Mat out;
+    for (size_t i = 0; i < S; i++) {
+        for (size_t j = 0; j < S; j++)
+            out.m_elements[i][j] = m_elements[j][i];
     }
     return out;
 }

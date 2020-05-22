@@ -51,14 +51,14 @@ public:
             Color m_color;
         };
     public:
-        void bind_world(const Mat4f &world);
+        void bind_world_view(const Mat4f &world_view);
         void bind_projection(const Mat4f &proj);
         const Mat4f &get_proj() const { return m_proj; }
         Output operator()(const Vertex &input) const;
     private:
-        Mat4f m_world = Mat4f::identity();
+        Mat4f m_world_view = Mat4f::identity();
         Mat4f m_proj = Mat4f::identity();
-        Mat4f m_world_proj = Mat4f::identity();
+        Mat4f m_world_view_proj = Mat4f::identity();
     };
     // default geometry shader passes vertices through and outputs triangle
     typedef DefaultGeometryShader<VertexShader::Output> GeometryShader;
