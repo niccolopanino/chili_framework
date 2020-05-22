@@ -34,7 +34,7 @@ public:
     bool operator!=(const Vec4 &rhs) const { return !(*this == rhs); }
 
     Vec4 get_saturated() const;
-    Vec4 saturate() { *this = get_saturated(); }
+    Vec4 saturate() { return *this = get_saturated(); }
     static T dot(const Vec4 &v0, const Vec4 &v1);
 public:
     T m_w = (T)1;
