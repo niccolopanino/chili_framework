@@ -258,6 +258,9 @@
     <ClInclude Include="BasePhongShader.h">
       <Filter>Header Files\Effects\Shader</Filter>
     </ClInclude>
+    <ClInclude Include="VertexLightTexEffect.h">
+      <Filter>Header Files\Effects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp">
@@ -391,6 +394,9 @@
     </ClCompile>
     <ClCompile Include="MouseTracker.cpp">
       <Filter>Source Files\System / Application</Filter>
+    </ClCompile>
+    <ClCompile Include="VertexLightTexEffect.cpp">
+      <Filter>Source Files\Effects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

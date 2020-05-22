@@ -15,6 +15,8 @@ public:
     static IndexedTriangleList<V> get_skinned(int divisions = 7, float size = 1.f);
     template<typename V>
     static IndexedTriangleList<V> get_normals(int divisions = 7, float size = 1.f);
+    template<typename V>
+    static IndexedTriangleList<V> get_skinned_normals(int divisions = 7, float size = 1.f);
 };
 
 template<typename V>
@@ -82,6 +84,15 @@ template<typename V>
 inline IndexedTriangleList<V> Plane::get_normals(int divisions, float size)
 {
     auto itl = get_plain<V>(divisions, size);
+    for (auto &v : itl.m_vertices)
+        v.m_n = Vec3f(0.f, 0.f, -1.f);
+    return itl;
+}
+
+template<typename V>
+inline IndexedTriangleList<V> Plane::get_skinned_normals(int divisions, float size)
+{
+    auto itl = get_skinned<V>(divisions, size);
     for (auto &v : itl.m_vertices)
         v.m_n = Vec3f(0.f, 0.f, -1.f);
     return itl;

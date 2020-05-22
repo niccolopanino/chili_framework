@@ -3,6 +3,7 @@
 #include "Pipeline.h"
 #include "SpecularPointEffect.h"
 #include "SolidEffect.h"
+#include "VertexLightTexEffect.h"
 #include "ZBuffer.h"
 #include "Graphics.h"
 #include "Keyboard.h"
@@ -17,6 +18,7 @@ class SpecularPointScene : public Scene
 public:
     typedef ::Pipeline<SpecularPointEffect> Pipeline;
     typedef ::Pipeline<SolidEffect> LightPipeline;
+    typedef ::Pipeline<VertexLightTexEffect> WallPipeline;
     typedef Pipeline::Vertex Vertex;
 public:
     SpecularPointScene(Graphics &gfx, IndexedTriangleList<Vertex> itl);
@@ -25,9 +27,11 @@ public:
 private:
     IndexedTriangleList<Vertex> m_it_list;
     IndexedTriangleList<SolidEffect::Vertex> m_light_itl;
+    IndexedTriangleList<VertexLightTexEffect::Vertex> m_ceiling_itl;
     std::shared_ptr<ZBuffer> m_zb;
     Pipeline m_pipeline;
     LightPipeline m_light_pipe;
+    WallPipeline m_wall_pipe;
     MouseTracker m_mt;
     // fov
     static constexpr float k_aspect_ratio = 1.33333f;
