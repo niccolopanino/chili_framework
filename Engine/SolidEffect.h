@@ -2,7 +2,7 @@
 #include "Vec3.h"
 #include "Vec4.h"
 #include "Colors.h"
-#include "DefaultVertexShader.h"
+#include "BaseVertexShader.h"
 #include "DefaultGeometryShader.h"
 
 class SolidEffect
@@ -28,37 +28,31 @@ public:
         Vec3f m_pos;
         Color m_color;
     };
-    class VertexShader
+    // vertex type solid effect
+    // only pos is interpolated
+    class VSOut
     {
     public:
-        class Output
-        {
-        public:
-            Output() = default;
-            Output(const Vec4f &pos) : m_pos(pos) { }
-            Output(const Vec4f &pos, const Output &src) : m_pos(pos), m_color(src.m_color) { }
-            Output(const Vec4f &pos, const Color &color) : m_pos(pos), m_color(color) { }
-            Output operator+(const Output &rhs) const { return Output(m_pos + rhs.m_pos, m_color); }
-            Output &operator+=(const Output &rhs) { return *this = *this + rhs; }
-            Output operator-(const Output &rhs) const { return Output(m_pos - rhs.m_pos, m_color); }
-            Output &operator-=(const Output &rhs) { return *this = *this - rhs; }
-            Output operator*(float rhs) const { return Output(m_pos * rhs, m_color); }
-            Output &operator*=(float rhs) { return *this = *this * rhs; }
-            Output operator/(float rhs) const { return Output(m_pos / rhs, m_color); }
-            Output &operator/=(float rhs) { return *this = *this / rhs; }
-        public:
-            Vec4f m_pos;
-            Color m_color;
-        };
+        VSOut() = default;
+        VSOut(const Vec4f &pos) : m_pos(pos) { }
+        VSOut(const Vec4f &pos, const VSOut &src) : m_pos(pos), m_color(src.m_color) { }
+        VSOut(const Vec4f &pos, const Color &color) : m_pos(pos), m_color(color) { }
+        VSOut operator+(const VSOut &rhs) const { return VSOut(m_pos + rhs.m_pos, m_color); }
+        VSOut &operator+=(const VSOut &rhs) { return *this = *this + rhs; }
+        VSOut operator-(const VSOut &rhs) const { return VSOut(m_pos - rhs.m_pos, m_color); }
+        VSOut &operator-=(const VSOut &rhs) { return *this = *this - rhs; }
+        VSOut operator*(float rhs) const { return VSOut(m_pos * rhs, m_color); }
+        VSOut &operator*=(float rhs) { return *this = *this * rhs; }
+        VSOut operator/(float rhs) const { return VSOut(m_pos / rhs, m_color); }
+        VSOut &operator/=(float rhs) { return *this = *this / rhs; }
     public:
-        void bind_world_view(const Mat4f &world_view);
-        void bind_projection(const Mat4f &proj);
-        const Mat4f &get_proj() const { return m_proj; }
+        Vec4f m_pos;
+        Color m_color;
+    };
+    class VertexShader : public BaseVertexShader<VSOut>
+    {
+    public:
         Output operator()(const Vertex &input) const;
-    private:
-        Mat4f m_world_view = Mat4f::identity();
-        Mat4f m_proj = Mat4f::identity();
-        Mat4f m_world_view_proj = Mat4f::identity();
     };
     // default geometry shader passes vertices through and outputs triangle
     typedef DefaultGeometryShader<VertexShader::Output> GeometryShader;

@@ -3,6 +3,7 @@
 #include "Vec4.h"
 #include "Mat.h"
 #include "Colors.h"
+#include "BaseVertexShader.h"
 #include "DefaultGeometryShader.h"
 #include "ChiliMath.h"
 #include <cmath>
@@ -31,39 +32,31 @@ public:
         Vec3f m_pos;
         Vec3f m_n;
     };
-    // duplicate pos to have one "clean" world position
-    class VertexShader
+    class VSOut
     {
     public:
-        class Output
-        {
-        public:
-            Output() = default;
-            Output(const Vec4f &pos) : m_pos(pos) { }
-            Output(const Vec4f &pos, const Output &src);
-            Output(const Vec4f &pos, const Vec3f &n, const Vec3f &world_pos);
-            Output operator+(const Output &rhs) const;
-            Output &operator+=(const Output &rhs) { return *this = *this + rhs; }
-            Output operator-(const Output &rhs) const;
-            Output &operator-=(const Output &rhs) { return *this = *this - rhs; }
-            Output operator*(float rhs) const;
-            Output &operator*=(float rhs) { return *this = *this * rhs; }
-            Output operator/(float rhs) const;
-            Output &operator/=(float rhs) { return *this = *this / rhs; }
-        public:
-            Vec4f m_pos;
-            Vec3f m_n;
-            Vec3f m_world_pos;
-        };
+        VSOut() = default;
+        VSOut(const Vec4f &pos) : m_pos(pos) { }
+        VSOut(const Vec4f &pos, const VSOut &src);
+        VSOut(const Vec4f &pos, const Vec3f &n, const Vec3f &world_pos);
+        VSOut operator+(const VSOut &rhs) const;
+        VSOut &operator+=(const VSOut &rhs) { return *this = *this + rhs; }
+        VSOut operator-(const VSOut &rhs) const;
+        VSOut &operator-=(const VSOut &rhs) { return *this = *this - rhs; }
+        VSOut operator*(float rhs) const;
+        VSOut &operator*=(float rhs) { return *this = *this * rhs; }
+        VSOut operator/(float rhs) const;
+        VSOut &operator/=(float rhs) { return *this = *this / rhs; }
     public:
-        void bind_world_view(const Mat4f &world_view);
-        void bind_projection(const Mat4f &proj);
-        const Mat4f &get_proj() const { return m_proj; }
+        Vec4f m_pos;
+        Vec3f m_n;
+        Vec3f m_world_pos;
+    };
+    // duplicate pos to have one "clean" world position
+    class VertexShader : public BaseVertexShader<VSOut>
+    {
+    public:
         Output operator()(const Vertex &input) const;
-    private:
-        Mat4f m_world_view = Mat4f::identity();
-        Mat4f m_proj = Mat4f::identity();
-        Mat4f m_world_view_proj = Mat4f::identity();
     };
     // default geometry shader passes vertices through and outputs triangle
     typedef DefaultGeometryShader<VertexShader::Output> GeometryShader;
