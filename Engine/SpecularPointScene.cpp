@@ -69,7 +69,7 @@ void SpecularPointScene::draw()
         * view
     );
     m_pipeline.m_effect.m_vs.bind_projection(proj);
-    m_pipeline.m_effect.m_ps.set_light_position(m_lpos * view);
+    m_pipeline.m_effect.m_ps.set_light_pos(m_lpos * view);
     // render triangles
     m_pipeline.draw(m_it_list);
 

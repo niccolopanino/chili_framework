@@ -255,6 +255,9 @@
     <ClInclude Include="BaseVertexShader.h">
       <Filter>Header Files\Effects\Shader</Filter>
     </ClInclude>
+    <ClInclude Include="BasePhongShader.h">
+      <Filter>Header Files\Effects\Shader</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp">
