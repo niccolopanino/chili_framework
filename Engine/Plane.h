@@ -29,7 +29,7 @@ inline IndexedTriangleList<V> Plane::get_plain(int divisions_x, int divisions_y,
 {
     const int num_vertices_x = divisions_x + 1;
     const int num_vertices_y = divisions_y + 1;
-    std::vector<V> vertices(num_vertices_x * num_vertices_y);
+    std::vector<V> vertices((size_t)num_vertices_x * num_vertices_y);
     // give V a constructor for pos only (improvements)
     {
         const float side_x = width / 2.f;

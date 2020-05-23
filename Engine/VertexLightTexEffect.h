@@ -68,8 +68,8 @@ public:
         void bind_texture(const std::wstring &filename);
     private:
         std::unique_ptr<Surface> m_tex;
-        unsigned int m_tex_width;
-        unsigned int m_tex_height;
+        unsigned int m_tex_width = 0u;
+        unsigned int m_tex_height = 0u;
     };
 public:
     VertexShader m_vs;
