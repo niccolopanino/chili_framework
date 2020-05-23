@@ -6,6 +6,7 @@
 #include <cctype>
 #include <algorithm>
 #include <stdexcept>
+#include <sstream>
 #include "tiny_obj_loader.h"
 #include "Miniball.h"
 #include "Vec3.h"
