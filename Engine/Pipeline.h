@@ -24,7 +24,7 @@ public:
 public:
     Pipeline(Graphics &gfx);
     Pipeline(Graphics &gfx, std::shared_ptr<ZBuffer> zb);
-    void draw(IndexedTriangleList<Vertex> &tri_list);
+    void draw(const IndexedTriangleList<Vertex> &tri_list);
     // need to reset the z-buffer after each frame
     void begin_frame();
 private:
@@ -89,7 +89,7 @@ inline Pipeline<E>::Pipeline(Graphics & gfx, std::shared_ptr<ZBuffer> zb) :
 }
 
 template<typename E>
-inline void Pipeline<E>::draw(IndexedTriangleList<Vertex> &tri_list)
+inline void Pipeline<E>::draw(const IndexedTriangleList<Vertex> &tri_list)
 {
     process_vertices(tri_list.m_vertices, tri_list.m_indices);
 }
