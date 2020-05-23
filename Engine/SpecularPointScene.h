@@ -32,7 +32,7 @@ private:
     IndexedTriangleList<SolidEffect::Vertex> m_light_itl =
         Sphere::get_plain<SolidEffect::Vertex>(.05f);
     IndexedTriangleList<VertexLightTexEffect::Vertex> m_ceiling_itl =
-        Plane::get_skinned_normals<VertexLightTexEffect::Vertex>(20);
+        Plane::get_skinned_normals<VertexLightTexEffect::Vertex>(20, 20);
     std::shared_ptr<ZBuffer> m_zb;
     Pipeline m_pipeline;
     LightPipeline m_light_pipe;
