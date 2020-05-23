@@ -10,6 +10,7 @@
 #include <cmath>
 #include <algorithm>
 
+template<typename DiffuseParams, typename SpecularParams>
 class SpecularPointEffect
 {
 public:
@@ -57,15 +58,20 @@ public:
     class VertexShader : public BaseVertexShader<VSOut>
     {
     public:
-        Output operator()(const Vertex &input) const;
+        typename BaseVertexShader<VSOut>::Output operator()(const Vertex &input) const
+        {
+            const auto pos = Vec4f(input.m_pos);
+            return Output(pos * m_world_view_proj,
+                Vec4f(input.m_n, 0.f) * m_world_view, pos * m_world_view);
+        }
     };
     // default geometry shader passes vertices through and outputs triangle
-    typedef DefaultGeometryShader<VertexShader::Output> GeometryShader;
-    //invoked for each pixel of a triangle
+    typedef DefaultGeometryShader<typename VertexShader::Output> GeometryShader;
+    // invoked for each pixel of a triangle
     // takes an input of attributes that are the
     // result of interpolating vertex attributes
     // and outputs a color
-    class PixelShader : public BasePhongShader<>
+    class PixelShader : public BasePhongShader<DiffuseParams, SpecularParams>
     {
     public:
         template<typename I>
@@ -78,3 +84,59 @@ public:
     GeometryShader m_gs;
     PixelShader m_ps;
 };
+
+template<typename DiffuseParams, typename SpecularParams>
+inline typename SpecularPointEffect<DiffuseParams, SpecularParams>::Vertex
+SpecularPointEffect<DiffuseParams, SpecularParams>::Vertex::operator+(const Vertex &rhs) const
+{
+    return Vertex(m_pos + rhs.m_pos, m_n + rhs.m_n);
+}
+
+template<typename DiffuseParams, typename SpecularParams>
+inline typename SpecularPointEffect<DiffuseParams, SpecularParams>::Vertex
+SpecularPointEffect<DiffuseParams, SpecularParams>::Vertex::operator-(const Vertex &rhs) const
+{
+    return Vertex(m_pos - rhs.m_pos, m_n - rhs.m_n);
+}
+
+template<typename DiffuseParams, typename SpecularParams>
+inline SpecularPointEffect<DiffuseParams, SpecularParams>::VSOut::VSOut(const Vec4f &pos,
+    const VSOut &src)
+    :
+    m_pos(pos), m_n(src.m_n), m_world_pos(src.m_world_pos)
+{ }
+
+template<typename DiffuseParams, typename SpecularParams>
+inline SpecularPointEffect<DiffuseParams, SpecularParams>::VSOut::VSOut(const Vec4f &pos,
+    const Vec3f &n, const Vec3f &world_pos)
+    :
+    m_pos(pos), m_n(n), m_world_pos(world_pos)
+{ }
+
+template<typename DiffuseParams, typename SpecularParams>
+inline typename SpecularPointEffect<DiffuseParams, SpecularParams>::VSOut
+SpecularPointEffect<DiffuseParams, SpecularParams>::VSOut::operator+(const VSOut &rhs) const
+{
+    return VSOut(m_pos + rhs.m_pos, m_n + rhs.m_n, m_world_pos + rhs.m_world_pos);
+}
+
+template<typename DiffuseParams, typename SpecularParams>
+inline typename SpecularPointEffect<DiffuseParams, SpecularParams>::VSOut
+SpecularPointEffect<DiffuseParams, SpecularParams>::VSOut::operator-(const VSOut &rhs) const
+{
+    return VSOut(m_pos - rhs.m_pos, m_n - rhs.m_n, m_world_pos - rhs.m_world_pos);
+}
+
+template<typename DiffuseParams, typename SpecularParams>
+inline typename SpecularPointEffect<DiffuseParams, SpecularParams>::VSOut
+SpecularPointEffect<DiffuseParams, SpecularParams>::VSOut::operator*(float rhs) const
+{
+    return VSOut(m_pos * rhs, m_n * rhs, m_world_pos * rhs);
+}
+
+template<typename DiffuseParams, typename SpecularParams>
+inline typename SpecularPointEffect<DiffuseParams, SpecularParams>::VSOut
+SpecularPointEffect<DiffuseParams, SpecularParams>::VSOut::operator/(float rhs) const
+{
+    return VSOut(m_pos / rhs, m_n / rhs, m_world_pos / rhs);
+}

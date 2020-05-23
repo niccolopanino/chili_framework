@@ -6,9 +6,12 @@
 #include "BaseVertexShader.h"
 #include "DefaultGeometryShader.h"
 #include "Surface.h"
+#include "ChiliMath.h"
+#include <algorithm>
 #include <memory>
 #include <string>
 
+template<typename DiffuseParams>
 class VertexLightTexEffect
 {
 public:
@@ -47,7 +50,24 @@ public:
     class VertexShader : public BaseVertexShader<VSOut>
     {
     public:
-        Output operator()(const Vertex &input) const;
+        typename BaseVertexShader<VSOut>::Output operator()(const Vertex &input) const
+        {
+            // transform mech vertex position before lighting calc
+            const auto world_pos = input.m_pos * m_world_view;
+            // vertex to light data
+            const auto v_to_l = m_light_pos - world_pos;
+            const auto dist = v_to_l.len();
+            const Vec3f dir = v_to_l / dist;
+            // calculate attenuation
+            const auto att = 1.f / (DiffuseParams::k_const_att + DiffuseParams::k_lin_att * dist
+                + DiffuseParams::k_quad_att * sq(dist));
+            // calculate intennsity based on angle of incidence and attenuation
+            const auto d = m_light_diff * att * std::max(0.f,
+                Vec3f::dot(static_cast<Vec3f>(Vec4f(input.m_n, 0.f) * m_world_view), dir));
+            // add diffuse, ambient, filter by material color, saturate and scale
+            const auto l = d + m_light_amb;
+            return Output(input.m_pos * m_world_view_proj, l, input.m_tc);
+        }
         void set_diffuse_light(const Vec3f &c) { m_light_diff = c; }
         void set_ambient_light(const Vec3f &c) { m_light_amb = c; }
         void set_light_pos(const Vec4f &pos) { m_light_pos = pos; }
@@ -55,11 +75,8 @@ public:
         Vec4f m_light_pos;
         Vec3f m_light_diff;
         Vec3f m_light_amb;
-        static constexpr float k_lin_att = 2.f;
-        static constexpr float k_quad_att = 2.619f;
-        static constexpr float k_const_att = .382f;
     };
-    typedef DefaultGeometryShader<VertexShader::Output> GeometryShader;
+    typedef DefaultGeometryShader<typename VertexShader::Output> GeometryShader;
     class PixelShader
     {
     public:
@@ -77,12 +94,35 @@ public:
     PixelShader m_ps;
 };
 
+template<typename DiffuseParams>
+inline typename VertexLightTexEffect<DiffuseParams>::VSOut
+VertexLightTexEffect<DiffuseParams>::VSOut::operator+(const VSOut &rhs) const
+{
+    return VSOut(m_pos + rhs.m_pos, m_l + rhs.m_l, m_tc + rhs.m_tc);
+}
+
+template<typename DiffuseParams>
+inline typename VertexLightTexEffect<DiffuseParams>::VSOut
+VertexLightTexEffect<DiffuseParams>::VSOut::operator-(const VSOut &rhs) const
+{
+    return VSOut(m_pos - rhs.m_pos, m_l - rhs.m_l, m_tc - rhs.m_tc);
+}
+
+template<typename DiffuseParams>
 template<typename I>
-inline Color VertexLightTexEffect::PixelShader::operator()(const I &input) const
+inline Color VertexLightTexEffect<DiffuseParams>::PixelShader::operator()(const I &input) const
 {
     const auto mat_color = Vec3f(m_tex->get_pixel(
         unsigned int(input.m_tc.m_x * m_tex_width + .5f) % m_tex_width,
         unsigned int(input.m_tc.m_y * m_tex_height + .5f) % m_tex_height
     )) / 255.f;
     return Color((mat_color * input.m_l).get_saturated() * 255.f);
+}
+
+template<typename DiffuseParams>
+inline void VertexLightTexEffect<DiffuseParams>::PixelShader::bind_texture(const Surface &tex)
+{
+    m_tex = &tex;
+    m_tex_width = m_tex->get_width();
+    m_tex_height = m_tex->get_height();
 }

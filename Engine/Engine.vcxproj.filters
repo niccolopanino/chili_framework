@@ -261,6 +261,9 @@
     <ClInclude Include="VertexLightTexEffect.h">
       <Filter>Header Files\Effects</Filter>
     </ClInclude>
+    <ClInclude Include="RippleVertexSpecPhongEffect.h">
+      <Filter>Header Files\Effects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp">
@@ -321,9 +324,6 @@
       <Filter>Source Files\Extern</Filter>
     </ClCompile>
     <ClCompile Include="SolidEffect.cpp">
-      <Filter>Source Files\Effects</Filter>
-    </ClCompile>
-    <ClCompile Include="SpecularPointEffect.cpp">
       <Filter>Source Files\Effects</Filter>
     </ClCompile>
     <ClCompile Include="GeometryFlatEffect.cpp">
@@ -394,9 +394,6 @@
     </ClCompile>
     <ClCompile Include="MouseTracker.cpp">
       <Filter>Source Files\System / Application</Filter>
-    </ClCompile>
-    <ClCompile Include="VertexLightTexEffect.cpp">
-      <Filter>Source Files\Effects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

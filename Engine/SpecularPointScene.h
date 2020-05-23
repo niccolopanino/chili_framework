@@ -4,6 +4,7 @@
 #include "SpecularPointEffect.h"
 #include "SolidEffect.h"
 #include "VertexLightTexEffect.h"
+#include "RippleVertexSpecPhongEffect.h"
 #include "ZBuffer.h"
 #include "Graphics.h"
 #include "Keyboard.h"
@@ -32,6 +33,10 @@ struct SpecularParams
 
 class SpecularPointScene : public Scene
 {
+    using SpecularPointEffect = SpecularPointEffect<PointDiffuseParams, SpecularParams>;
+    using VertexLightTexEffect = VertexLightTexEffect<PointDiffuseParams>;
+    using RippleVertexSpecPhongEffect =
+        RippleVertexSpecPhongEffect<PointDiffuseParams, SpecularParams>;
 public:
     struct Wall
     {
@@ -43,13 +48,14 @@ public:
     typedef ::Pipeline<SpecularPointEffect> Pipeline;
     typedef ::Pipeline<SolidEffect> LightPipeline;
     typedef ::Pipeline<VertexLightTexEffect> WallPipeline;
+    typedef ::Pipeline<RippleVertexSpecPhongEffect> RipplePipeline;
     typedef Pipeline::Vertex Vertex;
 public:
     SpecularPointScene(Graphics &gfx);
     virtual void update(Keyboard &kbd, Mouse &mouse, float dt) override;
     virtual void draw() override;
 private:
-    float m_t = 0.f;
+    float m_time = 0.f;
     // scene params
     static constexpr float k_width = 4.f;
     static constexpr float k_height = 1.75f;
@@ -58,6 +64,7 @@ private:
     Pipeline m_pipeline;
     LightPipeline m_light_pipe;
     WallPipeline m_wall_pipe;
+    RipplePipeline m_rip_pipe;
     // fov
     static constexpr float k_aspect_ratio = 1.33333f;
     static constexpr float k_hfov = 85.f;
@@ -96,6 +103,9 @@ private:
     Surface m_tfloor = Surface::from_file(L"resources/img/floor.png");
     std::vector<Wall> m_walls;
     // ripple stuff
+    IndexedTriangleList<RippleVertexSpecPhongEffect::Vertex> m_sauron_itl =
+        Plane::get_skinned<RippleVertexSpecPhongEffect::Vertex>(50, 10,
+            k_sauron_size, k_sauron_size, .6f);
     static constexpr float k_sauron_size = .6f;
     Mat4f m_sauron_model = Mat4f::rotate_x(PI / 2.f) * Mat4f::translate(.3f, -.8f, 0.f);
     Surface m_tsauron = Surface::from_file(L"resources/img/sauron-bhole-100x100.png");

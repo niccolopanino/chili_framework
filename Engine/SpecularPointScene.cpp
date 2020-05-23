@@ -2,7 +2,7 @@
 
 SpecularPointScene::SpecularPointScene(Graphics &gfx) :
     m_zb(std::make_shared<ZBuffer>(Graphics::k_screen_width, Graphics::k_screen_height)),
-    m_pipeline(gfx, m_zb), m_light_pipe(gfx, m_zb), m_wall_pipe(gfx, m_zb),
+    m_pipeline(gfx, m_zb), m_light_pipe(gfx, m_zb), m_wall_pipe(gfx, m_zb), m_rip_pipe(gfx, m_zb),
     Scene("Phong point shader scene free mesh specular highlights")
 {
     // adjust suzanne model
@@ -13,26 +13,29 @@ SpecularPointScene::SpecularPointScene(Graphics &gfx) :
     // load ceiling, walls, floor
     m_walls.push_back({
         &m_tceiling,
-        Plane::get_skinned_normals<VertexLightTexEffect::Vertex>(20, 20, k_width, k_width, k_tscale_ceiling),
+        Plane::get_skinned_normals<VertexLightTexEffect::Vertex>(20, 20,
+            k_width, k_width, k_tscale_ceiling),
         Mat4f::rotate_x(-PI / 2.f) * Mat4f::translate(0.f, k_height / 2.f, 0.f)
     });
     for (int i = 0; i < 4; i++) {
         m_walls.push_back({
             &m_twall,
-            Plane::get_skinned_normals<VertexLightTexEffect::Vertex>(20, 20, k_width, k_height, k_tscale_wall),
+            Plane::get_skinned_normals<VertexLightTexEffect::Vertex>(20, 20,
+                k_width, k_height, k_tscale_wall),
             Mat4f::translate(0.f, 0.f, k_width / 2.f) * Mat4f::rotate_y(float(i) * PI / 2.f)
         });
     }
     m_walls.push_back({
         &m_tfloor,
-        Plane::get_skinned_normals<VertexLightTexEffect::Vertex>(20, 20, k_width, k_width, k_tscale_floor),
+        Plane::get_skinned_normals<VertexLightTexEffect::Vertex>(20, 20,
+            k_width, k_width, k_tscale_floor),
         Mat4f::rotate_x(PI / 2.f) * Mat4f::translate(0.f, -k_height / 2.f, 0.f)
     });
 }
 
 void SpecularPointScene::update(Keyboard &kbd, Mouse &mouse, float dt)
 {
-    m_t += dt;
+    m_time += dt;
 
     if (kbd.is_key_pressed('W'))
         m_cam_pos += Vec4f(0.f, 0.f, 1.f, 0.f) * m_cam_rot_inv.get_transposed() * k_cam_speed * dt;
@@ -72,8 +75,9 @@ void SpecularPointScene::update(Keyboard &kbd, Mouse &mouse, float dt)
         }
     }
 
-    m_theta_y = wrap_angle(m_t * m_rot_speed);
-    m_lpos.m_y = m_light_hamp * sin(wrap_angle(m_t * PI / (2.f * m_light_hamp)));
+    m_theta_y = wrap_angle(m_time * m_rot_speed);
+    m_lpos.m_y = m_light_hamp * sin(wrap_angle(m_time * PI / (2.f * m_light_hamp)));
+    m_rip_pipe.m_effect.m_vs.set_time(m_time);
 }
 
 void SpecularPointScene::draw()
@@ -114,4 +118,11 @@ void SpecularPointScene::draw()
     }
 
     // draw ripple plane
+    m_rip_pipe.m_effect.m_vs.bind_world_view(m_sauron_model * view);
+    m_rip_pipe.m_effect.m_vs.bind_projection(proj);
+    m_rip_pipe.m_effect.m_ps.set_light_pos(m_lpos * view);
+    m_rip_pipe.m_effect.m_ps.set_ambient_light(m_lamb);
+    m_rip_pipe.m_effect.m_ps.set_diffuse_light(m_ldiff);
+    m_rip_pipe.m_effect.m_ps.bind_texture(m_tsauron);
+    m_rip_pipe.draw(m_sauron_itl);
 }

@@ -183,6 +183,7 @@
     <ClInclude Include="NDCScreenTransformer.h" />
     <ClInclude Include="Rect.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="RippleVertexSpecPhongEffect.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SolidEffect.h" />
     <ClInclude Include="SolidGeometryEffect.h" />
@@ -240,14 +241,12 @@
     <ClCompile Include="SolidGeometryEffect.cpp" />
     <ClCompile Include="Sound.cpp" />
     <ClCompile Include="SoundEffect.cpp" />
-    <ClCompile Include="SpecularPointEffect.cpp" />
     <ClCompile Include="SpecularPointScene.cpp" />
     <ClCompile Include="Surface.cpp" />
     <ClCompile Include="TextureEffect.cpp" />
     <ClCompile Include="tiny_obj_loader.cpp" />
     <ClCompile Include="VertexColorEffect.cpp" />
     <ClCompile Include="VertexFlatEffect.cpp" />
-    <ClCompile Include="VertexLightTexEffect.cpp" />
     <ClCompile Include="VertexPositionColorEffect.cpp" />
     <ClCompile Include="VertexWaveScene.cpp" />
     <ClCompile Include="WaveVertexTextureEffect.cpp" />
