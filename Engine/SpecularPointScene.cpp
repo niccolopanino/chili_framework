@@ -1,12 +1,8 @@
 #include "SpecularPointScene.h"
-#include "Mat.h"
-#include "Sphere.h"
-#include "Plane.h"
 
 SpecularPointScene::SpecularPointScene(Graphics &gfx, IndexedTriangleList<Vertex> itl) :
     m_zb(std::make_shared<ZBuffer>(Graphics::k_screen_width, Graphics::k_screen_height)),
-    m_it_list(std::move(itl)), m_light_itl(Sphere::get_plain<SolidEffect::Vertex>(.05f)),
-    m_ceiling_itl(Plane::get_skinned_normals<VertexLightTexEffect::Vertex>(20)),
+    m_it_list(std::move(itl)),
     m_pipeline(gfx, m_zb), m_light_pipe(gfx, m_zb), m_wall_pipe(gfx, m_zb),
     Scene("Phong point shader scene free mesh specular highlights")
 {

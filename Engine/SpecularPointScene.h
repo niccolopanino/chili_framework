@@ -10,6 +10,9 @@
 #include "Mouse.h"
 #include "MouseTracker.h"
 #include "IndexedTriangleList.h"
+#include "Mat.h"
+#include "Sphere.h"
+#include "Plane.h"
 #include "ChiliMath.h"
 #include <memory>
 
@@ -26,8 +29,10 @@ public:
     virtual void draw() override;
 private:
     IndexedTriangleList<Vertex> m_it_list;
-    IndexedTriangleList<SolidEffect::Vertex> m_light_itl;
-    IndexedTriangleList<VertexLightTexEffect::Vertex> m_ceiling_itl;
+    IndexedTriangleList<SolidEffect::Vertex> m_light_itl =
+        Sphere::get_plain<SolidEffect::Vertex>(.05f);
+    IndexedTriangleList<VertexLightTexEffect::Vertex> m_ceiling_itl =
+        Plane::get_skinned_normals<VertexLightTexEffect::Vertex>(20);
     std::shared_ptr<ZBuffer> m_zb;
     Pipeline m_pipeline;
     LightPipeline m_light_pipe;
